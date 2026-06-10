@@ -10,6 +10,27 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
   socialLinks[]{platform, url}
 }`;
 
+export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
+  _id,
+  _type,
+  heroEyebrow,
+  heroTitle,
+  heroDescription,
+  heroImage,
+  sectionTitle,
+  sectionDescription,
+  ctaLabel
+}`;
+
+export const aboutPageSettingsQuery = groq`*[_type == "aboutPageSettings"][0]{
+  _id,
+  _type,
+  pageTitle,
+  intro,
+  body,
+  portraitImage
+}`;
+
 export const photographerQuery = groq`*[_type == "photographer"][0]{
   _id,
   _type,
@@ -20,44 +41,22 @@ export const photographerQuery = groq`*[_type == "photographer"][0]{
   email
 }`;
 
-export const galleriesQuery = groq`*[_type == "gallery"] | order(sortOrder asc, title asc){
+export const featuredPhotosQuery = groq`*[_type == "photo" && featured == true] | order(_createdAt desc){
   _id,
   _type,
-  title,
-  "slug": slug.current,
-  coverImage,
-  description,
-  featured,
-  sortOrder
+  image,
+  altText,
+  location,
+  cameraData,
+  featured
 }`;
 
-export const featuredGalleriesQuery = groq`*[_type == "gallery" && featured == true] | order(sortOrder asc, title asc){
+export const allPhotosQuery = groq`*[_type == "photo"] | order(featured desc, _createdAt desc){
   _id,
   _type,
-  title,
-  "slug": slug.current,
-  coverImage,
-  description,
-  featured,
-  sortOrder
-}`;
-
-export const galleryBySlugQuery = groq`*[_type == "gallery" && slug.current == $slug][0]{
-  _id,
-  _type,
-  title,
-  "slug": slug.current,
-  coverImage,
-  description,
-  featured,
-  sortOrder,
-  "photos": *[_type == "photo" && gallery._ref == ^._id] | order(featured desc, _createdAt desc){
-    _id,
-    _type,
-    image,
-    altText,
-    location,
-    cameraData,
-    featured
-  }
+  image,
+  altText,
+  location,
+  cameraData,
+  featured
 }`;

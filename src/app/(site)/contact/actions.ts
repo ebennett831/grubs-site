@@ -28,8 +28,6 @@ export async function submitContactForm(formData: FormData) {
     redirect("/contact?status=invalid");
   }
 
-  // Placeholder architecture: this is where a secure email/API integration would be added.
-  // Keep all secret-bearing integrations server-side only.
   console.info("Contact submission received", {
     name: parsed.data.name,
     email: parsed.data.email,

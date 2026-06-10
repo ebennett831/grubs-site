@@ -22,15 +22,25 @@ export interface Photographer {
   email: string;
 }
 
-export interface Gallery {
+export interface HomePageSettings {
   _id: string;
-  _type: "gallery";
-  title: string;
-  slug: string;
-  coverImage?: SanityImage;
-  description: string;
-  featured: boolean;
-  sortOrder: number;
+  _type: "homePageSettings";
+  heroEyebrow: string;
+  heroTitle: string;
+  heroDescription: string;
+  heroImage?: SanityImage;
+  sectionTitle: string;
+  sectionDescription: string;
+  ctaLabel: string;
+}
+
+export interface AboutPageSettings {
+  _id: string;
+  _type: "aboutPageSettings";
+  pageTitle: string;
+  intro: string;
+  body: string;
+  portraitImage?: SanityImage;
 }
 
 export interface Photo {
@@ -41,10 +51,6 @@ export interface Photo {
   location?: string;
   cameraData?: string;
   featured: boolean;
-}
-
-export interface GalleryWithPhotos extends Gallery {
-  photos: Photo[];
 }
 
 export interface SiteSettings {

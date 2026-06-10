@@ -1,9 +1,5 @@
-import { absoluteUrl, getSiteUrl } from "@/lib/utils/site";
-import {
-  type GalleryWithPhotos,
-  type Photographer,
-  type SiteSettings,
-} from "@/types/sanity";
+import { getSiteUrl } from "@/lib/utils/site";
+import { type Photographer, type SiteSettings } from "@/types/sanity";
 
 export function buildOrganizationSchema(
   siteSettings: SiteSettings | null,
@@ -27,16 +23,5 @@ export function buildWebsiteSchema(siteSettings: SiteSettings | null) {
     name: siteSettings?.siteTitle ?? "Photography Portfolio",
     url: getSiteUrl(),
     description: siteSettings?.siteDescription,
-  };
-}
-
-export function buildGallerySchema(gallery: GalleryWithPhotos) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "ImageGallery",
-    name: gallery.title,
-    description: gallery.description,
-    url: absoluteUrl(`/gallery/${gallery.slug}`),
-    image: gallery.photos.map((photo) => photo.image).filter(Boolean),
   };
 }
