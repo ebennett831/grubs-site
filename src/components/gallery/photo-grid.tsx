@@ -12,27 +12,32 @@ export function PhotoGrid({ photos }: PhotoGridProps) {
     return <p className="text-charcoal/70">No photographs published yet.</p>;
   }
 
-  const columns = [[], [], []] as Photo[][];
+  const getAspectRatio = (photo: Photo) => {
+    const dimensions = photo.image?.dimensions;
 
-  photos.forEach((photo, index) => {
-    columns[index % columns.length].push(photo);
-  });
+    if (!dimensions || !dimensions.width || !dimensions.height) {
+      return 4 / 5;
+    }
+
+    return dimensions.width / dimensions.height;
+  };
 
   return (
     <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 [column-fill:_balance]">
-      {columns.flat().map((photo) => {
-        const imageUrl = photo.image
-          ? urlFor(photo.image)
-              .width(1400)
-              .height(1800)
-              .fit("crop")
+      {photos.map((photo) => {
+        const aspectRatio = getAspectRatio(photo);
+        const image = photo.image;
+        const imageRef = image?.asset?._ref?.trim();
+        const imageUrl = imageRef
+          ? urlFor(image!)
+              .width(1600)
               .auto("format")
               .url()
           : null;
 
         return (
           <figure key={photo._id} className="group mb-6 break-inside-avoid overflow-hidden bg-charcoal/10">
-            <div className="relative aspect-[4/5] overflow-hidden">
+            <div className="relative overflow-hidden" style={{ aspectRatio }}>
               {imageUrl ? (
                 <Image
                   src={imageUrl}

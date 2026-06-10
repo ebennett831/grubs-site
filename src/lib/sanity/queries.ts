@@ -44,7 +44,7 @@ export const photographerQuery = groq`*[_type == "photographer"][0]{
 export const featuredPhotosQuery = groq`*[_type == "photo" && featured == true] | order(_createdAt desc){
   _id,
   _type,
-  image,
+  image{..., "dimensions": asset->metadata.dimensions},
   altText,
   location,
   cameraData,
@@ -54,7 +54,7 @@ export const featuredPhotosQuery = groq`*[_type == "photo" && featured == true] 
 export const allPhotosQuery = groq`*[_type == "photo"] | order(featured desc, _createdAt desc){
   _id,
   _type,
-  image,
+  image{..., "dimensions": asset->metadata.dimensions},
   altText,
   location,
   cameraData,

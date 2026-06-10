@@ -4,6 +4,11 @@ export interface SanityImage {
     _ref: string;
     _type: "reference";
   };
+  dimensions?: {
+    aspectRatio: number;
+    height: number;
+    width: number;
+  };
   alt?: string;
 }
 
