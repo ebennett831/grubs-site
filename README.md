@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Photography Portfolio
 
-## Getting Started
+A production-ready photography portfolio built with Next.js App Router, TypeScript, Tailwind CSS v4, and Sanity CMS.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js 15 (App Router)
+- React Server Components by default
+- TypeScript
+- Tailwind CSS v4
+- Sanity CMS + next-sanity
+- Zod for server-side validation
+- ESLint + Prettier
+
+## Project Structure
+
+```txt
+src/
+├─ app/
+│  ├─ page.tsx
+│  ├─ work/
+│  ├─ about/
+│  ├─ contact/
+│  ├─ gallery/[slug]/
+│  ├─ robots.ts
+│  └─ sitemap.ts
+├─ components/
+│  ├─ layout/
+│  ├─ gallery/
+│  ├─ sections/
+│  └─ ui/
+├─ lib/
+│  ├─ sanity/
+│  ├─ seo/
+│  └─ utils/
+├─ types/
+├─ hooks/
+└─ styles/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy `.env.example` to `.env.local` and fill in values:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
-## Learn More
+NEXT_PUBLIC_SANITY_PROJECT_ID=
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2025-02-01
 
-To learn more about Next.js, take a look at the following resources:
+SANITY_API_READ_TOKEN=
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Sanity Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Create a Sanity project.
+2. Add environment variables.
+3. Run Studio locally:
 
-## Deploy on Vercel
+```bash
+npm run sanity:studio
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Sanity schemas included:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Photographer
+- Gallery
+- Photo
+- Site Settings
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000.
+
+## Quality Checks
+
+```bash
+npm run lint
+npm run build
+npm run format
+```
+
+## Deployment (Cloudflare-Compatible)
+
+1. Set all environment variables in your deployment platform.
+2. Build command: `npm run build`
+3. Start command: `npm run start`
+4. Ensure Node runtime supports Next.js 15 requirements.
+5. Validate that security headers from `next.config.ts` are preserved by edge/CDN config.
+6. Set `NEXT_PUBLIC_SITE_URL` to the production domain for canonical URLs, sitemap, and OG metadata.
+
+## Notes
+
+- Content is sourced from Sanity queries; no portfolio data is hardcoded.
+- Contact form is server-validated with Zod and includes honeypot spam protection architecture.
+- Routing and components are structured for future private galleries, print store, blog, booking, newsletter, and analytics extensions.

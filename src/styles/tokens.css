@@ -1,0 +1,8 @@
+@theme {
+  --color-cream: #f7f2ea;
+  --color-charcoal: #181513;
+  --color-accent: #9f5d3f;
+
+  --font-serif-display: var(--font-cormorant);
+  --font-sans-ui: var(--font-manrope);
+}
