@@ -27,7 +27,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
       <Container className="grid gap-10 lg:grid-cols-[1fr_1.1fr]">
         <div className="space-y-4">
           <h1 className="font-serif-display text-5xl text-charcoal sm:text-6xl">Contact</h1>
-          <p className="text-charcoal/80">
+          <p className="text-charcoal/80 whitespace-pre-wrap break-words leading-relaxed">
             Share your project details or inquiry. Form validation is server-side and structured for a
             secure provider integration in production.
           </p>

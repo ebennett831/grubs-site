@@ -15,6 +15,7 @@ export const siteSettingsSchema = defineType({
       name: "siteDescription",
       title: "Site Description",
       type: "text",
+      rows: 5,
       validation: (rule) => rule.required(),
     }),
     defineField({

@@ -54,7 +54,7 @@ export default async function HomePage() {
               <h2 className="font-serif-display text-charcoal text-4xl sm:text-5xl">
                 {homePageSettings?.sectionTitle ?? "Photography"}
               </h2>
-              <p className="text-charcoal/75 mt-3 max-w-2xl text-sm sm:text-base">
+              <p className="text-charcoal/75 mt-3 max-w-2xl text-sm sm:text-base whitespace-pre-wrap break-words leading-relaxed">
                 {homePageSettings?.sectionDescription ?? "Featured images arranged like an editorial wall."}
               </p>
             </div>

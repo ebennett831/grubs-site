@@ -15,6 +15,7 @@ export const photographerSchema = defineType({
       name: "bio",
       title: "Bio",
       type: "text",
+      rows: 8,
       validation: (rule) => rule.required(),
     }),
     defineField({

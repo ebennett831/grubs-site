@@ -41,8 +41,12 @@ export default async function AboutPage() {
           <h1 className="font-serif-display text-5xl text-charcoal sm:text-6xl">
             {aboutPageSettings?.pageTitle ?? "About"}
           </h1>
-          <p className="text-charcoal/80">{aboutPageSettings?.intro ?? "Publish custom about-page copy in Sanity."}</p>
-          <p className="text-charcoal/75 max-w-2xl">{aboutPageSettings?.body ?? "Use this page for a separate story from the homepage so both can be rewritten independently."}</p>
+          <p className="text-charcoal/80 whitespace-pre-wrap break-words leading-relaxed">
+            {aboutPageSettings?.intro ?? "Publish custom about-page copy in Sanity."}
+          </p>
+          <p className="text-charcoal/75 max-w-2xl whitespace-pre-wrap break-words leading-relaxed">
+            {aboutPageSettings?.body ?? "Use this page for a separate story from the homepage so both can be rewritten independently."}
+          </p>
 
           <div className="space-y-2 text-sm">
             <p className="text-charcoal/70">Social</p>
