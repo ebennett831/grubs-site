@@ -14,10 +14,10 @@ export async function SiteFooter() {
         <p>{siteSettings?.siteTitle ?? "Photography Portfolio"}</p>
         <div className="flex gap-4">
           <Link
-            href="/work"
+            href="/photography"
             className="focus-visible:outline-accent hover:text-black focus-visible:outline-2 focus-visible:outline-offset-4"
           >
-            Work
+            Photography
           </Link>
           <Link
             href="/about"

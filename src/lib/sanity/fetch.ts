@@ -2,7 +2,7 @@ import { type QueryParams } from "next-sanity";
 
 import { hasValidSanityEnv, sanityClient } from "@/lib/sanity/client";
 
-export async function fetchSanity<T>(query: string, params: QueryParams = {}) {
+export async function fetchSanity<T>(query: string, params: QueryParams = {}, revalidate = 0) {
   if (!hasValidSanityEnv) {
     return null as T | null;
   }
@@ -10,7 +10,7 @@ export async function fetchSanity<T>(query: string, params: QueryParams = {}) {
   try {
     return await sanityClient.fetch<T>(query, params, {
       next: {
-        revalidate: 120,
+        revalidate,
       },
     });
   } catch {

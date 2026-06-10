@@ -15,7 +15,7 @@ interface ContactPageProps {
 export default async function ContactPage({ searchParams }: ContactPageProps) {
   const [{ status }, photographer, siteSettings] = await Promise.all([
     searchParams,
-    fetchSanity<Photographer>(photographerQuery),
+    fetchSanity<Photographer>(photographerQuery, {}, 0),
     fetchSanity<SiteSettings>(siteSettingsQuery),
   ]);
 
