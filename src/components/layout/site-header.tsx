@@ -8,6 +8,7 @@ import { type SiteSettings } from "@/types/sanity";
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/photography", label: "Photography" },
+  { href: "/galleries", label: "Galleries" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

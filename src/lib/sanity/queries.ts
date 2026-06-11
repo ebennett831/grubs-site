@@ -1,5 +1,18 @@
 import { groq } from "next-sanity";
 
+const photoProjection = groq`{
+  _id,
+  _type,
+  image{..., "dimensions": asset->metadata.dimensions},
+  altText,
+  gallery->{
+    _id,
+    _type,
+    title,
+    sortOrder
+  }
+}`;
+
 export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
   _id,
   _type,
@@ -52,4 +65,38 @@ export const allPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc){
   _type,
   image{..., "dimensions": asset->metadata.dimensions},
   altText
+}`;
+
+export const galleriesQuery = groq`*[_type == "gallery"] | order(coalesce(sortOrder, 0) desc, _createdAt desc){
+  _id,
+  _type,
+  title,
+  description,
+  slug,
+  sortOrder,
+  coverPhoto->{
+    _id,
+    _type,
+    image{..., "dimensions": asset->metadata.dimensions},
+    altText
+  },
+  "photoCount": count(*[_type == "photo" && references(^._id)])
+}`;
+
+export const ungroupedPhotosQuery = groq`*[_type == "photo" && !defined(gallery)] | order(_createdAt desc) ${photoProjection}`;
+
+export const galleryByIdentifierQuery = groq`*[_type == "gallery" && (slug.current == $identifier || _id == $identifier)][0]{
+  _id,
+  _type,
+  title,
+  description,
+  slug,
+  sortOrder,
+  coverPhoto->{
+    _id,
+    _type,
+    image{..., "dimensions": asset->metadata.dimensions},
+    altText
+  },
+  "photos": *[_type == "photo" && references(^._id)] | order(_createdAt desc) ${photoProjection}
 }`;

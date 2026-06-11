@@ -18,6 +18,13 @@ export const photoSchema = defineType({
       type: "string",
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: "gallery",
+      title: "Gallery",
+      type: "reference",
+      weak: true,
+      to: [{type: "gallery"}],
+    }),
   ],
   preview: {
     select: {

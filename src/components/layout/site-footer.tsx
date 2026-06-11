@@ -20,6 +20,12 @@ export async function SiteFooter() {
             Photography
           </Link>
           <Link
+            href="/galleries"
+            className="focus-visible:outline-accent hover:text-black focus-visible:outline-2 focus-visible:outline-offset-4"
+          >
+            Galleries
+          </Link>
+          <Link
             href="/about"
             className="focus-visible:outline-accent hover:text-black focus-visible:outline-2 focus-visible:outline-offset-4"
           >

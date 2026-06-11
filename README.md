@@ -65,15 +65,20 @@ npm run sanity:studio
 Sanity schemas included:
 
 - Photographer
-- Gallery
+- Galleries
 - Photo
 - Site Settings
 
-The Studio also includes a Bulk Photo Import tool. Open Studio, choose Bulk Photo Import from the sidebar, then select one CSV or JSON manifest plus the matching image files in one go.
+The Studio now has two no-code tools:
 
-The tool is file-only now: choose one or more image files and it automatically uploads them, creates `photo` documents, and uses the file name as the alt text and document ID.
+- Gallery Manager lets you create galleries, choose a cover photo, and move galleries up or down with buttons.
+- Bulk Photo Import lets you pick photo files, optionally drop them into a gallery, and automatically creates photo documents using the file name as the alt text.
 
 If you upload the same file again, it updates the same document instead of creating a duplicate.
+
+Photography is back to a single flat wall of all photos. The Galleries tab is where the grouped gallery view lives, with cover photos, titles, optional descriptions, and recent-first ordering.
+
+Gallery order is controlled from the Gallery Manager buttons. New galleries default to most-recent-first behavior.
 
 ## Local Development
 

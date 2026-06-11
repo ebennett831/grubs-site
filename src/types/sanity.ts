@@ -45,6 +45,26 @@ export interface GallerySettings {
   density: number;
 }
 
+export interface GalleryCoverPhoto {
+  _id: string;
+  _type: "photo";
+  image?: SanityImage;
+  altText: string;
+}
+
+export interface Gallery {
+  _id: string;
+  _type: "gallery";
+  title: string;
+  description?: string;
+  slug: {
+    current: string;
+  };
+  sortOrder: number;
+  coverPhoto?: GalleryCoverPhoto;
+  photoCount?: number;
+}
+
 export interface AboutPageSettings {
   _id: string;
   _type: "aboutPageSettings";
@@ -59,6 +79,12 @@ export interface Photo {
   _type: "photo";
   image?: SanityImage;
   altText: string;
+  gallery?: {
+    _id: string;
+    _type: "gallery";
+    title: string;
+    sortOrder: number;
+  };
 }
 
 export interface SiteSettings {
