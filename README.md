@@ -69,6 +69,12 @@ Sanity schemas included:
 - Photo
 - Site Settings
 
+The Studio also includes a Bulk Photo Import tool. Open Studio, choose Bulk Photo Import from the sidebar, then select one CSV or JSON manifest plus the matching image files in one go.
+
+The tool is file-only now: choose one or more image files and it automatically uploads them, creates `photo` documents, and uses the file name as the alt text and document ID.
+
+If you upload the same file again, it updates the same document instead of creating a duplicate.
+
 ## Local Development
 
 ```bash

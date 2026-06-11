@@ -18,13 +18,10 @@ export const photoSchema = defineType({
       type: "string",
       validation: (rule) => rule.required(),
     }),
-    defineField({ name: "location", title: "Location", type: "string" }),
-    defineField({ name: "cameraData", title: "Camera Data", type: "string" }),
   ],
   preview: {
     select: {
       title: "altText",
-      subtitle: "location",
       media: "image",
     },
   },

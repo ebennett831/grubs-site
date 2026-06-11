@@ -51,7 +51,5 @@ export const allPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc){
   _id,
   _type,
   image{..., "dimensions": asset->metadata.dimensions},
-  altText,
-  location,
-  cameraData
+  altText
 }`;

@@ -59,8 +59,6 @@ export interface Photo {
   _type: "photo";
   image?: SanityImage;
   altText: string;
-  location?: string;
-  cameraData?: string;
 }
 
 export interface SiteSettings {
