@@ -39,6 +39,12 @@ export interface HomePageSettings {
   ctaLabel: string;
 }
 
+export interface GallerySettings {
+  _id: string;
+  _type: "gallerySettings";
+  density: number;
+}
+
 export interface AboutPageSettings {
   _id: string;
   _type: "aboutPageSettings";
@@ -55,7 +61,6 @@ export interface Photo {
   altText: string;
   location?: string;
   cameraData?: string;
-  featured: boolean;
 }
 
 export interface SiteSettings {

@@ -22,6 +22,12 @@ export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
   ctaLabel
 }`;
 
+export const gallerySettingsQuery = groq`*[_type == "gallerySettings"][0]{
+  _id,
+  _type,
+  density
+}`;
+
 export const aboutPageSettingsQuery = groq`*[_type == "aboutPageSettings"][0]{
   _id,
   _type,
@@ -41,22 +47,11 @@ export const photographerQuery = groq`*[_type == "photographer"][0]{
   email
 }`;
 
-export const featuredPhotosQuery = groq`*[_type == "photo" && featured == true] | order(_createdAt desc){
+export const allPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc){
   _id,
   _type,
   image{..., "dimensions": asset->metadata.dimensions},
   altText,
   location,
-  cameraData,
-  featured
-}`;
-
-export const allPhotosQuery = groq`*[_type == "photo"] | order(featured desc, _createdAt desc){
-  _id,
-  _type,
-  image{..., "dimensions": asset->metadata.dimensions},
-  altText,
-  location,
-  cameraData,
-  featured
+  cameraData
 }`;
