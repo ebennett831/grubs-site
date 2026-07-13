@@ -15,12 +15,6 @@
 
 # next.js
 /.next/
-This studio is not registered and cannot access your content yet. Choose how you want to connect it.
-Register studio
-For production and editor-facing studios. Enables schema syncing, Content Agent, and other COS features.
-Add development host
-For localhost and preview URLs. Does not register this Studio and does not sync schemas.
-
 /out/
 
 # production
@@ -38,6 +32,16 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.dev.vars*
+
+# OpenNext build output
+.open-next/
+
+# Wrangler local metadata
+.wrangler/
+
+# Cloudflare generated types
+cloudflare-env.d.ts
 
 # vercel
 .vercel

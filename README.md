@@ -99,12 +99,46 @@ npm run format
 
 ## Deployment (Cloudflare-Compatible)
 
-1. Set all environment variables in your deployment platform.
-2. Build command: `npm run build`
-3. Start command: `npm run start`
-4. Ensure Node runtime supports Next.js 15 requirements.
-5. Validate that security headers from `next.config.ts` are preserved by edge/CDN config.
-6. Set `NEXT_PUBLIC_SITE_URL` to the production domain for canonical URLs, sitemap, and OG metadata.
+This project is configured for Cloudflare Workers using OpenNext.
+
+1. Authenticate Wrangler:
+
+```bash
+npx wrangler login
+```
+
+2. Set required secrets and vars (production):
+
+```bash
+npx wrangler secret put SANITY_API_READ_TOKEN
+npx wrangler secret put SANITY_API_WRITE_TOKEN
+```
+
+Use `wrangler.jsonc` for non-secret `vars` when needed, and set `NEXT_PUBLIC_SITE_URL` to your production domain.
+
+3. Preview in the Workers runtime locally:
+
+```bash
+npm run preview
+```
+
+4. Deploy to Cloudflare Workers:
+
+```bash
+npm run deploy
+```
+
+5. For Cloudflare Workers Builds CI/CD:
+
+- Build command: `npx @opennextjs/cloudflare build`
+- Deploy command: `npx @opennextjs/cloudflare deploy`
+- Configure both `NEXT_PUBLIC_*` and non-public environment variables in Workers Builds settings.
+
+Notes:
+
+- The app uses the Node.js runtime path on Workers via `@opennextjs/cloudflare`.
+- `export const runtime = "edge"` is not used, which is required for this adapter.
+- Security headers are still defined in `next.config.ts` and should be verified after deployment.
 
 ## Notes
 
