@@ -3,7 +3,7 @@ import { groq } from "next-sanity";
 const photoProjection = groq`{
   _id,
   _type,
-  image{..., "dimensions": asset->metadata.dimensions},
+  image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
   altText,
   gallery->{
     _id,
@@ -63,7 +63,7 @@ export const photographerQuery = groq`*[_type == "photographer"][0]{
 export const allPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc){
   _id,
   _type,
-  image{..., "dimensions": asset->metadata.dimensions},
+  image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
   altText
 }`;
 
@@ -77,7 +77,7 @@ export const galleriesQuery = groq`*[_type == "gallery"] | order(coalesce(sortOr
   coverPhoto->{
     _id,
     _type,
-    image{..., "dimensions": asset->metadata.dimensions},
+    image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
     altText
   },
   "photoCount": count(*[_type == "photo" && references(^._id)])
@@ -95,7 +95,7 @@ export const galleryByIdentifierQuery = groq`*[_type == "gallery" && (slug.curre
   coverPhoto->{
     _id,
     _type,
-    image{..., "dimensions": asset->metadata.dimensions},
+    image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
     altText
   },
   "photos": *[_type == "photo" && references(^._id)] | order(_createdAt desc) ${photoProjection}

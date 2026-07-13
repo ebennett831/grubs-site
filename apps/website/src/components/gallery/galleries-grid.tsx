@@ -37,7 +37,10 @@ export function GalleriesGrid({galleries}: GalleriesGridProps) {
       {galleries.map((gallery) => {
         const galleryPath = gallery.slug?.current || gallery._id;
         const coverImage = gallery.coverPhoto?.image;
-        const imageUrl = coverImage?.asset?._ref ? urlFor(coverImage).width(1800).auto("format").url() : null;
+        const imageUrl = coverImage?.asset?._ref
+          ? urlFor(coverImage).width(1400).fit("max").quality(82).auto("format").url()
+          : null;
+        const lqip = coverImage?.lqip;
 
         return (
           <motion.div
@@ -72,6 +75,8 @@ export function GalleriesGrid({galleries}: GalleriesGridProps) {
                     width={coverImage?.dimensions?.width ?? 1800}
                     height={coverImage?.dimensions?.height ?? 2200}
                     sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    placeholder={lqip ? "blur" : "empty"}
+                    blurDataURL={lqip}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                 ) : (

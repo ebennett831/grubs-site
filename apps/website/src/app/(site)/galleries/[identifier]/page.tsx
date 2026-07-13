@@ -54,10 +54,12 @@ export default async function GalleryPage({params}: GalleryPageProps) {
         {gallery.coverPhoto?.image ? (
           <div className="relative mx-auto aspect-[16/10] w-full max-w-4xl overflow-hidden rounded-2xl bg-black/5 sm:aspect-[16/9]">
             <Image
-              src={urlFor(gallery.coverPhoto.image).width(1800).auto("format").url()}
+              src={urlFor(gallery.coverPhoto.image).width(1400).fit("max").quality(82).auto("format").url()}
               alt={gallery.coverPhoto.altText}
               fill
               sizes="(max-width: 1024px) 100vw, 1024px"
+              placeholder={gallery.coverPhoto.image.lqip ? "blur" : "empty"}
+              blurDataURL={gallery.coverPhoto.image.lqip}
               className="object-cover"
             />
           </div>

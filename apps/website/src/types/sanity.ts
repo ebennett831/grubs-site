@@ -4,6 +4,7 @@ export interface SanityImage {
     _ref: string;
     _type: "reference";
   };
+  lqip?: string;
   dimensions?: {
     aspectRatio: number;
     height: number;

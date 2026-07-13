@@ -15,7 +15,13 @@ export default async function AboutPage() {
   ]);
 
   const portraitUrl = aboutPageSettings?.portraitImage
-    ? urlFor(aboutPageSettings.portraitImage).width(1400).height(1700).fit("crop").auto("format").url()
+    ? urlFor(aboutPageSettings.portraitImage)
+        .width(1200)
+        .height(1500)
+        .fit("crop")
+        .quality(82)
+        .auto("format")
+        .url()
     : null;
 
   return (
@@ -28,6 +34,8 @@ export default async function AboutPage() {
               alt={aboutPageSettings?.pageTitle ?? "About portrait"}
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"
+              placeholder={aboutPageSettings?.portraitImage?.lqip ? "blur" : "empty"}
+              blurDataURL={aboutPageSettings?.portraitImage?.lqip}
               className="object-cover"
             />
           ) : (

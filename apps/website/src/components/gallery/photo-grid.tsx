@@ -42,11 +42,14 @@ export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
         const image = photo.image;
         const imageRef = image?.asset?._ref?.trim();
         const dimensions = image?.dimensions;
+        const lqip = image?.lqip;
         const width = dimensions?.width ?? 1600;
         const height = dimensions?.height ?? 2000;
         const imageUrl = imageRef
           ? urlFor(image!)
-              .width(1600)
+              .width(1200)
+              .fit("max")
+              .quality(80)
               .auto("format")
               .url()
           : null;
@@ -77,6 +80,8 @@ export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
                   height={height}
                   loading="lazy"
                   sizes="(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
+                  placeholder={lqip ? "blur" : "empty"}
+                  blurDataURL={lqip}
                   className="h-auto w-full"
                 />
               </motion.div>
