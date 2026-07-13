@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+**/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -16,9 +17,15 @@
 # next.js
 /.next/
 /out/
+**/.next/
+**/out/
 
 # production
 /build
+**/dist
+
+# Sanity local/build artifacts
+**/.sanity/
 
 # misc
 .DS_Store
@@ -36,9 +43,11 @@ yarn-error.log*
 
 # OpenNext build output
 .open-next/
+**/.open-next/
 
 # Wrangler local metadata
 .wrangler/
+**/.wrangler/
 
 # Cloudflare generated types
 cloudflare-env.d.ts

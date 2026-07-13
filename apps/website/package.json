@@ -1,5 +1,5 @@
 {
-  "name": "grubs-site",
+  "name": "@grubs/website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,13 +13,11 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --check .",
-    "format:write": "prettier --write .",
-    "sanity:studio": "sanity dev"
+    "format:write": "prettier --write ."
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.1",
     "@sanity/image-url": "^2.1.1",
-    "@sanity/vision": "^4.22.0",
     "framer-motion": "^12.40.0",
     "next": "^15.5.7",
     "next-sanity": "^11.6.13",

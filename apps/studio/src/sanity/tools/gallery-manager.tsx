@@ -1,11 +1,9 @@
-import Image from "next/image";
-
 import {type FormEvent, useEffect, useMemo, useState} from "react";
 
 import {definePlugin, type Tool, useClient} from "sanity";
 import {route} from "sanity/router";
 
-import {urlFor} from "@/lib/sanity/image";
+import {urlFor} from "../image";
 
 const apiVersion = "2025-02-01";
 
@@ -397,13 +395,10 @@ function GalleryManagerComponent({tool}: {tool: Tool}) {
                         background: "rgba(0,0,0,0.05)",
                       }}
                     >
-                        {imageUrl ? (
-                        <Image
+                      {imageUrl ? (
+                        <img
                           src={imageUrl}
                           alt={gallery.coverPhoto?.altText || gallery.title}
-                          width={240}
-                          height={176}
-                          sizes="240px"
                           style={{width: "100%", height: "100%", objectFit: "cover"}}
                         />
                       ) : null}

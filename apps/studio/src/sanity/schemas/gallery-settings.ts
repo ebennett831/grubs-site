@@ -1,6 +1,6 @@
 import { defineField, defineType } from "sanity";
 
-import { GalleryDensitySlider } from "@/lib/sanity/inputs/gallery-density-slider";
+import { GalleryDensitySlider } from "../inputs/gallery-density-slider";
 
 export const gallerySettingsSchema = defineType({
   name: "gallerySettings",

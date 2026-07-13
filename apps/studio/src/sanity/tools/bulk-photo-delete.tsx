@@ -1,11 +1,9 @@
-import Image from "next/image";
-
 import {type FormEvent, useEffect, useMemo, useState} from "react";
 
 import {definePlugin, type Tool, useClient} from "sanity";
 import {route} from "sanity/router";
 
-import {urlFor} from "@/lib/sanity/image";
+import {urlFor} from "../image";
 
 const apiVersion = "2025-02-01";
 
@@ -303,12 +301,10 @@ function BulkPhotoDeleteComponent({tool}: {tool: Tool}) {
                       />
                       <div style={{position: "relative", aspectRatio: "4 / 3", overflow: "hidden", borderRadius: 10, background: "rgba(0,0,0,0.05)"}}>
                         {imageUrl ? (
-                          <Image
+                          <img
                             src={imageUrl}
                             alt={photo.altText}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 240px"
-                            className="object-cover"
+                            style={{width: "100%", height: "100%", objectFit: "cover"}}
                           />
                         ) : null}
                       </div>
