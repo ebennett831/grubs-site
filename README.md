@@ -98,3 +98,9 @@ npm run deploy
 ```
 
 This deploys Studio independently and can later be mapped to a custom domain like `studio.example.com`.
+
+## Content Editing Guide
+
+For a non-technical walkthrough of day-to-day content updates, see:
+
+- `apps/studio/EDITOR_GUIDE.md`
