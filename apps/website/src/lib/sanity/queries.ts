@@ -22,9 +22,22 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
   _type,
   siteTitle,
   siteDescription,
+  contactEmail,
+  footerEyebrow,
+  footerHeading,
+  footerDescription,
+  footerLocation,
+  footerCopyrightName,
   ogImage,
   favicon,
-  socialLinks[]{platform, url}
+  socialLinks[]{
+    _key,
+    platform,
+    label,
+    url,
+    showInFooter,
+    showOnAboutPage
+  }
 }`;
 
 export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
@@ -67,10 +80,25 @@ export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
 export const aboutPageSettingsQuery = groq`*[_type == "aboutPageSettings"][0]{
   _id,
   _type,
+  eyebrow,
   pageTitle,
   intro,
   body,
-  portraitImage
+  secondaryHeading,
+  locationLine,
+  availabilityStatement,
+  socialSectionHeading,
+  resumeLabel,
+  resumeDescription,
+  "resumeFile": resumeFile{
+    "asset": asset->{
+      url,
+      originalFilename,
+      mimeType
+    }
+  },
+  portraitImageAlt,
+  portraitImage{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip}
 }`;
 
 export const photographerQuery = groq`*[_type == "photographer"][0]{
@@ -78,8 +106,15 @@ export const photographerQuery = groq`*[_type == "photographer"][0]{
   _type,
   name,
   bio,
-  profileImage,
-  socialLinks[]{platform, url},
+  profileImage{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
+  socialLinks[]{
+    _key,
+    platform,
+    label,
+    url,
+    showInFooter,
+    showOnAboutPage
+  },
   email
 }`;
 

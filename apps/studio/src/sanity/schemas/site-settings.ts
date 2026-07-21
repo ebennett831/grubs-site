@@ -4,12 +4,19 @@ export const siteSettingsSchema = defineType({
   name: "siteSettings",
   title: "Site Settings",
   type: "document",
+  groups: [
+    { name: "identity", title: "Identity", default: true },
+    { name: "footer", title: "Footer" },
+    { name: "social", title: "Social Links" },
+    { name: "seo", title: "SEO" },
+  ],
   fields: [
     defineField({
       name: "siteTitle",
       title: "Site Title",
       description: "Website name shown in navigation and metadata.",
       type: "string",
+      group: "identity",
       validation: (rule) => rule.required().max(70),
     }),
     defineField({
@@ -18,13 +25,69 @@ export const siteSettingsSchema = defineType({
       description: "Short summary used for search engines and social previews.",
       type: "text",
       rows: 5,
+      group: "identity",
       validation: (rule) => rule.required().max(220),
+    }),
+    defineField({
+      name: "contactEmail",
+      title: "Contact Email",
+      description: "Primary public email used for footer and contact links.",
+      type: "string",
+      group: "identity",
+      validation: (rule) => rule.email(),
+    }),
+    defineField({
+      name: "footerEyebrow",
+      title: "Footer Eyebrow",
+      description: "Short pre-heading above the footer heading.",
+      type: "string",
+      group: "footer",
+      initialValue: "Connect",
+      validation: (rule) => rule.max(40),
+    }),
+    defineField({
+      name: "footerHeading",
+      title: "Footer Heading",
+      description: "Main footer heading.",
+      type: "string",
+      group: "footer",
+      initialValue: "Let's work together",
+      validation: (rule) => rule.max(120),
+    }),
+    defineField({
+      name: "footerDescription",
+      title: "Footer Description",
+      description: "Optional short availability statement.",
+      type: "text",
+      rows: 3,
+      group: "footer",
+      initialValue:
+        "Available for commissions, collaborations, and editorial work.",
+      validation: (rule) => rule.max(220),
+    }),
+    defineField({
+      name: "footerLocation",
+      title: "Footer Location",
+      description: "Optional location line shown below social links.",
+      type: "string",
+      group: "footer",
+      validation: (rule) => rule.max(100),
+    }),
+    defineField({
+      name: "footerCopyrightName",
+      title: "Footer Copyright Name",
+      description:
+        "Optional name used in the copyright line. Falls back to Site Title.",
+      type: "string",
+      group: "footer",
+      validation: (rule) => rule.max(100),
     }),
     defineField({
       name: "ogImage",
       title: "Open Graph Image",
       description: "Image used when sharing the site on social media.",
       type: "image",
+      group: "seo",
       options: { hotspot: true },
     }),
     defineField({
@@ -32,38 +95,17 @@ export const siteSettingsSchema = defineType({
       title: "Favicon",
       description: "Small icon shown in browser tabs.",
       type: "image",
+      group: "seo",
       options: { hotspot: true },
     }),
     defineField({
       name: "socialLinks",
       title: "Social Links",
-      description: "Optional links shown for social profiles.",
+      description:
+        "Add profile links once, then choose whether each appears in the footer and/or About page.",
       type: "array",
-      of: [
-        {
-          type: "object",
-          preview: {
-            select: {
-              title: "platform",
-              subtitle: "url",
-            },
-          },
-          fields: [
-            defineField({
-              name: "platform",
-              title: "Platform",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "url",
-              title: "URL",
-              type: "url",
-              validation: (rule) => rule.required(),
-            }),
-          ],
-        },
-      ],
+      group: "social",
+      of: [{ type: "socialLink" }],
     }),
   ],
   preview: {

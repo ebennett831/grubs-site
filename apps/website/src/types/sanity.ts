@@ -13,19 +13,44 @@ export interface SanityImage {
   alt?: string;
 }
 
+export type SocialPlatform =
+  | "instagram"
+  | "linkedin"
+  | "email"
+  | "website"
+  | "x"
+  | "facebook"
+  | "youtube"
+  | "vimeo"
+  | "tiktok"
+  | "behance"
+  | "threads"
+  | "bluesky"
+  | "custom";
+
 export interface SocialLink {
-  platform: string;
-  url: string;
+  _key?: string;
+  platform?: SocialPlatform | string;
+  label?: string;
+  url?: string;
+  showInFooter?: boolean;
+  showOnAboutPage?: boolean;
+}
+
+export interface SanityFileAsset {
+  url?: string;
+  originalFilename?: string;
+  mimeType?: string;
 }
 
 export interface Photographer {
   _id: string;
   _type: "photographer";
-  name: string;
-  bio: string;
+  name?: string;
+  bio?: string;
   profileImage?: SanityImage;
-  socialLinks: SocialLink[];
-  email: string;
+  socialLinks?: SocialLink[];
+  email?: string;
 }
 
 export interface HomePageSettings {
@@ -73,10 +98,21 @@ export interface Gallery {
 export interface AboutPageSettings {
   _id: string;
   _type: "aboutPageSettings";
-  pageTitle: string;
-  intro: string;
-  body: string;
+  eyebrow?: string;
+  pageTitle?: string;
+  intro?: string;
+  body?: string;
+  secondaryHeading?: string;
+  locationLine?: string;
+  availabilityStatement?: string;
   portraitImage?: SanityImage;
+  portraitImageAlt?: string;
+  socialSectionHeading?: string;
+  resumeLabel?: string;
+  resumeDescription?: string;
+  resumeFile?: {
+    asset?: SanityFileAsset;
+  };
 }
 
 export interface Photo {
@@ -99,9 +135,15 @@ export interface Photo {
 export interface SiteSettings {
   _id: string;
   _type: "siteSettings";
-  siteTitle: string;
-  siteDescription: string;
+  siteTitle?: string;
+  siteDescription?: string;
+  contactEmail?: string;
+  footerEyebrow?: string;
+  footerHeading?: string;
+  footerDescription?: string;
+  footerLocation?: string;
+  footerCopyrightName?: string;
   ogImage?: SanityImage;
   favicon?: SanityImage;
-  socialLinks: SocialLink[];
+  socialLinks?: SocialLink[];
 }

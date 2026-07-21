@@ -1,9 +1,14 @@
 import type { StructureBuilder } from "sanity/structure";
 
-function singletonItem(S: StructureBuilder, title: string, schemaType: string, documentId: string) {
-  return S.listItem().title(title).child(
-    S.document().schemaType(schemaType).documentId(documentId),
-  );
+function singletonItem(
+  S: StructureBuilder,
+  title: string,
+  schemaType: string,
+  documentId: string,
+) {
+  return S.listItem()
+    .title(title)
+    .child(S.document().schemaType(schemaType).documentId(documentId));
 }
 
 export function buildDeskStructure(S: StructureBuilder) {
@@ -26,7 +31,7 @@ export function buildDeskStructure(S: StructureBuilder) {
             .defaultOrdering([{ field: "title", direction: "asc" }]),
         ),
       singletonItem(S, "About Page", "aboutPageSettings", "aboutPageSettings"),
-      singletonItem(S, "Photographer", "photographer", "photographer"),
+      singletonItem(S, "Photographer Profile", "photographer", "photographer"),
       singletonItem(S, "Site Settings", "siteSettings", "siteSettings"),
     ]);
 }

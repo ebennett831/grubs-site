@@ -1,8 +1,6 @@
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
-import { fetchSanity } from "@/lib/sanity/fetch";
-import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { type SiteSettings } from "@/types/sanity";
 
 const navItems = [
@@ -13,9 +11,11 @@ const navItems = [
   { href: "/contact", label: "Contact" },
 ];
 
-export async function SiteHeader() {
-  const siteSettings = await fetchSanity<SiteSettings>(siteSettingsQuery);
+interface SiteHeaderProps {
+  siteSettings: SiteSettings | null;
+}
 
+export function SiteHeader({ siteSettings }: SiteHeaderProps) {
   return (
     <header className="bg-cream/95 sticky top-0 z-20 border-b border-black/10 backdrop-blur-sm">
       <Container className="flex h-16 items-center justify-between">
