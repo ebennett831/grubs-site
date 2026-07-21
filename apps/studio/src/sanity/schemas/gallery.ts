@@ -2,24 +2,27 @@ import {defineField, defineType} from "sanity";
 
 export const gallerySchema = defineType({
   name: "gallery",
-  title: "Galleries",
+  title: "Gallery",
   type: "document",
   fields: [
     defineField({
       name: "title",
       title: "Title",
+      description: "Public name for this gallery.",
       type: "string",
       validation: (rule) => rule.required(),
     }),
     defineField({
       name: "description",
       title: "Description",
+      description: "Optional short intro shown on gallery cards.",
       type: "text",
       rows: 4,
     }),
     defineField({
       name: "coverPhoto",
       title: "Cover Photo",
+      description: "Optional photo used as the gallery thumbnail.",
       type: "reference",
       weak: true,
       to: [{type: "photo"}],

@@ -5,6 +5,10 @@ const photoProjection = groq`{
   _type,
   image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
   altText,
+  title,
+  caption,
+  location,
+  dateTaken,
   gallery->{
     _id,
     _type,
@@ -29,16 +33,35 @@ export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
   heroEyebrow,
   heroTitle,
   heroDescription,
-  heroImage,
-  sectionTitle,
-  sectionDescription,
-  ctaLabel
-}`;
-
-export const gallerySettingsQuery = groq`*[_type == "gallerySettings"][0]{
-  _id,
-  _type,
-  density
+  heroImage{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
+  heroImageAlt,
+  ctaLabel,
+  ctaHref,
+  featuredEyebrow,
+  featuredTitle,
+  featuredDescription,
+  featuredPhotos[]->{
+    _id,
+    _type,
+    image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
+    altText,
+    title,
+    caption,
+    location,
+    dateTaken,
+    gallery->{
+      _id,
+      _type,
+      title,
+      sortOrder
+    }
+  },
+  galleriesLinkLabel,
+  galleriesLinkDescription,
+  photographyLinkLabel,
+  photographyLinkDescription,
+  aboutLinkLabel,
+  aboutLinkDescription
 }`;
 
 export const aboutPageSettingsQuery = groq`*[_type == "aboutPageSettings"][0]{
@@ -64,7 +87,11 @@ export const allPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc){
   _id,
   _type,
   image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
-  altText
+  altText,
+  title,
+  caption,
+  location,
+  dateTaken
 }`;
 
 export const galleriesQuery = groq`*[_type == "gallery"] | order(coalesce(sortOrder, 0) desc, _createdAt desc){

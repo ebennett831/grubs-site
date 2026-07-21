@@ -7,13 +7,15 @@ export const photographerSchema = defineType({
   fields: [
     defineField({
       name: "name",
-      title: "Name",
+      title: "Display Name",
+      description: "Name shown on profile and structured data.",
       type: "string",
-      validation: (rule) => rule.required(),
+      validation: (rule) => rule.required().max(80),
     }),
     defineField({
       name: "bio",
-      title: "Bio",
+      title: "Biography",
+      description: "Main photographer biography text.",
       type: "text",
       rows: 8,
       validation: (rule) => rule.required(),
@@ -21,16 +23,24 @@ export const photographerSchema = defineType({
     defineField({
       name: "profileImage",
       title: "Profile Image",
+      description: "Optional profile image used on the About page.",
       type: "image",
       options: { hotspot: true },
     }),
     defineField({
       name: "socialLinks",
       title: "Social Links",
+      description: "Optional social profiles.",
       type: "array",
       of: [
         {
           type: "object",
+          preview: {
+            select: {
+              title: "platform",
+              subtitle: "url",
+            },
+          },
           fields: [
             defineField({
               name: "platform",
@@ -51,6 +61,7 @@ export const photographerSchema = defineType({
     defineField({
       name: "email",
       title: "Email",
+      description: "Public contact email address.",
       type: "string",
       validation: (rule) => rule.required().email(),
     }),

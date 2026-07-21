@@ -1,15 +1,12 @@
 import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
-import { allPhotosQuery, gallerySettingsQuery, siteSettingsQuery } from "@/lib/sanity/queries";
+import { allPhotosQuery, siteSettingsQuery } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { type GallerySettings, type Photo, type SiteSettings } from "@/types/sanity";
+import { type Photo, type SiteSettings } from "@/types/sanity";
 
 export default async function PhotographyPage() {
-  const [gallerySettings, rawPhotos] = await Promise.all([
-    fetchSanity<GallerySettings>(gallerySettingsQuery),
-    fetchSanity<Photo[]>(allPhotosQuery),
-  ]);
+  const rawPhotos = await fetchSanity<Photo[]>(allPhotosQuery);
   const photos = rawPhotos ?? [];
 
   return (
@@ -21,7 +18,7 @@ export default async function PhotographyPage() {
         </div>
 
         {photos.length ? (
-          <PhotoGrid photos={photos} density={gallerySettings?.density ?? 5} />
+          <PhotoGrid photos={photos} density={3} />
         ) : (
           <p className="text-charcoal/70">No photos published yet.</p>
         )}

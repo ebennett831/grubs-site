@@ -6,9 +6,9 @@ import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
 import { urlFor } from "@/lib/sanity/image";
-import { galleryByIdentifierQuery, gallerySettingsQuery, siteSettingsQuery } from "@/lib/sanity/queries";
+import { galleryByIdentifierQuery, siteSettingsQuery } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { type Gallery, type GallerySettings, type Photo, type SiteSettings } from "@/types/sanity";
+import { type Gallery, type Photo, type SiteSettings } from "@/types/sanity";
 
 type GalleryWithPhotos = Gallery & {
   photos: Photo[];
@@ -22,10 +22,7 @@ interface GalleryPageProps {
 
 export default async function GalleryPage({params}: GalleryPageProps) {
   const {identifier} = await params;
-  const [gallerySettings, gallery] = await Promise.all([
-    fetchSanity<GallerySettings>(gallerySettingsQuery),
-    fetchSanity<GalleryWithPhotos>(galleryByIdentifierQuery, {identifier}),
-  ]);
+  const gallery = await fetchSanity<GalleryWithPhotos>(galleryByIdentifierQuery, {identifier});
 
   if (!gallery) {
     notFound();
@@ -66,7 +63,7 @@ export default async function GalleryPage({params}: GalleryPageProps) {
         ) : null}
 
         {gallery.photos.length ? (
-          <PhotoGrid photos={gallery.photos} density={gallerySettings?.density ?? 5} />
+          <PhotoGrid photos={gallery.photos} density={3} />
         ) : (
           <p className="text-charcoal/70">No photos in this gallery yet.</p>
         )}

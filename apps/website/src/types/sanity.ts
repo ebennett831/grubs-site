@@ -31,19 +31,23 @@ export interface Photographer {
 export interface HomePageSettings {
   _id: string;
   _type: "homePageSettings";
-  heroEyebrow: string;
+  heroEyebrow?: string;
   heroTitle: string;
-  heroDescription: string;
+  heroDescription?: string;
   heroImage?: SanityImage;
-  sectionTitle: string;
-  sectionDescription: string;
-  ctaLabel: string;
-}
-
-export interface GallerySettings {
-  _id: string;
-  _type: "gallerySettings";
-  density: number;
+  heroImageAlt?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  featuredEyebrow?: string;
+  featuredTitle?: string;
+  featuredDescription?: string;
+  featuredPhotos?: Photo[];
+  galleriesLinkLabel?: string;
+  galleriesLinkDescription?: string;
+  photographyLinkLabel?: string;
+  photographyLinkDescription?: string;
+  aboutLinkLabel?: string;
+  aboutLinkDescription?: string;
 }
 
 export interface GalleryCoverPhoto {
@@ -80,6 +84,10 @@ export interface Photo {
   _type: "photo";
   image?: SanityImage;
   altText: string;
+  title?: string;
+  caption?: string;
+  location?: string;
+  dateTaken?: string;
   gallery?: {
     _id: string;
     _type: "gallery";

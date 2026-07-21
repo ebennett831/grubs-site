@@ -29,6 +29,8 @@ h4 {
 
 :focus-visible {
   outline-color: var(--color-accent);
+  outline-style: solid;
+  outline-width: 2px;
 }
 
 @keyframes fade-up {
@@ -45,4 +47,18 @@ h4 {
 
 .animate-fade-up {
   animation: fade-up 0.45s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
