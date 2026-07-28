@@ -54,7 +54,7 @@ export function SiteHeader({ siteSettings }: SiteHeaderProps) {
     headerSizeOptions[headerSize as keyof typeof headerSizeOptions];
 
   return (
-    <header className="bg-cream/92 sticky top-0 z-20 backdrop-blur-md">
+    <header className="bg-cream-deep/96 sticky top-0 z-20 backdrop-blur-md">
       <Container
         className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${sizeClasses.container}`}
       >
