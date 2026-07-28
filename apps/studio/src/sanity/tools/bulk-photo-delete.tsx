@@ -189,13 +189,23 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
   }
 
   return (
-    <div style={{ padding: 24 }}>
+    <div
+      style={{
+        padding: 24,
+        color: "var(--card-fg-color, #111827)",
+      }}
+    >
       <div style={{ display: "grid", gap: 24, maxWidth: 1200 }}>
         <div style={{ display: "grid", gap: 8 }}>
           <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
             {tool.title}
           </h2>
-          <p style={{ margin: 0, color: "var(--card-fg-color, #6b7280)" }}>
+          <p
+            style={{
+              margin: 0,
+              color: "var(--card-muted-fg-color, #6b7280)",
+            }}
+          >
             Pick a gallery or ungrouped photos, select the ones you want gone,
             and delete them in one batch.
           </p>
@@ -221,7 +231,7 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
               style={{
                 padding: 12,
                 borderRadius: 12,
-                background: "rgba(17,24,39,0.04)",
+                background: "var(--card-muted-bg-color, rgba(17,24,39,0.04))",
               }}
             >
               <p
@@ -230,7 +240,7 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                   fontSize: 12,
                   textTransform: "uppercase",
                   letterSpacing: "0.16em",
-                  color: "var(--card-fg-color, #6b7280)",
+                  color: "var(--card-muted-fg-color, #6b7280)",
                 }}
               >
                 Visible photos
@@ -243,7 +253,7 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
               style={{
                 padding: 12,
                 borderRadius: 12,
-                background: "rgba(17,24,39,0.04)",
+                background: "var(--card-muted-bg-color, rgba(17,24,39,0.04))",
               }}
             >
               <p
@@ -252,7 +262,7 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                   fontSize: 12,
                   textTransform: "uppercase",
                   letterSpacing: "0.16em",
-                  color: "var(--card-fg-color, #6b7280)",
+                  color: "var(--card-muted-fg-color, #6b7280)",
                 }}
               >
                 Selected
@@ -276,7 +286,8 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                 borderRadius: 10,
                 border: "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                 padding: "0 12px",
-                background: "white",
+                background: "var(--card-bg-color, #ffffff)",
+                color: "var(--input-fg-color, var(--card-fg-color, #111827))",
               }}
             >
               <option value="">Ungrouped photos</option>
@@ -306,7 +317,8 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                   border:
                     "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                   padding: "10px 12px",
-                  background: "white",
+                  background: "var(--card-bg-color, #ffffff)",
+                  color: "var(--card-fg-color, #111827)",
                   fontWeight: 700,
                   cursor:
                     !photos.length || isLoading ? "not-allowed" : "pointer",
@@ -341,7 +353,7 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                 style={{
                   margin: 0,
                   fontSize: 13,
-                  color: "var(--card-fg-color, #6b7280)",
+                  color: "var(--card-muted-fg-color, #6b7280)",
                 }}
               >
                 Deleting removes the photo documents from Studio. Uploaded image
@@ -375,10 +387,11 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                         padding: 12,
                         cursor: "pointer",
                         background: selectedIds.includes(photo._id)
-                          ? "rgba(17,24,39,0.04)"
-                          : "white",
+                          ? "var(--card-muted-bg-color, rgba(17,24,39,0.04))"
+                          : "var(--card-bg-color, #ffffff)",
+                        color: "var(--card-fg-color, #111827)",
                         boxShadow: selectedIds.includes(photo._id)
-                          ? "0 0 0 1px rgba(17,24,39,0.08)"
+                          ? "0 0 0 1px var(--card-border-color, rgba(17,24,39,0.08))"
                           : "none",
                       }}
                     >
@@ -398,7 +411,8 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                           aspectRatio: "4 / 3",
                           overflow: "hidden",
                           borderRadius: 10,
-                          background: "rgba(0,0,0,0.05)",
+                          background:
+                            "var(--card-muted-bg-color, rgba(0,0,0,0.05))",
                         }}
                       >
                         {imageUrl ? (
@@ -427,7 +441,7 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                           <span
                             style={{
                               fontSize: 12,
-                              color: "var(--card-fg-color, #6b7280)",
+                              color: "var(--card-muted-fg-color, #6b7280)",
                             }}
                           >
                             {photo.gallery.title}
@@ -436,7 +450,7 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                           <span
                             style={{
                               fontSize: 12,
-                              color: "var(--card-fg-color, #6b7280)",
+                              color: "var(--card-muted-fg-color, #6b7280)",
                             }}
                           >
                             Ungrouped
@@ -448,7 +462,12 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
                 })}
               </div>
             ) : (
-              <p style={{ margin: 0, color: "var(--card-fg-color, #6b7280)" }}>
+              <p
+                style={{
+                  margin: 0,
+                  color: "var(--card-muted-fg-color, #6b7280)",
+                }}
+              >
                 {isLoading
                   ? "Loading photos..."
                   : "No photos match this filter."}

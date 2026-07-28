@@ -234,13 +234,23 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
   }
 
   return (
-    <div style={{ padding: 24 }}>
+    <div
+      style={{
+        padding: 24,
+        color: "var(--card-fg-color, #111827)",
+      }}
+    >
       <div style={{ display: "grid", gap: 24, maxWidth: 1100 }}>
         <div style={{ display: "grid", gap: 8 }}>
           <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
             {tool.title}
           </h2>
-          <p style={{ margin: 0, color: "var(--card-fg-color, #6b7280)" }}>
+          <p
+            style={{
+              margin: 0,
+              color: "var(--card-muted-fg-color, #6b7280)",
+            }}
+          >
             Create galleries, optionally pick a cover photo, and move them up or
             down with simple buttons.
           </p>
@@ -269,7 +279,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
               style={{
                 padding: 12,
                 borderRadius: 12,
-                background: "rgba(17,24,39,0.04)",
+                background: "var(--card-muted-bg-color, rgba(17,24,39,0.04))",
               }}
             >
               <p
@@ -278,7 +288,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                   fontSize: 12,
                   textTransform: "uppercase",
                   letterSpacing: "0.16em",
-                  color: "var(--card-fg-color, #6b7280)",
+                  color: "var(--card-muted-fg-color, #6b7280)",
                 }}
               >
                 Available photos
@@ -291,7 +301,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
               style={{
                 padding: 12,
                 borderRadius: 12,
-                background: "rgba(17,24,39,0.04)",
+                background: "var(--card-muted-bg-color, rgba(17,24,39,0.04))",
               }}
             >
               <p
@@ -300,7 +310,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                   fontSize: 12,
                   textTransform: "uppercase",
                   letterSpacing: "0.16em",
-                  color: "var(--card-fg-color, #6b7280)",
+                  color: "var(--card-muted-fg-color, #6b7280)",
                 }}
               >
                 Cover photo
@@ -323,6 +333,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                   border:
                     "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                   padding: "0 12px",
+                  background: "var(--card-bg-color, #ffffff)",
+                  color: "var(--input-fg-color, var(--card-fg-color, #111827))",
                 }}
               />
             </label>
@@ -340,6 +352,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                     "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                   padding: 12,
                   resize: "vertical",
+                  background: "var(--card-bg-color, #ffffff)",
+                  color: "var(--input-fg-color, var(--card-fg-color, #111827))",
                 }}
               />
             </label>
@@ -355,7 +369,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                   border:
                     "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                   padding: "0 12px",
-                  background: "white",
+                  background: "var(--card-bg-color, #ffffff)",
+                  color: "var(--input-fg-color, var(--card-fg-color, #111827))",
                 }}
               >
                 <option value="">No cover photo</option>
@@ -395,7 +410,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                 style={{
                   margin: 0,
                   fontSize: 13,
-                  color: "var(--card-fg-color, #6b7280)",
+                  color: "var(--card-muted-fg-color, #6b7280)",
                 }}
               >
                 New galleries default to most recent first. You can add a cover
@@ -468,7 +483,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
               style={{
                 borderRadius: 999,
                 padding: "6px 10px",
-                background: "rgba(17,24,39,0.08)",
+                background: "var(--card-muted-bg-color, rgba(17,24,39,0.08))",
+                color: "var(--card-muted-fg-color, #6b7280)",
                 fontSize: 12,
                 fontWeight: 700,
               }}
@@ -499,7 +515,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                       borderRadius: 12,
                       border:
                         "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
-                      background: "white",
+                      background: "var(--card-bg-color, #ffffff)",
+                      color: "var(--card-fg-color, #111827)",
                     }}
                   >
                     <div
@@ -508,7 +525,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                         height: 88,
                         borderRadius: 10,
                         overflow: "hidden",
-                        background: "rgba(0,0,0,0.05)",
+                        background:
+                          "var(--card-muted-bg-color, rgba(0,0,0,0.05))",
                       }}
                     >
                       {imageUrl ? (
@@ -542,7 +560,9 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                           style={{
                             borderRadius: 999,
                             padding: "4px 8px",
-                            background: "rgba(17,24,39,0.08)",
+                            background:
+                              "var(--card-muted-bg-color, rgba(17,24,39,0.08))",
+                            color: "var(--card-muted-fg-color, #6b7280)",
                             fontSize: 11,
                             fontWeight: 700,
                           }}
@@ -555,7 +575,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                           style={{
                             margin: 0,
                             fontSize: 13,
-                            color: "var(--card-fg-color, #6b7280)",
+                            color: "var(--card-muted-fg-color, #6b7280)",
                           }}
                         >
                           {gallery.description}
@@ -580,7 +600,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                           border:
                             "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                           padding: "10px 12px",
-                          background: "white",
+                          background: "var(--card-bg-color, #ffffff)",
+                          color: "var(--card-fg-color, #111827)",
                           fontWeight: 700,
                           cursor: index === 0 ? "not-allowed" : "pointer",
                         }}
@@ -596,7 +617,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                           border:
                             "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                           padding: "10px 12px",
-                          background: "white",
+                          background: "var(--card-bg-color, #ffffff)",
+                          color: "var(--card-fg-color, #111827)",
                           fontWeight: 700,
                           cursor:
                             index === galleries.length - 1
@@ -611,7 +633,12 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                 );
               })
             ) : (
-              <p style={{ margin: 0, color: "var(--card-fg-color, #6b7280)" }}>
+              <p
+                style={{
+                  margin: 0,
+                  color: "var(--card-muted-fg-color, #6b7280)",
+                }}
+              >
                 No galleries yet.
               </p>
             )}

@@ -188,13 +188,23 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
     : "Ungrouped";
 
   return (
-    <div style={{ padding: 24 }}>
+    <div
+      style={{
+        padding: 24,
+        color: "var(--card-fg-color, #111827)",
+      }}
+    >
       <div style={{ display: "grid", gap: 24, maxWidth: 1100 }}>
         <div style={{ display: "grid", gap: 8 }}>
           <h2 style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>
             {tool.title}
           </h2>
-          <p style={{ margin: 0, color: "var(--card-fg-color, #6b7280)" }}>
+          <p
+            style={{
+              margin: 0,
+              color: "var(--card-muted-fg-color, #6b7280)",
+            }}
+          >
             Choose photo files, confirm the import, and the tool will create
             photo documents for you in the background.
           </p>
@@ -226,7 +236,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
                 style={{
                   margin: 0,
                   fontSize: 13,
-                  color: "var(--card-fg-color, #6b7280)",
+                  color: "var(--card-muted-fg-color, #6b7280)",
                 }}
               >
                 Choose where these photos should live before you upload them.
@@ -244,7 +254,8 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
                 style={{
                   borderRadius: 999,
                   padding: "6px 10px",
-                  background: "rgba(17,24,39,0.08)",
+                  background: "var(--card-muted-bg-color, rgba(17,24,39,0.08))",
+                  color: "var(--card-muted-fg-color, #6b7280)",
                   fontSize: 12,
                   fontWeight: 700,
                 }}
@@ -261,7 +272,8 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
                     "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                   borderRadius: 999,
                   padding: "6px 10px",
-                  background: "white",
+                  background: "var(--card-bg-color, #ffffff)",
+                  color: "var(--card-fg-color, #111827)",
                   fontSize: 12,
                   fontWeight: 700,
                   cursor: isImporting ? "wait" : "pointer",
@@ -284,7 +296,8 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
                 borderRadius: 10,
                 border: "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                 padding: "0 12px",
-                background: "white",
+                background: "var(--card-bg-color, #ffffff)",
+                color: "var(--input-fg-color, var(--card-fg-color, #111827))",
               }}
             >
               <option value="">Ungrouped</option>
@@ -300,7 +313,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
             style={{
               margin: 0,
               fontSize: 13,
-              color: "var(--card-fg-color, #6b7280)",
+              color: "var(--card-muted-fg-color, #6b7280)",
             }}
           >
             Destination: {galleryLabel}
@@ -342,8 +355,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
               padding: 20,
               borderRadius: 16,
               border: "2px dashed var(--card-accent-fg-color, #111827)",
-              background:
-                "linear-gradient(135deg, rgba(17,24,39,0.08), rgba(17,24,39,0.02))",
+              background: "var(--card-muted-bg-color, rgba(17,24,39,0.04))",
               cursor: isImporting ? "wait" : "pointer",
               textAlign: "center",
             }}
@@ -362,13 +374,19 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
                 {isImporting ? "Importing files..." : "Choose photo files"}
               </span>
               <span
-                style={{ fontSize: 14, color: "var(--card-fg-color, #6b7280)" }}
+                style={{
+                  fontSize: 14,
+                  color: "var(--card-muted-fg-color, #6b7280)",
+                }}
               >
                 Press this button to pick images from your computer.
               </span>
             </div>
             <span
-              style={{ fontSize: 12, color: "var(--card-fg-color, #6b7280)" }}
+              style={{
+                fontSize: 12,
+                color: "var(--card-muted-fg-color, #6b7280)",
+              }}
             >
               After selecting files, click Import selected photos to confirm.
             </span>
@@ -387,7 +405,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
               style={{
                 margin: 0,
                 fontSize: 13,
-                color: "var(--card-fg-color, #6b7280)",
+                color: "var(--card-muted-fg-color, #6b7280)",
               }}
             >
               Selected files: {selectedImageFiles.length}
@@ -423,7 +441,8 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
                       "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
                     borderRadius: 10,
                     padding: "12px 16px",
-                    background: "white",
+                    background: "var(--card-bg-color, #ffffff)",
+                    color: "var(--card-fg-color, #111827)",
                     fontWeight: 700,
                     cursor: isImporting ? "wait" : "pointer",
                   }}
@@ -433,7 +452,10 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
               </div>
             ) : (
               <span
-                style={{ fontSize: 13, color: "var(--card-fg-color, #6b7280)" }}
+                style={{
+                  fontSize: 13,
+                  color: "var(--card-muted-fg-color, #6b7280)",
+                }}
               >
                 No files selected yet.
               </span>
