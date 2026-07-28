@@ -9,14 +9,15 @@ export default async function GalleriesPage() {
   const galleries = await fetchSanity<Array<Gallery | null>>(galleriesQuery);
 
   return (
-    <section className="py-14 sm:py-18 lg:py-24">
+    <section className="bg-charcoal text-cream py-14 sm:py-18 lg:py-24">
       <Container className="max-w-none">
         <div className="mb-10 flex flex-col items-center gap-4 text-center">
-          <h1 className="font-serif-display text-charcoal text-5xl sm:text-6xl">
+          <div className="bg-accent-surface h-px w-12" aria-hidden="true" />
+          <h1 className="font-serif-display text-cream text-5xl sm:text-6xl">
             Galleries
           </h1>
           <div
-            className="h-px w-full max-w-3xl bg-black/10"
+            className="bg-cream/15 h-px w-full max-w-3xl"
             aria-hidden="true"
           />
         </div>

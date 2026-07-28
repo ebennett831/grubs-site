@@ -100,10 +100,10 @@ export function GalleriesGrid({ galleries }: GalleriesGridProps) {
           >
             <Link
               href={`/galleries/${encodeURIComponent(galleryPath)}`}
-              className="group focus-visible:outline-accent block overflow-hidden border border-black/10 bg-white shadow-[0_1px_0_rgba(255,255,255,0.6)] transition-shadow duration-300 hover:shadow-[0_18px_50px_rgba(0,0,0,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4"
+              className="border-cream/18 bg-charcoal group focus-visible:outline-accent hover:border-cream/42 block overflow-hidden border transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4"
             >
               {imageUrl ? (
-                <div className="relative aspect-[4/5] overflow-hidden bg-black/5">
+                <div className="bg-cream/5 relative aspect-[4/5] overflow-hidden">
                   <Image
                     src={imageUrl}
                     alt={
@@ -135,14 +135,14 @@ export function GalleriesGrid({ galleries }: GalleriesGridProps) {
                 </div>
               ) : (
                 <div className="space-y-2 p-5 sm:p-6">
-                  <p className="text-charcoal/55 text-[11px] tracking-[0.22em] uppercase">
+                  <p className="text-cream/52 text-[11px] tracking-[0.22em] uppercase">
                     Gallery
                   </p>
-                  <h2 className="font-serif-display text-charcoal text-3xl leading-tight">
+                  <h2 className="font-serif-display text-cream text-3xl leading-tight">
                     {galleryTitle}
                   </h2>
                   {photoCount ? (
-                    <p className="text-charcoal/55 text-xs tracking-[0.18em] uppercase">
+                    <p className="text-cream/52 text-xs tracking-[0.18em] uppercase">
                       {photoCount} {photoCount === 1 ? "photo" : "photos"}
                     </p>
                   ) : null}
@@ -150,8 +150,8 @@ export function GalleriesGrid({ galleries }: GalleriesGridProps) {
               )}
 
               {galleryDescription ? (
-                <div className="space-y-2 border-t border-black/10 p-5">
-                  <p className="text-charcoal/70 line-clamp-3 text-sm leading-7">
+                <div className="border-cream/15 space-y-2 border-t p-5">
+                  <p className="text-cream/68 line-clamp-3 text-sm leading-7">
                     {galleryDescription}
                   </p>
                 </div>

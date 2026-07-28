@@ -55,29 +55,33 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
   );
 
   return (
-    <section className="py-14 sm:py-18 lg:py-24">
+    <section className="bg-charcoal text-cream py-14 sm:py-18 lg:py-24">
       <Container className="max-w-none space-y-10">
         <Link
           href="/galleries"
-          className="text-charcoal/60 hover:text-charcoal focus-visible:outline-accent inline-flex items-center gap-2 text-sm tracking-[0.2em] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
+          className="text-cream/58 hover:text-cream focus-visible:outline-accent inline-flex items-center gap-2 text-sm tracking-[0.2em] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
         >
           <span aria-hidden="true">{"\u2190"}</span>
           Back to Galleries
         </Link>
 
         <div className="space-y-6 text-center">
-          <h1 className="font-serif-display text-charcoal text-5xl sm:text-6xl">
+          <div
+            className="bg-accent-surface mx-auto h-px w-12"
+            aria-hidden="true"
+          />
+          <h1 className="font-serif-display text-cream text-5xl sm:text-6xl">
             {galleryTitle}
           </h1>
           {galleryDescription ? (
-            <p className="text-charcoal/70 mx-auto max-w-3xl text-sm leading-7 sm:text-base">
+            <p className="text-cream/68 mx-auto max-w-3xl text-sm leading-7 sm:text-base">
               {galleryDescription}
             </p>
           ) : null}
         </div>
 
         {coverImageUrl ? (
-          <div className="relative mx-auto aspect-[16/10] w-full max-w-4xl overflow-hidden bg-black/5 sm:aspect-[16/9]">
+          <div className="bg-cream/5 relative mx-auto aspect-[16/10] w-full max-w-4xl overflow-hidden sm:aspect-[16/9]">
             <Image
               src={coverImageUrl}
               alt={coverAlt}
