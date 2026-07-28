@@ -91,16 +91,6 @@ export interface SanityColor {
   hex?: string | null;
 }
 
-export interface Photographer {
-  _id?: string | null;
-  _type?: "photographer" | null;
-  name?: string | null;
-  bio?: string | null;
-  profileImage?: SanityImage | null;
-  socialLinks?: Array<SocialLink | null>;
-  email?: string | null;
-}
-
 export interface HomePageSettings {
   _id?: string | null;
   _type?: "homePageSettings" | null;

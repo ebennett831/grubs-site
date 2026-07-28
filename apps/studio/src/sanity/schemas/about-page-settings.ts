@@ -3,6 +3,8 @@ import { defineField, defineType } from "sanity";
 export const aboutPageSettingsSchema = defineType({
   name: "aboutPageSettings",
   title: "About Page",
+  description:
+    "Controls the photographer portrait, biography, resume, and availability shown on /about.",
   type: "document",
   groups: [
     { name: "hero", title: "Hero", default: true },
@@ -20,7 +22,7 @@ export const aboutPageSettingsSchema = defineType({
     }),
     defineField({
       name: "pageTitle",
-      title: "Main Heading",
+      title: "Photographer Name / Heading",
       description:
         "Photographer name or primary heading shown beside the portrait.",
       type: "string",

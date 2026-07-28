@@ -6,39 +6,28 @@ import { SocialLinks } from "@/components/social/social-links";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
 import { getSanityFileUrl } from "@/lib/sanity/file";
-import { getSanityImageUrl, hasSanityImage } from "@/lib/sanity/image";
+import { getSanityImageUrl } from "@/lib/sanity/image";
 import {
   aboutPageSettingsQuery,
-  photographerQuery,
   siteSettingsQuery,
 } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
 import { normalizeSocialLinks } from "@/lib/utils/social-links";
-import {
-  type AboutPageSettings,
-  type Photographer,
-  type SiteSettings,
-} from "@/types/sanity";
+import { type AboutPageSettings, type SiteSettings } from "@/types/sanity";
 
 export default async function AboutPage() {
-  const [aboutPageSettings, siteSettings, photographer] = await Promise.all([
+  const [aboutPageSettings, siteSettings] = await Promise.all([
     fetchSanity<AboutPageSettings>(aboutPageSettingsQuery),
     fetchSanity<SiteSettings>(siteSettingsQuery),
-    fetchSanity<Photographer>(photographerQuery, {}, 0),
   ]);
 
-  const heroPortrait = hasSanityImage(aboutPageSettings?.portraitImage)
-    ? aboutPageSettings.portraitImage
-    : photographer?.profileImage;
+  const heroPortrait = aboutPageSettings?.portraitImage;
   const portraitUrl = getSanityImageUrl(heroPortrait, (builder) =>
     builder.width(1400).height(1750).fit("crop").quality(82).auto("format"),
   );
 
-  const biographySource =
-    getTrimmedString(aboutPageSettings?.body) ||
-    getTrimmedString(photographer?.bio) ||
-    "";
+  const biographySource = getTrimmedString(aboutPageSettings?.body) || "";
   const biographyParagraphs = biographySource
     .split(/\n{2,}/)
     .map((paragraph) => paragraph.trim())
@@ -55,9 +44,7 @@ export default async function AboutPage() {
     aboutPageSettings?.resumeDescription,
   );
 
-  const pageTitle =
-    getTrimmedString(aboutPageSettings?.pageTitle) ||
-    getTrimmedString(photographer?.name);
+  const pageTitle = getTrimmedString(aboutPageSettings?.pageTitle);
   const intro = getTrimmedString(aboutPageSettings?.intro);
   const locationLine = getTrimmedString(aboutPageSettings?.locationLine);
   const eyebrow = getTrimmedString(aboutPageSettings?.eyebrow);
@@ -71,9 +58,7 @@ export default async function AboutPage() {
   const contactEmailHref = getSafeEmailHref(siteSettings?.contactEmail);
   const portraitAlt =
     getTrimmedString(aboutPageSettings?.portraitImageAlt) ||
-    (getTrimmedString(photographer?.name)
-      ? `Portrait of ${getTrimmedString(photographer?.name)}`
-      : "");
+    (pageTitle ? `Portrait of ${pageTitle}` : "");
   const hasHeroText = Boolean(eyebrow || pageTitle || locationLine || intro);
   const hasSupportingContent = Boolean(
     biographyParagraphs.length ||

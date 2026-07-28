@@ -7,12 +7,11 @@ This guide is for everyday content updates in Sanity Studio.
 Use the left sidebar in this order:
 
 1. Home Page
-2. Photos
-3. Galleries
-4. Gallery Display
-5. About Page
-6. Photographer
-7. Site Settings
+2. About Page
+3. Photos
+4. Galleries
+5. Photo Grid Display
+6. Site Settings
 
 The top navigation also includes Gallery Manager, Bulk Photo Import, and Bulk
 Photo Delete.
@@ -55,7 +54,8 @@ If Featured Photos is empty, the website automatically shows recent photos.
 4. Click Publish.
 
 For several images at once, open Bulk Photo Import from the top navigation,
-choose an optional destination gallery, select the files, and confirm the import.
+choose an optional destination gallery, select the files, and confirm the
+import. Imported photo documents are created immediately.
 
 ### Create a gallery
 
@@ -71,29 +71,52 @@ choose an optional destination gallery, select the files, and confirm the import
 4. Click Publish.
 
 Gallery Manager provides a faster way to create galleries and reorder them.
+Choose a cover photo only when you want one; new galleries do not select one
+automatically.
 
 ### Change gallery image density
 
-1. Open Gallery Display.
+1. Open Photo Grid Display.
 2. Move Gallery Density toward Large or Dense.
 3. Click Publish.
 
-Gallery Display controls both the Photography page and individual galleries. If
-it has not been published yet, the website uses density 3.
+Photo Grid Display controls both the Photography page and individual galleries.
+If it has not been published yet, the website uses density 3.
 
 ### Update About page
 
 1. Open About Page.
-2. Update Heading, Intro Paragraph, Main Text, Portrait Image.
-3. Click Publish.
+2. Use Hero for the Photographer Name / Heading, Intro Paragraph, location, and
+   Portrait Image.
+3. Use Biography for the longer story, availability statement, and social
+   section label.
+4. Use Resume to upload an optional PDF and customize its link text.
+5. Add Portrait Alt Text whenever a portrait is uploaded.
+6. Click Publish.
 
-### Update global site settings
+The About page uses only this document. Social destinations and the public email
+come from Site Settings.
+
+### Update footer and social links
 
 1. Open Site Settings.
-2. Update Site Title and Site Description.
+2. Use Socials to add Instagram, YouTube, LinkedIn, Email, or another supported
+   destination.
+3. For each item, choose whether it appears in the footer and/or About page.
+4. For Email, enter the address without `mailto:`.
+5. Use Footer to edit the closing heading, description, location, and copyright
+   name.
+6. Click Publish.
+
+Only configured social items are displayed.
+
+### Update global identity and SEO
+
+1. Open Site Settings.
+2. Use Identity for Site Title, Site Description, and Contact Email.
 3. In Appearance, optionally choose a Site Accent Color. Clear it to use the
    default terracotta.
-4. Optionally set Open Graph Image and Favicon.
+4. Use SEO for the Open Graph Image and Favicon.
 5. Click Publish.
 
 ## Good habits
@@ -105,10 +128,14 @@ it has not been published yet, the website uses density 3.
 
 ## Safe editing notes
 
-- Home Page, About Page, Photographer, and Site Settings are single documents.
+- Home Page, About Page, Photo Grid Display, and Site Settings are single
+  documents.
 - Studio is configured to avoid accidental duplicates of these single pages.
-- Most content fields are optional. You can save and publish a sparse document while
-  preparing it; the public site omits sections that do not have usable content.
+- The website reads these exact Studio documents, so published edits appear
+  locally immediately and on cached production pages after revalidation.
+- Most content fields are optional. You can save and publish a sparse document
+  while preparing it; the public site omits sections that do not have usable
+  content.
 - Yellow validation messages are editorial guidance and do not block publishing.
 - A photo's Image field is the only intentionally required content field because a
   photo document without an image has no usable asset.

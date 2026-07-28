@@ -4,7 +4,9 @@ import { GalleryDensitySlider } from "../inputs/gallery-density-slider";
 
 export const gallerySettingsSchema = defineType({
   name: "gallerySettings",
-  title: "Gallery Display",
+  title: "Photo Grid Display",
+  description:
+    "Controls image density on /photography and inside individual galleries.",
   type: "document",
   fields: [
     defineField({
@@ -26,7 +28,7 @@ export const gallerySettingsSchema = defineType({
     },
     prepare({ density }) {
       return {
-        title: "Gallery Display",
+        title: "Photo Grid Display",
         subtitle:
           typeof density === "number"
             ? `Density ${density} of 8`

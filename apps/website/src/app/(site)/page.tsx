@@ -367,7 +367,7 @@ export default async function HomePage() {
     },
   ];
 
-  const organizationSchema = buildOrganizationSchema(siteSettings, null);
+  const organizationSchema = buildOrganizationSchema(siteSettings);
   const websiteSchema = buildWebsiteSchema(siteSettings);
 
   return (

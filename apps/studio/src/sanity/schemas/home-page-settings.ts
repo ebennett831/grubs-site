@@ -3,6 +3,7 @@ import { defineField, defineType } from "sanity";
 export const homePageSettingsSchema = defineType({
   name: "homePageSettings",
   title: "Home Page",
+  description: "Controls the content shown on the public homepage.",
   type: "document",
   groups: [
     { name: "hero", title: "Hero", default: true },
@@ -79,7 +80,7 @@ export const homePageSettingsSchema = defineType({
       name: "ctaHref",
       title: "Hero CTA Link",
       description:
-        "Use internal paths such as /photography, /galleries, or /about.",
+        "Use an existing site path such as /photography, /galleries, /galleries/gallery-slug, or /about.",
       type: "string",
       group: "hero",
       validation: (rule) =>
@@ -145,7 +146,8 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "galleriesLinkLabel",
       title: "Galleries Label",
-      description: "Label for the compact Galleries link near the page end.",
+      description:
+        "Main label for the Galleries row in the editorial navigation near the page end.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(30).warning(),
@@ -153,7 +155,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "galleriesLinkDescription",
       title: "Galleries Description",
-      description: "Short supporting line beneath the Galleries link.",
+      description: "Short supporting line for the Galleries destination.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(120).warning(),
@@ -161,7 +163,8 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "photographyLinkLabel",
       title: "Photography Label",
-      description: "Label for the compact Photography link near the page end.",
+      description:
+        "Main label for the Photography row in the editorial navigation near the page end.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(30).warning(),
@@ -169,7 +172,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "photographyLinkDescription",
       title: "Photography Description",
-      description: "Short supporting line beneath the Photography link.",
+      description: "Short supporting line for the Photography destination.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(120).warning(),
@@ -177,7 +180,8 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "aboutLinkLabel",
       title: "About Label",
-      description: "Label for the compact About link near the page end.",
+      description:
+        "Main label for the About row in the editorial navigation near the page end.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(30).warning(),
@@ -185,7 +189,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "aboutLinkDescription",
       title: "About Description",
-      description: "Short supporting line beneath the About link.",
+      description: "Short supporting line for the About destination.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(120).warning(),

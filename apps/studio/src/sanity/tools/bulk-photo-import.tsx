@@ -190,7 +190,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
   return (
     <div
       style={{
-        padding: 24,
+        padding: "clamp(12px, 2.5vw, 24px)",
         color: "var(--card-fg-color, #111827)",
       }}
     >

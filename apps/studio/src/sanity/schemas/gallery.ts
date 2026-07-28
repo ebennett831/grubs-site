@@ -3,6 +3,8 @@ import { defineField, defineType } from "sanity";
 export const gallerySchema = defineType({
   name: "gallery",
   title: "Gallery",
+  description:
+    "A public collection shown on /galleries and at its generated gallery URL.",
   type: "document",
   fields: [
     defineField({
@@ -56,18 +58,23 @@ export const gallerySchema = defineType({
   preview: {
     select: {
       title: "title",
-      subtitle: "sortOrder",
+      description: "description",
+      media: "coverPhoto.image",
     },
     prepare(selection) {
+      const description =
+        typeof selection.description === "string" &&
+        selection.description.trim()
+          ? selection.description.trim()
+          : "Gallery";
+
       return {
         title:
           typeof selection.title === "string" && selection.title.trim()
             ? selection.title
             : "Untitled gallery",
-        subtitle:
-          typeof selection.subtitle === "number"
-            ? `Order ${selection.subtitle}`
-            : "Gallery",
+        subtitle: description,
+        media: selection.media,
       };
     },
   },

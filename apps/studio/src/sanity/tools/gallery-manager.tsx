@@ -91,7 +91,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
               "title": coalesce(title, "Untitled gallery"),
               description,
               slug,
-              sortOrder,
+              "sortOrder": coalesce(sortOrder, 0),
               coverPhoto->{
                 _id,
                 "altText": coalesce(altText, title, "Untitled photo"),
@@ -111,7 +111,6 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
         if (isActive) {
           setGalleries(galleryResults ?? []);
           setPhotos(photoResults ?? []);
-          setCoverPhotoId((current) => current || photoResults?.[0]?._id || "");
         }
       } catch (fetchError) {
         if (isActive) {
@@ -141,7 +140,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
           "title": coalesce(title, "Untitled gallery"),
           description,
           slug,
-          sortOrder,
+          "sortOrder": coalesce(sortOrder, 0),
           coverPhoto->{
             _id,
             "altText": coalesce(altText, title, "Untitled photo"),
@@ -197,6 +196,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
 
       setTitle("");
       setDescription("");
+      setCoverPhotoId("");
       setStatus("Gallery created.");
       setSuccess(`Success: created gallery \"${title.trim()}\".`);
       await refresh();
@@ -220,11 +220,10 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
       return;
     }
 
-    const nextSortOrder =
-      direction === "up" ? target.sortOrder + 1 : target.sortOrder - 1;
     await client
-      .patch(current._id)
-      .set({ sortOrder: nextSortOrder })
+      .transaction()
+      .patch(current._id, (patch) => patch.set({ sortOrder: target.sortOrder }))
+      .patch(target._id, (patch) => patch.set({ sortOrder: current.sortOrder }))
       .commit({ visibility: "deferred" });
     setStatus("Gallery order updated.");
     setSuccess(
@@ -236,7 +235,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
   return (
     <div
       style={{
-        padding: 24,
+        padding: "clamp(12px, 2.5vw, 24px)",
         color: "var(--card-fg-color, #111827)",
       }}
     >
@@ -507,8 +506,8 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                   <article
                     key={gallery._id}
                     style={{
-                      display: "grid",
-                      gridTemplateColumns: "120px 1fr auto",
+                      display: "flex",
+                      flexWrap: "wrap",
                       gap: 12,
                       alignItems: "center",
                       padding: 12,
@@ -542,7 +541,14 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                       ) : null}
                     </div>
 
-                    <div style={{ display: "grid", gap: 6 }}>
+                    <div
+                      style={{
+                        display: "grid",
+                        flex: "1 1 220px",
+                        gap: 6,
+                        minWidth: 0,
+                      }}
+                    >
                       <div
                         style={{
                           display: "flex",
@@ -589,6 +595,7 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
                         gap: 8,
                         flexWrap: "wrap",
                         justifyContent: "flex-end",
+                        marginLeft: "auto",
                       }}
                     >
                       <button

@@ -1,12 +1,9 @@
 import { getSiteUrl } from "@/lib/utils/site";
 import { normalizeSocialLinks } from "@/lib/utils/social-links";
 import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
-import { type Photographer, type SiteSettings } from "@/types/sanity";
+import { type SiteSettings } from "@/types/sanity";
 
-export function buildOrganizationSchema(
-  siteSettings: SiteSettings | null,
-  photographer: Photographer | null,
-) {
+export function buildOrganizationSchema(siteSettings: SiteSettings | null) {
   const normalizedSocialLinks = [
     ...normalizeSocialLinks(siteSettings?.socialLinks, "footer"),
     ...normalizeSocialLinks(siteSettings?.socialLinks, "about"),
@@ -18,18 +15,13 @@ export function buildOrganizationSchema(
         .map((item) => item.href),
     ),
   ];
-  const emailHref = getSafeEmailHref(
-    siteSettings?.contactEmail ?? photographer?.email,
-  );
+  const emailHref = getSafeEmailHref(siteSettings?.contactEmail);
   const email = emailHref?.slice("mailto:".length);
 
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name:
-      getTrimmedString(siteSettings?.siteTitle) ??
-      getTrimmedString(photographer?.name) ??
-      "Photography Portfolio",
+    name: getTrimmedString(siteSettings?.siteTitle) ?? "Photography Portfolio",
     url: getSiteUrl(),
     ...(email ? { email } : {}),
     ...(sameAs.length ? { sameAs } : {}),

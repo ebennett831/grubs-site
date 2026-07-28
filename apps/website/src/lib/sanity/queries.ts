@@ -79,7 +79,10 @@ export const gallerySettingsQuery = groq`*[
     density
   }`;
 
-export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
+export const homePageSettingsQuery = groq`*[
+  _type == "homePageSettings" &&
+  _id == "homePageSettings"
+][0]{
   _id,
   _type,
   heroEyebrow,
@@ -104,7 +107,10 @@ export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
   aboutLinkDescription
 }`;
 
-export const aboutPageSettingsQuery = groq`*[_type == "aboutPageSettings"][0]{
+export const aboutPageSettingsQuery = groq`*[
+  _type == "aboutPageSettings" &&
+  _id == "aboutPageSettings"
+][0]{
   _id,
   _type,
   eyebrow,
@@ -130,16 +136,6 @@ export const aboutPageSettingsQuery = groq`*[_type == "aboutPageSettings"][0]{
   },
   portraitImageAlt,
   portraitImage${imageProjection}
-}`;
-
-export const photographerQuery = groq`*[_type == "photographer"][0]{
-  _id,
-  _type,
-  name,
-  bio,
-  profileImage${imageProjection},
-  "socialLinks": coalesce(socialLinks[]${socialLinkProjection}, []),
-  email
 }`;
 
 export const allPhotosQuery = groq`*[

@@ -30,7 +30,14 @@ export const GalleryDensitySlider = forwardRef<
   );
 
   return (
-    <div style={{ display: "grid", gap: 12, paddingBlock: 4 }}>
+    <div
+      style={{
+        display: "grid",
+        gap: 12,
+        paddingBlock: 4,
+        color: "var(--card-fg-color, #111827)",
+      }}
+    >
       <div
         style={{
           alignItems: "center",
@@ -44,7 +51,9 @@ export const GalleryDensitySlider = forwardRef<
         <output
           htmlFor={inputId}
           style={{
+            background: "var(--card-muted-bg-color, rgba(17,24,39,0.08))",
             borderRadius: 999,
+            color: "var(--card-muted-fg-color, #6b7280)",
             fontSize: 12,
             fontWeight: 600,
             padding: "4px 8px",
@@ -72,7 +81,7 @@ export const GalleryDensitySlider = forwardRef<
           display: "flex",
           fontSize: 12,
           justifyContent: "space-between",
-          opacity: 0.65,
+          color: "var(--card-muted-fg-color, #6b7280)",
         }}
       >
         <span>Large</span>

@@ -145,10 +145,6 @@ export const socialLinkSchema = defineType({
       type: "string",
       validation: (rule) => [
         rule.custom((value, context) => {
-          if (context.document?._type === "photographer") {
-            return true;
-          }
-
           return validateSocialUrl(
             value,
             (context.parent as { platform?: unknown } | undefined)?.platform,

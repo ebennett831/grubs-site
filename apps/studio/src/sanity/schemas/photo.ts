@@ -2,7 +2,9 @@ import { defineField, defineType } from "sanity";
 
 export const photoSchema = defineType({
   name: "photo",
-  title: "Photos",
+  title: "Photo",
+  description:
+    "A photograph that can appear in the main photography grid, a gallery, or featured homepage work.",
   type: "document",
   fields: [
     defineField({

@@ -1,5 +1,4 @@
 import { colorInput } from "@sanity/color-input";
-import { visionTool } from "@sanity/vision";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 
@@ -21,7 +20,6 @@ const singletonTypes = [
   "homePageSettings",
   "aboutPageSettings",
   "gallerySettings",
-  "photographer",
   "siteSettings",
 ];
 
@@ -38,7 +36,6 @@ export default defineConfig({
     galleryManagerTool(),
     bulkPhotoImportTool(),
     bulkPhotoDeleteTool(),
-    visionTool(),
   ],
   schema,
   document: {

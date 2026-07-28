@@ -171,7 +171,11 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
     setIsDeleting(true);
 
     try {
-      await Promise.all(selectedIds.map((photoId) => client.delete(photoId)));
+      const transaction = selectedIds.reduce(
+        (currentTransaction, photoId) => currentTransaction.delete(photoId),
+        client.transaction(),
+      );
+      await transaction.commit({ visibility: "deferred" });
       setStatus(
         `Deleted ${selectedIds.length} photo document${selectedIds.length === 1 ? "" : "s"}.`,
       );
@@ -191,7 +195,7 @@ function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
   return (
     <div
       style={{
-        padding: 24,
+        padding: "clamp(12px, 2.5vw, 24px)",
         color: "var(--card-fg-color, #111827)",
       }}
     >

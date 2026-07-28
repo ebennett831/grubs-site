@@ -3,11 +3,13 @@ import { defineField, defineType } from "sanity";
 export const siteSettingsSchema = defineType({
   name: "siteSettings",
   title: "Site Settings",
+  description:
+    "Global identity, social links, footer content, appearance, and search metadata.",
   type: "document",
   groups: [
     { name: "identity", title: "Identity", default: true },
     { name: "appearance", title: "Appearance" },
-    { name: "social", title: "Social Links" },
+    { name: "social", title: "Socials" },
     { name: "footer", title: "Footer" },
     { name: "seo", title: "SEO" },
   ],
@@ -33,7 +35,7 @@ export const siteSettingsSchema = defineType({
       name: "accentColor",
       title: "Site Accent Color",
       description:
-        "Optional. Choose the warm accent used for focus states, subtle page texture, and the footer transition. Clear it to restore the default terracotta.",
+        "Optional. Choose the accent used for focus states, subtle page texture, rules, and hover details. Clear it to restore the default terracotta.",
       type: "color",
       group: "appearance",
       options: {
@@ -93,7 +95,7 @@ export const siteSettingsSchema = defineType({
     defineField({
       name: "footerLocation",
       title: "Footer Location",
-      description: "Optional location line shown below social links.",
+      description: "Optional location shown in the footer's lower utility row.",
       type: "string",
       group: "footer",
       validation: (rule) => rule.max(100).warning(),
