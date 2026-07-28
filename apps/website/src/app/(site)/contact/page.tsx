@@ -57,6 +57,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           <SocialLinks
             links={socialLinks}
             variant="footer"
+            tone="light"
             className="mt-2 max-w-2xl"
           />
         </div>

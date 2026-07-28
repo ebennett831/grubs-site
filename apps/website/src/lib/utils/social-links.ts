@@ -100,24 +100,12 @@ function getDefaultLabel(platform: SocialPlatform | "unknown") {
   return platform === "unknown" ? "Website" : PLATFORM_LABELS[platform];
 }
 
-function shouldShowInVariant(
-  link: SocialLink,
-  variant: SocialVariant,
-  hasExplicitFlag: boolean,
-) {
+function shouldShowInVariant(link: SocialLink, variant: SocialVariant) {
   if (variant === "footer") {
-    if (hasExplicitFlag) {
-      return link.showInFooter === true;
-    }
-
-    return link.showInFooter ?? true;
+    return link.showInFooter !== false;
   }
 
-  if (hasExplicitFlag) {
-    return link.showOnAboutPage === true;
-  }
-
-  return link.showOnAboutPage ?? true;
+  return link.showOnAboutPage !== false;
 }
 
 export function normalizeSocialLinks(
@@ -128,14 +116,8 @@ export function normalizeSocialLinks(
     return [];
   }
 
-  const hasExplicitFlag = links.some((link) =>
-    variant === "footer"
-      ? typeof link.showInFooter === "boolean"
-      : typeof link.showOnAboutPage === "boolean",
-  );
-
   const normalizedLinks = links
-    .filter((link) => shouldShowInVariant(link, variant, hasExplicitFlag))
+    .filter((link) => shouldShowInVariant(link, variant))
     .map((link, index) => {
       const platform = normalizePlatform(link.platform);
       const href = normalizeHref(platform, link.url ?? "");

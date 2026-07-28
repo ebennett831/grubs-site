@@ -6,8 +6,8 @@ export const siteSettingsSchema = defineType({
   type: "document",
   groups: [
     { name: "identity", title: "Identity", default: true },
-    { name: "footer", title: "Footer" },
     { name: "social", title: "Social Links" },
+    { name: "footer", title: "Footer" },
     { name: "seo", title: "SEO" },
   ],
   fields: [
@@ -31,7 +31,8 @@ export const siteSettingsSchema = defineType({
     defineField({
       name: "contactEmail",
       title: "Contact Email",
-      description: "Primary public email used for footer and contact links.",
+      description:
+        "Primary public email used by contact prompts. Add an Email item under Social Links to show it in the footer or About page.",
       type: "string",
       group: "identity",
       validation: (rule) => rule.email(),
@@ -102,7 +103,7 @@ export const siteSettingsSchema = defineType({
       name: "socialLinks",
       title: "Social Links",
       description:
-        "Add profile links once, then choose whether each appears in the footer and/or About page.",
+        "Add each profile or email once, then choose whether it appears in the footer and/or About page. Drag items to set their display order.",
       type: "array",
       group: "social",
       of: [{ type: "socialLink" }],

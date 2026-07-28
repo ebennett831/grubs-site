@@ -5,87 +5,182 @@ import { RevealOnScroll } from "@/components/motion/reveal-on-scroll";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
 import { urlFor } from "@/lib/sanity/image";
-import { allPhotosQuery, homePageSettingsQuery, siteSettingsQuery } from "@/lib/sanity/queries";
+import {
+  homePageSettingsQuery,
+  homepageFallbackPhotosQuery,
+  siteSettingsQuery,
+} from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { buildOrganizationSchema, buildWebsiteSchema } from "@/lib/seo/structured-data";
-import { type HomePageSettings, type Photo, type SiteSettings } from "@/types/sanity";
+import {
+  buildOrganizationSchema,
+  buildWebsiteSchema,
+} from "@/lib/seo/structured-data";
+import {
+  type HomePageSettings,
+  type Photo,
+  type SiteSettings,
+} from "@/types/sanity";
 
-type FeaturedWidthVariant = "wide" | "medium" | "narrow";
+type FeaturedLayout = {
+  requestWidth: number;
+  sizes: string;
+  wrapperClassName: string;
+};
 
-const FEATURED_VARIANTS: FeaturedWidthVariant[] = ["wide", "medium", "wide", "narrow", "wide", "medium"];
+const PRIMARY_FEATURED_LAYOUTS: FeaturedLayout[] = [
+  {
+    requestWidth: 2000,
+    sizes: "(max-width: 640px) calc(100vw - 2.5rem), calc(100vw - 4rem)",
+    wrapperClassName: "w-full",
+  },
+  {
+    requestWidth: 1600,
+    sizes:
+      "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 72vw, 55vw",
+    wrapperClassName:
+      "mt-12 w-full sm:mt-16 sm:ml-auto sm:w-[72%] lg:mt-24 lg:w-[55%]",
+  },
+  {
+    requestWidth: 1600,
+    sizes:
+      "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 78vw, 68vw",
+    wrapperClassName: "mt-10 w-full sm:mt-12 sm:w-[78%] lg:mt-16 lg:w-[68%]",
+  },
+  {
+    requestWidth: 2000,
+    sizes:
+      "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 92vw, 84vw",
+    wrapperClassName:
+      "mx-auto mt-14 w-full sm:mt-18 sm:w-[92%] lg:mt-22 lg:w-[84%]",
+  },
+];
 
-function getFeaturedWrapperClass(index: number) {
-  const variant = FEATURED_VARIANTS[index % FEATURED_VARIANTS.length];
+const PORTRAIT_FEATURED_LAYOUTS: FeaturedLayout[] = [
+  {
+    requestWidth: 1600,
+    sizes:
+      "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 68vw, 56vw",
+    wrapperClassName: "w-full sm:w-[68%] lg:w-[56%]",
+  },
+  {
+    requestWidth: 1400,
+    sizes:
+      "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 62vw, 46vw",
+    wrapperClassName:
+      "mt-12 w-full sm:mt-16 sm:ml-auto sm:w-[62%] lg:mt-24 lg:w-[46%]",
+  },
+  {
+    requestWidth: 1400,
+    sizes:
+      "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 62vw, 48vw",
+    wrapperClassName: "mt-10 w-full sm:mt-12 sm:w-[62%] lg:mt-16 lg:w-[48%]",
+  },
+  {
+    requestWidth: 1600,
+    sizes:
+      "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 64vw, 52vw",
+    wrapperClassName:
+      "mx-auto mt-14 w-full sm:mt-18 sm:w-[64%] lg:mt-22 lg:w-[52%]",
+  },
+];
 
-  if (variant === "medium") {
-    return index % 2 === 0 ? "lg:ml-auto lg:w-[70%]" : "lg:mr-auto lg:w-[70%]";
-  }
+function getPrimaryFeaturedLayout(photo: Photo, index: number) {
+  const aspectRatio = photo.image?.dimensions?.aspectRatio;
+  const isPortrait = typeof aspectRatio === "number" && aspectRatio < 0.9;
 
-  if (variant === "narrow") {
-    return index % 2 === 0 ? "lg:mr-auto lg:w-[52%]" : "lg:ml-auto lg:w-[52%]";
-  }
-
-  return "w-full";
-}
-
-function getFeaturedRequestWidth(index: number) {
-  const variant = FEATURED_VARIANTS[index % FEATURED_VARIANTS.length];
-
-  if (variant === "narrow") {
-    return 1400;
-  }
-
-  if (variant === "medium") {
-    return 1600;
-  }
-
-  return 2000;
-}
-
-function getFeaturedSizes(index: number) {
-  const variant = FEATURED_VARIANTS[index % FEATURED_VARIANTS.length];
-
-  if (variant === "narrow") {
-    return "(max-width: 1024px) calc(100vw - 2.5rem), 52vw";
-  }
-
-  if (variant === "medium") {
-    return "(max-width: 1024px) calc(100vw - 2.5rem), 70vw";
-  }
-
-  return "(max-width: 1024px) calc(100vw - 2.5rem), 92vw";
+  return (isPortrait ? PORTRAIT_FEATURED_LAYOUTS : PRIMARY_FEATURED_LAYOUTS)[
+    index
+  ];
 }
 
 function getCaptionParts(photo: Photo) {
   return [photo.title, photo.location, photo.dateTaken].filter(Boolean);
 }
 
+function FeaturedPhoto({
+  photo,
+  layout,
+  delay,
+}: {
+  photo: Photo;
+  layout: FeaturedLayout;
+  delay: number;
+}) {
+  const image = photo.image;
+  const hasImage = Boolean(image?.asset?._ref);
+
+  if (!hasImage) {
+    return null;
+  }
+
+  const width = image?.dimensions?.width ?? layout.requestWidth;
+  const height =
+    image?.dimensions?.height ?? Math.round((layout.requestWidth * 3) / 2);
+  const captionParts = getCaptionParts(photo);
+  const imageUrl = urlFor(image!)
+    .width(layout.requestWidth)
+    .fit("max")
+    .quality(82)
+    .auto("format")
+    .url();
+  const alt =
+    photo.altText?.trim() || photo.title?.trim() || "Featured photograph";
+
+  return (
+    <RevealOnScroll className={layout.wrapperClassName} delay={delay}>
+      <figure className="w-full">
+        <Image
+          src={imageUrl}
+          alt={alt}
+          width={width}
+          height={height}
+          sizes={layout.sizes}
+          placeholder={image?.lqip ? "blur" : "empty"}
+          blurDataURL={image?.lqip}
+          className="h-auto w-full"
+        />
+        {photo.caption || captionParts.length ? (
+          <figcaption className="text-charcoal/62 mt-3 max-w-[64ch] space-y-1 text-xs leading-6 sm:text-sm">
+            {photo.caption ? <p>{photo.caption}</p> : null}
+            {captionParts.length ? <p>{captionParts.join(" | ")}</p> : null}
+          </figcaption>
+        ) : null}
+      </figure>
+    </RevealOnScroll>
+  );
+}
+
 export default async function HomePage() {
-  const [siteSettings, homePageSettings, allPhotos] = await Promise.all([
+  const [siteSettings, homePageSettings, fallbackPhotos] = await Promise.all([
     fetchSanity<SiteSettings>(siteSettingsQuery),
     fetchSanity<HomePageSettings>(homePageSettingsQuery),
-    fetchSanity<Photo[]>(allPhotosQuery),
+    fetchSanity<Photo[]>(homepageFallbackPhotosQuery),
   ]);
 
-  const curatedPhotos = homePageSettings?.featuredPhotos ?? [];
-  const fallbackPhotos = allPhotos?.slice(0, 6) ?? [];
-  const featuredPhotos = curatedPhotos.length ? curatedPhotos.slice(0, 8) : fallbackPhotos;
+  const curatedPhotos = (homePageSettings?.featuredPhotos ?? []).filter(
+    (photo): photo is Photo => Boolean(photo?.image?.asset?._ref),
+  );
+  const featuredPhotos = curatedPhotos.length
+    ? curatedPhotos.slice(0, 8)
+    : (fallbackPhotos ?? []).filter((photo) => photo?.image?.asset?._ref);
+  const primaryFeaturedPhotos = featuredPhotos.slice(0, 4);
+  const closingFeaturedPhotos = featuredPhotos.slice(4);
 
   const heroImage = homePageSettings?.heroImage;
   const hasHeroImage = Boolean(heroImage?.asset?._ref);
-  const heroImageWidth = heroImage?.dimensions?.width ?? 2400;
-  const heroImageHeight = heroImage?.dimensions?.height ?? 1600;
   const heroImageUrl = hasHeroImage
     ? urlFor(heroImage!).width(2400).fit("max").quality(84).auto("format").url()
     : null;
-  const heroAlt = homePageSettings?.heroImageAlt?.trim() || "Photograph featured on the homepage";
+  const heroAlt =
+    homePageSettings?.heroImageAlt?.trim() ||
+    "Photograph featured on the homepage";
 
   const organizationSchema = buildOrganizationSchema(siteSettings, null);
   const websiteSchema = buildWebsiteSchema(siteSettings);
 
   return (
     <>
-      <section className="relative isolate min-h-[32rem] h-[80svh] md:h-[90svh]">
+      <section className="relative isolate h-[80svh] min-h-[32rem] md:h-[90svh]">
         {heroImageUrl ? (
           <Image
             src={heroImageUrl}
@@ -94,14 +189,12 @@ export default async function HomePage() {
             priority
             fetchPriority="high"
             sizes="100vw"
-            width={heroImageWidth}
-            height={heroImageHeight}
             placeholder={heroImage?.lqip ? "blur" : "empty"}
             blurDataURL={heroImage?.lqip}
             className="object-cover"
           />
         ) : (
-          <div className="absolute inset-0 bg-charcoal" aria-hidden="true" />
+          <div className="bg-charcoal absolute inset-0" aria-hidden="true" />
         )}
 
         <div
@@ -111,11 +204,12 @@ export default async function HomePage() {
 
         <Container className="relative flex h-full items-end pb-12 sm:pb-16">
           <div className="max-w-2xl space-y-4 text-white sm:space-y-5">
-            <p className="text-xs tracking-[0.28em] uppercase text-white/85">
+            <p className="text-xs tracking-[0.28em] text-white/85 uppercase">
               {homePageSettings?.heroEyebrow ?? "PHOTOGRAPHY"}
             </p>
             <h1 className="font-serif-display text-4xl leading-[0.95] sm:text-6xl lg:text-7xl">
-              {homePageSettings?.heroTitle ?? "Photographs of people, places, and passing moments."}
+              {homePageSettings?.heroTitle ??
+                "Photographs of people, places, and passing moments."}
             </h1>
             {homePageSettings?.heroDescription ? (
               <p className="max-w-xl text-sm leading-7 text-white/88 sm:text-base">
@@ -124,7 +218,7 @@ export default async function HomePage() {
             ) : null}
             <Link
               href={homePageSettings?.ctaHref || "/photography"}
-              className="inline-flex items-center gap-2 border-b border-white/80 pb-1 text-sm tracking-[0.12em] uppercase text-white transition-colors hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              className="inline-flex items-center gap-2 border-b border-white/80 pb-1 text-sm tracking-[0.12em] text-white uppercase transition-colors hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               {homePageSettings?.ctaLabel ?? "View photography"}
               <span aria-hidden="true">{"->"}</span>
@@ -134,9 +228,9 @@ export default async function HomePage() {
       </section>
 
       {featuredPhotos.length ? (
-        <section className="py-14 sm:py-18 lg:py-24">
+        <section className="pt-14 pb-18 sm:pt-18 sm:pb-22 lg:pt-24 lg:pb-28">
           <Container className="max-w-none">
-            <div className="mx-auto max-w-3xl space-y-4 pb-14 sm:pb-18">
+            <div className="max-w-2xl space-y-4 pb-12 sm:pb-16 lg:ml-[8%] lg:pb-20">
               <p className="text-charcoal/70 text-xs tracking-[0.24em] uppercase">
                 {homePageSettings?.featuredEyebrow ?? "Featured work"}
               </p>
@@ -150,111 +244,131 @@ export default async function HomePage() {
               ) : null}
             </div>
 
-            <div className="space-y-12 sm:space-y-14 lg:space-y-18">
-              {featuredPhotos.map((photo, index) => {
-                const image = photo.image;
-                const hasImage = Boolean(image?.asset?._ref);
-                if (!hasImage) {
-                  return null;
-                }
+            <div>
+              {primaryFeaturedPhotos.map((photo, index) => (
+                <FeaturedPhoto
+                  key={photo._id}
+                  photo={photo}
+                  layout={getPrimaryFeaturedLayout(photo, index)}
+                  delay={index * 0.05}
+                />
+              ))}
 
-                const requestWidth = getFeaturedRequestWidth(index);
-                const width = image?.dimensions?.width ?? requestWidth;
-                const height = image?.dimensions?.height ?? Math.round((requestWidth * 3) / 2);
-                const captionParts = getCaptionParts(photo);
-                const imageUrl = urlFor(image!)
-                  .width(requestWidth)
-                  .fit("max")
-                  .quality(82)
-                  .auto("format")
-                  .url();
+              {closingFeaturedPhotos.length ? (
+                <div className="mt-12 grid gap-x-6 gap-y-10 sm:mt-16 sm:grid-cols-2 sm:gap-y-14 lg:mt-20 lg:gap-x-10">
+                  {closingFeaturedPhotos.map((photo, index) => {
+                    const isOnlyClosingPhoto =
+                      closingFeaturedPhotos.length === 1;
+                    const isUnpairedLastPhoto =
+                      closingFeaturedPhotos.length % 2 === 1 &&
+                      index === closingFeaturedPhotos.length - 1;
+                    const wrapperClassName = isOnlyClosingPhoto
+                      ? "sm:col-span-2 sm:ml-auto sm:w-[64%]"
+                      : isUnpairedLastPhoto
+                        ? "sm:col-start-2"
+                        : "";
+                    const sizes = isOnlyClosingPhoto
+                      ? "(max-width: 640px) calc(100vw - 2.5rem), 64vw"
+                      : "(max-width: 640px) calc(100vw - 2.5rem), calc(50vw - 2.5rem)";
 
-                return (
-                  <RevealOnScroll key={photo._id} delay={index * 0.06}>
-                    <figure className={`w-full px-1 sm:px-2 ${getFeaturedWrapperClass(index)}`}>
-                      <Image
-                        src={imageUrl}
-                        alt={photo.altText}
-                        width={width}
-                        height={height}
-                        sizes={getFeaturedSizes(index)}
-                        placeholder={image?.lqip ? "blur" : "empty"}
-                        blurDataURL={image?.lqip}
-                        className="h-auto w-full"
+                    return (
+                      <FeaturedPhoto
+                        key={photo._id}
+                        photo={photo}
+                        layout={{
+                          requestWidth: isOnlyClosingPhoto ? 1600 : 1400,
+                          sizes,
+                          wrapperClassName,
+                        }}
+                        delay={index * 0.05}
                       />
-                      {(photo.caption || captionParts.length) ? (
-                        <figcaption className="text-charcoal/62 mt-3 space-y-1 text-xs leading-6 sm:text-sm">
-                          {photo.caption ? <p>{photo.caption}</p> : null}
-                          {captionParts.length ? <p>{captionParts.join(" | ")}</p> : null}
-                        </figcaption>
-                      ) : null}
-                    </figure>
-                  </RevealOnScroll>
-                );
-              })}
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
           </Container>
         </section>
       ) : null}
 
-      <section className="border-t border-black/15 py-16 sm:py-20">
-        <Container className="max-w-none">
-          <div className="mb-8 space-y-2">
-            <p className="text-charcoal/65 text-xs tracking-[0.24em] uppercase">Explore</p>
+      <section className="border-t border-black/15 py-10 sm:py-12">
+        <Container className="grid gap-8 lg:grid-cols-[minmax(0,0.38fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
+          <div className="space-y-2">
+            <p className="text-charcoal/60 text-xs tracking-[0.24em] uppercase">
+              Continue exploring
+            </p>
+            <h2 className="font-serif-display text-charcoal text-3xl leading-none sm:text-4xl">
+              More of the work
+            </h2>
           </div>
 
-          <div className="grid gap-0">
+          <nav
+            aria-label="Explore more of the portfolio"
+            className="grid border-t border-black/12 sm:grid-cols-3 sm:border-t-0"
+          >
             <Link
               href="/galleries"
-              className="group grid grid-cols-[1fr_auto] items-center gap-6 border-b border-black/10 py-6 transition-colors hover:bg-black/[0.025] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-charcoal"
+              className="group hover:text-charcoal/65 focus-visible:outline-charcoal flex min-h-24 items-start justify-between gap-4 border-b border-black/12 py-5 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-32 sm:border-r sm:px-5 sm:first:pl-0"
             >
-              <div className="space-y-1">
-                <p className="font-serif-display text-3xl leading-none sm:text-4xl">
+              <div className="space-y-2">
+                <span className="font-serif-display block text-2xl leading-none sm:text-3xl">
                   {homePageSettings?.galleriesLinkLabel || "Galleries"}
-                </p>
-                <p className="text-charcoal/68 text-sm sm:text-base">
-                  {homePageSettings?.galleriesLinkDescription || "View grouped bodies of work"}
-                </p>
+                </span>
+                <span className="text-charcoal/58 block max-w-[22ch] text-xs leading-5 sm:text-sm">
+                  {homePageSettings?.galleriesLinkDescription ||
+                    "View grouped bodies of work"}
+                </span>
               </div>
-              <span className="text-2xl transition-transform duration-300 ease-out group-hover:translate-x-1.5" aria-hidden="true">
+              <span
+                className="text-lg transition-transform duration-200 ease-out group-hover:translate-x-1"
+                aria-hidden="true"
+              >
                 {"->"}
               </span>
             </Link>
 
             <Link
               href="/photography"
-              className="group grid grid-cols-[1fr_auto] items-center gap-6 border-b border-black/10 py-6 transition-colors hover:bg-black/[0.025] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-charcoal"
+              className="group hover:text-charcoal/65 focus-visible:outline-charcoal flex min-h-24 items-start justify-between gap-4 border-b border-black/12 py-5 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-32 sm:border-r sm:px-5"
             >
-              <div className="space-y-1">
-                <p className="font-serif-display text-3xl leading-none sm:text-4xl">
+              <div className="space-y-2">
+                <span className="font-serif-display block text-2xl leading-none sm:text-3xl">
                   {homePageSettings?.photographyLinkLabel || "Photography"}
-                </p>
-                <p className="text-charcoal/68 text-sm sm:text-base">
-                  {homePageSettings?.photographyLinkDescription || "Browse individual photographs"}
-                </p>
+                </span>
+                <span className="text-charcoal/58 block max-w-[22ch] text-xs leading-5 sm:text-sm">
+                  {homePageSettings?.photographyLinkDescription ||
+                    "Browse individual photographs"}
+                </span>
               </div>
-              <span className="text-2xl transition-transform duration-300 ease-out group-hover:translate-x-1.5" aria-hidden="true">
+              <span
+                className="text-lg transition-transform duration-200 ease-out group-hover:translate-x-1"
+                aria-hidden="true"
+              >
                 {"->"}
               </span>
             </Link>
 
             <Link
               href="/about"
-              className="group grid grid-cols-[1fr_auto] items-center gap-6 py-6 transition-colors hover:bg-black/[0.025] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-charcoal"
+              className="group hover:text-charcoal/65 focus-visible:outline-charcoal flex min-h-24 items-start justify-between gap-4 py-5 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-32 sm:pl-5"
             >
-              <div className="space-y-1">
-                <p className="font-serif-display text-3xl leading-none sm:text-4xl">
+              <div className="space-y-2">
+                <span className="font-serif-display block text-2xl leading-none sm:text-3xl">
                   {homePageSettings?.aboutLinkLabel || "About"}
-                </p>
-                <p className="text-charcoal/68 text-sm sm:text-base">
-                  {homePageSettings?.aboutLinkDescription || "Learn about the photographer"}
-                </p>
+                </span>
+                <span className="text-charcoal/58 block max-w-[22ch] text-xs leading-5 sm:text-sm">
+                  {homePageSettings?.aboutLinkDescription ||
+                    "Learn about the photographer"}
+                </span>
               </div>
-              <span className="text-2xl transition-transform duration-300 ease-out group-hover:translate-x-1.5" aria-hidden="true">
+              <span
+                className="text-lg transition-transform duration-200 ease-out group-hover:translate-x-1"
+                aria-hidden="true"
+              >
                 {"->"}
               </span>
             </Link>
-          </div>
+          </nav>
         </Container>
       </section>
 

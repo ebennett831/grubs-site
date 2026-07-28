@@ -7,7 +7,7 @@ export const homePageSettingsSchema = defineType({
   groups: [
     { name: "hero", title: "Hero", default: true },
     { name: "featured", title: "Featured work" },
-    { name: "navigation", title: "Navigation" },
+    { name: "navigation", title: "Closing links" },
   ],
   initialValue: {
     heroEyebrow: "PHOTOGRAPHY",
@@ -17,7 +17,8 @@ export const homePageSettingsSchema = defineType({
     ctaHref: "/photography",
     featuredEyebrow: "Featured work",
     featuredTitle: "Selected photographs",
-    featuredDescription: "A collection of recent portraits, landscapes, and observations.",
+    featuredDescription:
+      "A collection of recent portraits, landscapes, and observations.",
     galleriesLinkLabel: "Galleries",
     galleriesLinkDescription: "View grouped bodies of work",
     photographyLinkLabel: "Photography",
@@ -67,8 +68,14 @@ export const homePageSettingsSchema = defineType({
       group: "hero",
       validation: (rule) =>
         rule.custom((value, context) => {
-          const hasHeroImage = Boolean((context.document as { heroImage?: { asset?: { _ref?: string } } } | undefined)?.heroImage?.asset?._ref);
-          if (hasHeroImage && !value) {
+          const hasHeroImage = Boolean(
+            (
+              context.document as
+                | { heroImage?: { asset?: { _ref?: string } } }
+                | undefined
+            )?.heroImage?.asset?._ref,
+          );
+          if (hasHeroImage && !value?.trim()) {
             return "Add alt text when a hero image is set.";
           }
 
@@ -86,7 +93,8 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "ctaHref",
       title: "Hero CTA Link",
-      description: "Use internal paths such as /photography, /galleries, or /about.",
+      description:
+        "Use internal paths such as /photography, /galleries, or /about.",
       type: "string",
       group: "hero",
       validation: (rule) =>
@@ -95,7 +103,9 @@ export const homePageSettingsSchema = defineType({
             return true;
           }
 
-          return value.startsWith("/") ? true : "Use a path that starts with /.";
+          return value.startsWith("/")
+            ? true
+            : "Use a path that starts with /.";
         }),
     }),
     defineField({
@@ -126,7 +136,8 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "featuredPhotos",
       title: "Featured Photos",
-      description: "Choose and order the photographs shown on the homepage.",
+      description:
+        "Choose and order 4-6 photographs for the strongest pacing. Up to 8 are supported; later images appear in a more compact closing grid.",
       type: "array",
       group: "featured",
       of: [
@@ -143,6 +154,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "galleriesLinkLabel",
       title: "Galleries Label",
+      description: "Label for the compact Galleries link near the page end.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(30),
@@ -150,6 +162,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "galleriesLinkDescription",
       title: "Galleries Description",
+      description: "Short supporting line beneath the Galleries link.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(120),
@@ -157,6 +170,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "photographyLinkLabel",
       title: "Photography Label",
+      description: "Label for the compact Photography link near the page end.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(30),
@@ -164,6 +178,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "photographyLinkDescription",
       title: "Photography Description",
+      description: "Short supporting line beneath the Photography link.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(120),
@@ -171,6 +186,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "aboutLinkLabel",
       title: "About Label",
+      description: "Label for the compact About link near the page end.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(30),
@@ -178,6 +194,7 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "aboutLinkDescription",
       title: "About Description",
+      description: "Short supporting line beneath the About link.",
       type: "string",
       group: "navigation",
       validation: (rule) => rule.max(120),
@@ -190,7 +207,9 @@ export const homePageSettingsSchema = defineType({
       featuredPhotos: "featuredPhotos",
     },
     prepare(selection) {
-      const featuredCount = Array.isArray(selection.featuredPhotos) ? selection.featuredPhotos.length : 0;
+      const featuredCount = Array.isArray(selection.featuredPhotos)
+        ? selection.featuredPhotos.length
+        : 0;
 
       return {
         title: selection.heroTitle || "Home Page Settings",

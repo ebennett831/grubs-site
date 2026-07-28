@@ -129,6 +129,17 @@ export const allPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc){
   dateTaken
 }`;
 
+export const homepageFallbackPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc)[0...6]{
+  _id,
+  _type,
+  image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
+  altText,
+  title,
+  caption,
+  location,
+  dateTaken
+}`;
+
 export const galleriesQuery = groq`*[_type == "gallery"] | order(coalesce(sortOrder, 0) desc, _createdAt desc){
   _id,
   _type,

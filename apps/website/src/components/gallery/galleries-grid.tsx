@@ -3,16 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import {motion, useReducedMotion} from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
-import {urlFor} from "@/lib/sanity/image";
-import {type Gallery} from "@/types/sanity";
+import { urlFor } from "@/lib/sanity/image";
+import { type Gallery } from "@/types/sanity";
 
 interface GalleriesGridProps {
   galleries: Gallery[];
 }
 
-export function GalleriesGrid({galleries}: GalleriesGridProps) {
+export function GalleriesGrid({ galleries }: GalleriesGridProps) {
   const shouldReduceMotion = useReducedMotion();
 
   if (!galleries.length) {
@@ -38,7 +38,12 @@ export function GalleriesGrid({galleries}: GalleriesGridProps) {
         const galleryPath = gallery.slug?.current || gallery._id;
         const coverImage = gallery.coverPhoto?.image;
         const imageUrl = coverImage?.asset?._ref
-          ? urlFor(coverImage).width(1400).fit("max").quality(82).auto("format").url()
+          ? urlFor(coverImage)
+              .width(1400)
+              .fit("max")
+              .quality(82)
+              .auto("format")
+              .url()
           : null;
         const lqip = coverImage?.lqip;
 
@@ -65,7 +70,7 @@ export function GalleriesGrid({galleries}: GalleriesGridProps) {
           >
             <Link
               href={`/galleries/${galleryPath}`}
-              className="group block overflow-hidden border border-black/10 bg-white shadow-[0_1px_0_rgba(255,255,255,0.6)] transition-shadow duration-300 hover:shadow-[0_18px_50px_rgba(0,0,0,0.12)] focus-visible:outline-accent focus-visible:outline-2 focus-visible:outline-offset-4"
+              className="group focus-visible:outline-accent block overflow-hidden border border-black/10 bg-white shadow-[0_1px_0_rgba(255,255,255,0.6)] transition-shadow duration-300 hover:shadow-[0_18px_50px_rgba(0,0,0,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4"
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-black/5">
                 {imageUrl ? (
@@ -89,17 +94,19 @@ export function GalleriesGrid({galleries}: GalleriesGridProps) {
 
                 <div className="absolute inset-x-0 bottom-0 p-5 text-white">
                   <div className="mb-4 flex items-center justify-between gap-4">
-                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] backdrop-blur-sm">
+                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold tracking-[0.22em] uppercase backdrop-blur-sm">
                       Gallery
                     </span>
-                    <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] backdrop-blur-sm transition-colors group-hover:bg-white/20">
+                    <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold tracking-[0.18em] uppercase backdrop-blur-sm transition-colors group-hover:bg-white/20">
                       Open
                     </span>
                   </div>
 
                   <div className="space-y-1">
-                    <h2 className="font-serif-display text-3xl leading-tight">{gallery.title}</h2>
-                    <p className="text-sm uppercase tracking-[0.2em] text-white/70">
+                    <h2 className="font-serif-display text-3xl leading-tight">
+                      {gallery.title}
+                    </h2>
+                    <p className="text-sm tracking-[0.2em] text-white/70 uppercase">
                       {gallery.photoCount ?? 0} photos
                     </p>
                   </div>
@@ -108,9 +115,13 @@ export function GalleriesGrid({galleries}: GalleriesGridProps) {
 
               <div className="space-y-2 p-5">
                 {gallery.description ? (
-                  <p className="line-clamp-3 text-sm leading-7 text-charcoal/70">{gallery.description}</p>
+                  <p className="text-charcoal/70 line-clamp-3 text-sm leading-7">
+                    {gallery.description}
+                  </p>
                 ) : (
-                  <p className="text-sm leading-7 text-charcoal/50">Browse the full set of photos.</p>
+                  <p className="text-charcoal/50 text-sm leading-7">
+                    Browse the full set of photos.
+                  </p>
                 )}
               </div>
             </Link>

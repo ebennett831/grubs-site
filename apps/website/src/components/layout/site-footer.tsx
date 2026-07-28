@@ -18,18 +18,18 @@ export function SiteFooter({ siteSettings }: SiteFooterProps) {
     "Photography Portfolio";
 
   return (
-    <footer className="mt-20 border-t border-black/15 py-14 sm:py-18">
-      <Container className="space-y-12">
-        <section className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-start">
-          <div className="space-y-4">
-            <p className="text-charcoal/60 text-xs tracking-[0.28em] uppercase">
+    <footer className="bg-charcoal text-cream border-t border-white/10 py-16 sm:py-20 lg:py-24">
+      <Container className="space-y-16">
+        <section className="grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(28rem,1.1fr)] lg:items-start lg:gap-20">
+          <div className="space-y-5">
+            <p className="text-cream/58 text-xs tracking-[0.28em] uppercase">
               {siteSettings?.footerEyebrow?.trim() || "Connect"}
             </p>
-            <h2 className="font-serif-display text-charcoal max-w-xl text-4xl leading-[0.95] sm:text-5xl lg:text-6xl">
+            <h2 className="font-serif-display text-cream max-w-xl text-4xl leading-[0.95] sm:text-5xl lg:text-6xl">
               {siteSettings?.footerHeading?.trim() || "Let's work together"}
             </h2>
             {siteSettings?.footerDescription?.trim() ? (
-              <p className="text-charcoal/76 max-w-md leading-relaxed">
+              <p className="text-cream/68 max-w-md leading-7">
                 {siteSettings.footerDescription}
               </p>
             ) : null}
@@ -42,14 +42,14 @@ export function SiteFooter({ siteSettings }: SiteFooterProps) {
           ) : null}
         </section>
 
-        <section className="text-charcoal/68 flex flex-col gap-2 border-t border-black/10 pt-6 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="border-cream/15 text-cream/58 flex flex-col gap-2 border-t pt-6 text-sm sm:flex-row sm:items-center sm:justify-between">
           <p>
             {"\u00A9"} {currentYear} {copyrightName}
           </p>
           {siteSettings?.footerLocation?.trim() ? (
             <p>{siteSettings.footerLocation}</p>
           ) : null}
-        </section>
+        </div>
       </Container>
     </footer>
   );

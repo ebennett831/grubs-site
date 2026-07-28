@@ -1,17 +1,17 @@
 import { defineField, defineType } from "sanity";
 
 const COMMON_SOCIAL_HOSTS: Record<string, string[]> = {
-  instagram: ["instagram.com", "www.instagram.com"],
-  linkedin: ["linkedin.com", "www.linkedin.com"],
+  instagram: ["instagram.com"],
+  linkedin: ["linkedin.com"],
   website: [],
-  x: ["x.com", "www.x.com", "twitter.com", "www.twitter.com"],
-  facebook: ["facebook.com", "www.facebook.com"],
-  youtube: ["youtube.com", "www.youtube.com", "youtu.be"],
-  vimeo: ["vimeo.com", "www.vimeo.com"],
-  tiktok: ["tiktok.com", "www.tiktok.com"],
-  behance: ["behance.net", "www.behance.net"],
-  threads: ["threads.net", "www.threads.net"],
-  bluesky: ["bsky.app", "www.bsky.app"],
+  x: ["x.com", "twitter.com"],
+  facebook: ["facebook.com"],
+  youtube: ["youtube.com", "youtu.be"],
+  vimeo: ["vimeo.com"],
+  tiktok: ["tiktok.com"],
+  behance: ["behance.net"],
+  threads: ["threads.net"],
+  bluesky: ["bsky.app"],
 };
 
 function validateSocialUrl(url: unknown, platform: unknown) {
@@ -24,7 +24,7 @@ function validateSocialUrl(url: unknown, platform: unknown) {
   const trimmed = url.trim();
 
   if (normalizedPlatform === "email") {
-    if (trimmed.startsWith("mailto:")) {
+    if (trimmed.toLowerCase().startsWith("mailto:")) {
       const address = trimmed.replace(/^mailto:/i, "").trim();
       if (!address) {
         return "Add an email address after mailto:.";
@@ -37,7 +37,7 @@ function validateSocialUrl(url: unknown, platform: unknown) {
 
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
       ? true
-      : "Use a valid email address or a mailto: link.";
+      : "Enter a valid email address.";
   }
 
   let parsedUrl: URL;
@@ -55,7 +55,10 @@ function validateSocialUrl(url: unknown, platform: unknown) {
   if (
     allowedHosts &&
     allowedHosts.length > 0 &&
-    !allowedHosts.includes(parsedUrl.hostname.toLowerCase())
+    !allowedHosts.some((host) => {
+      const hostname = parsedUrl.hostname.toLowerCase();
+      return hostname === host || hostname.endsWith(`.${host}`);
+    })
   ) {
     return `This URL does not look like ${normalizedPlatform}.`;
   }
@@ -105,7 +108,7 @@ export const socialLinkSchema = defineType({
       name: "url",
       title: "Link",
       description:
-        "Use https:// links. For Email, you can enter an email address or mailto:address.",
+        "Use an https:// profile link. For Email, enter the address only; mailto: is added automatically.",
       type: "string",
       validation: (rule) =>
         rule.required().custom((value, context) => {
@@ -137,9 +140,9 @@ export const socialLinkSchema = defineType({
       showOnAboutPage: "showOnAboutPage",
     },
     prepare(selection) {
-      const footer = selection.showInFooter ? "Footer" : null;
-      const about = selection.showOnAboutPage ? "About page" : null;
-      const placement = [footer, about].filter(Boolean).join(" · ");
+      const footer = selection.showInFooter !== false ? "Footer" : null;
+      const about = selection.showOnAboutPage !== false ? "About page" : null;
+      const placement = [footer, about].filter(Boolean).join(" \u00B7 ");
 
       return {
         title: selection.platform
@@ -148,7 +151,7 @@ export const socialLinkSchema = defineType({
           : "Social Link",
         subtitle: [selection.label || selection.url, placement || "Hidden"]
           .filter(Boolean)
-          .join(" · "),
+          .join(" \u00B7 "),
       };
     },
   },

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-import {motion, useReducedMotion} from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 import { urlFor } from "@/lib/sanity/image";
 import { type Photo } from "@/types/sanity";
@@ -53,7 +53,12 @@ export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
               .auto("format")
               .url()
           : null;
-        const hash = photo._id.split("").reduce((accumulator, character) => accumulator + character.charCodeAt(0), 0);
+        const hash = photo._id
+          .split("")
+          .reduce(
+            (accumulator, character) => accumulator + character.charCodeAt(0),
+            0,
+          );
         const entranceX = shouldReduceMotion ? 0 : ((hash % 3) - 1) * 24;
         const entranceY = shouldReduceMotion ? 0 : ((hash % 5) - 2) * 18;
         const entranceRotate = shouldReduceMotion ? 0 : ((hash % 7) - 3) * 1.5;
@@ -62,17 +67,32 @@ export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
         return (
           <motion.figure
             key={photo._id}
-            className="group mb-6 break-inside-avoid overflow-hidden bg-charcoal/10"
+            className="group bg-charcoal/10 mb-6 break-inside-avoid overflow-hidden"
             initial={
               shouldReduceMotion
-                ? {opacity: 1, x: 0, y: 0, rotate: 0}
-                : {opacity: 0, x: entranceX, y: entranceY, rotate: entranceRotate, scale: 0.98}
+                ? { opacity: 1, x: 0, y: 0, rotate: 0 }
+                : {
+                    opacity: 0,
+                    x: entranceX,
+                    y: entranceY,
+                    rotate: entranceRotate,
+                    scale: 0.98,
+                  }
             }
-            animate={{opacity: 1, x: 0, y: 0, rotate: 0, scale: 1}}
-            transition={{type: "spring", stiffness: 140, damping: 24, mass: 0.9, delay}}
+            animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 140,
+              damping: 24,
+              mass: 0.9,
+              delay,
+            }}
           >
             {imageUrl ? (
-              <motion.div whileHover={shouldReduceMotion ? undefined : {scale: 1.01}} transition={{duration: 0.2}}>
+              <motion.div
+                whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
+                transition={{ duration: 0.2 }}
+              >
                 <Image
                   src={imageUrl}
                   alt={photo.altText}

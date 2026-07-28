@@ -8,7 +8,6 @@ export const aboutPageSettingsSchema = defineType({
     { name: "hero", title: "Hero", default: true },
     { name: "biography", title: "Biography" },
     { name: "resume", title: "Resume" },
-    { name: "socials", title: "Socials" },
   ],
   fields: [
     defineField({
@@ -21,8 +20,9 @@ export const aboutPageSettingsSchema = defineType({
     }),
     defineField({
       name: "pageTitle",
-      title: "Heading",
-      description: "Main title shown on the About page.",
+      title: "Main Heading",
+      description:
+        "Photographer name or primary heading shown beside the portrait.",
       type: "string",
       group: "hero",
       validation: (rule) => rule.required().max(80),
@@ -30,7 +30,8 @@ export const aboutPageSettingsSchema = defineType({
     defineField({
       name: "intro",
       title: "Intro Paragraph",
-      description: "Short introduction shown near the top.",
+      description:
+        "Short positioning statement shown beside the portrait. Keep this concise.",
       type: "text",
       rows: 4,
       group: "hero",
@@ -45,36 +46,9 @@ export const aboutPageSettingsSchema = defineType({
       validation: (rule) => rule.max(100),
     }),
     defineField({
-      name: "body",
-      title: "Main Text",
-      description: "Longer biography or artist statement.",
-      type: "text",
-      rows: 8,
-      group: "biography",
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "secondaryHeading",
-      title: "Secondary Heading",
-      description: "Optional heading above the biography text.",
-      type: "string",
-      group: "biography",
-      validation: (rule) => rule.max(80),
-    }),
-    defineField({
-      name: "availabilityStatement",
-      title: "Availability Statement",
-      description:
-        "Optional short contact or availability statement near the page end.",
-      type: "text",
-      rows: 3,
-      group: "biography",
-      validation: (rule) => rule.max(220),
-    }),
-    defineField({
       name: "portraitImage",
       title: "Portrait Image",
-      description: "Optional portrait displayed on the About page.",
+      description: "Main photograph shown at the top of the About page.",
       type: "image",
       group: "hero",
       options: { hotspot: true },
@@ -82,7 +56,8 @@ export const aboutPageSettingsSchema = defineType({
     defineField({
       name: "portraitImageAlt",
       title: "Portrait Alt Text",
-      description: "Describe the portrait for screen readers.",
+      description:
+        "Describe the person and visible context for screen-reader users.",
       type: "string",
       group: "hero",
       validation: (rule) =>
@@ -95,7 +70,7 @@ export const aboutPageSettingsSchema = defineType({
             )?.portraitImage?.asset?._ref,
           );
 
-          if (hasPortrait && !value) {
+          if (hasPortrait && !value?.trim()) {
             return "Add alt text when a portrait image is uploaded.";
           }
 
@@ -103,10 +78,47 @@ export const aboutPageSettingsSchema = defineType({
         }),
     }),
     defineField({
-      name: "resumeFile",
-      title: "Resume",
+      name: "body",
+      title: "Biography",
       description:
-        "Upload a PDF. This section stays hidden on the website until a file is uploaded.",
+        "Longer biography or artist statement. Separate paragraphs with a blank line.",
+      type: "text",
+      rows: 8,
+      group: "biography",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "secondaryHeading",
+      title: "Biography Section Label",
+      description: "Optional label above the longer biography.",
+      type: "string",
+      group: "biography",
+      validation: (rule) => rule.max(80),
+    }),
+    defineField({
+      name: "availabilityStatement",
+      title: "Availability Statement",
+      description:
+        "Optional commissions or collaboration note shown near the page end.",
+      type: "text",
+      rows: 3,
+      group: "biography",
+      validation: (rule) => rule.max(220),
+    }),
+    defineField({
+      name: "socialSectionHeading",
+      title: "Social Section Label",
+      description:
+        "Optional label above social links sourced from Site Settings.",
+      type: "string",
+      group: "biography",
+      validation: (rule) => rule.max(60),
+    }),
+    defineField({
+      name: "resumeFile",
+      title: "Resume PDF",
+      description:
+        "Upload a PDF. The resume section remains hidden until a file is provided.",
       type: "file",
       group: "resume",
       options: {
@@ -131,14 +143,6 @@ export const aboutPageSettingsSchema = defineType({
       group: "resume",
       hidden: ({ document }) => !document?.resumeFile,
       validation: (rule) => rule.max(220),
-    }),
-    defineField({
-      name: "socialSectionHeading",
-      title: "Social Section Heading",
-      description: "Optional heading for the social links section.",
-      type: "string",
-      group: "socials",
-      validation: (rule) => rule.max(60),
     }),
   ],
   preview: {
