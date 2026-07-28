@@ -106,12 +106,6 @@ export interface HomePageSettings {
   featuredTitle?: string | null;
   featuredDescription?: string | null;
   featuredPhotos?: Array<Photo | null>;
-  galleriesLinkLabel?: string | null;
-  galleriesLinkDescription?: string | null;
-  photographyLinkLabel?: string | null;
-  photographyLinkDescription?: string | null;
-  aboutLinkLabel?: string | null;
-  aboutLinkDescription?: string | null;
 }
 
 export interface GallerySummary {

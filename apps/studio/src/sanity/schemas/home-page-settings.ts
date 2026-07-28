@@ -10,7 +10,6 @@ export const homePageSettingsSchema = defineType({
   groups: [
     { name: "hero", title: "Hero", default: true },
     { name: "featured", title: "Featured work" },
-    { name: "navigation", title: "Closing links" },
   ],
   fields: [
     defineField({
@@ -158,57 +157,6 @@ export const homePageSettingsSchema = defineType({
           .warning("Up to 8 photos are recommended for homepage pacing."),
         rule.unique().warning("Repeated photos are usually unintentional."),
       ],
-    }),
-    defineField({
-      name: "galleriesLinkLabel",
-      title: "Galleries Label",
-      description:
-        "Main label for the Galleries row in the editorial navigation near the page end.",
-      type: "string",
-      group: "navigation",
-      validation: (rule) => rule.max(30).warning(),
-    }),
-    defineField({
-      name: "galleriesLinkDescription",
-      title: "Galleries Description",
-      description: "Short supporting line for the Galleries destination.",
-      type: "string",
-      group: "navigation",
-      validation: (rule) => rule.max(120).warning(),
-    }),
-    defineField({
-      name: "photographyLinkLabel",
-      title: "Photography Label",
-      description:
-        "Main label for the Photography row in the editorial navigation near the page end.",
-      type: "string",
-      group: "navigation",
-      validation: (rule) => rule.max(30).warning(),
-    }),
-    defineField({
-      name: "photographyLinkDescription",
-      title: "Photography Description",
-      description: "Short supporting line for the Photography destination.",
-      type: "string",
-      group: "navigation",
-      validation: (rule) => rule.max(120).warning(),
-    }),
-    defineField({
-      name: "aboutLinkLabel",
-      title: "About Label",
-      description:
-        "Main label for the About row in the editorial navigation near the page end.",
-      type: "string",
-      group: "navigation",
-      validation: (rule) => rule.max(30).warning(),
-    }),
-    defineField({
-      name: "aboutLinkDescription",
-      title: "About Description",
-      description: "Short supporting line for the About destination.",
-      type: "string",
-      group: "navigation",
-      validation: (rule) => rule.max(120).warning(),
     }),
   ],
   preview: {

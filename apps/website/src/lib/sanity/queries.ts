@@ -100,13 +100,7 @@ export const homePageSettingsQuery = groq`*[
   "featuredPhotos": coalesce(
     array::compact(featuredPhotos[]->${photoProjection}),
     []
-  ),
-  galleriesLinkLabel,
-  galleriesLinkDescription,
-  photographyLinkLabel,
-  photographyLinkDescription,
-  aboutLinkLabel,
-  aboutLinkDescription
+  )
 }`;
 
 export const aboutPageSettingsQuery = groq`*[

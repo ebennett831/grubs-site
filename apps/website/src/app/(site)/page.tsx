@@ -348,38 +348,6 @@ export default async function HomePage() {
   const hasFeaturedIntro = Boolean(
     featuredEyebrow || featuredTitle || featuredDescription,
   );
-  const galleriesLinkLabel =
-    getTrimmedString(homePageSettings?.galleriesLinkLabel) || "Galleries";
-  const galleriesLinkDescription = getTrimmedString(
-    homePageSettings?.galleriesLinkDescription,
-  );
-  const photographyLinkLabel =
-    getTrimmedString(homePageSettings?.photographyLinkLabel) || "Photography";
-  const photographyLinkDescription = getTrimmedString(
-    homePageSettings?.photographyLinkDescription,
-  );
-  const aboutLinkLabel =
-    getTrimmedString(homePageSettings?.aboutLinkLabel) || "About";
-  const aboutLinkDescription = getTrimmedString(
-    homePageSettings?.aboutLinkDescription,
-  );
-  const exploreLinks = [
-    {
-      href: "/galleries",
-      label: galleriesLinkLabel,
-      description: galleriesLinkDescription,
-    },
-    {
-      href: "/photography",
-      label: photographyLinkLabel,
-      description: photographyLinkDescription,
-    },
-    {
-      href: "/about",
-      label: aboutLinkLabel,
-      description: aboutLinkDescription,
-    },
-  ];
 
   const organizationSchema = buildOrganizationSchema(siteSettings);
   const websiteSchema = buildWebsiteSchema(siteSettings);
@@ -512,7 +480,7 @@ export default async function HomePage() {
       ) : null}
 
       {featuredPhotos.length ? (
-        <section className="pt-16 sm:pt-20 lg:pt-24">
+        <section className="pt-16 pb-20 sm:pt-20 sm:pb-28 lg:pt-24 lg:pb-32">
           <Container className="max-w-none">
             {hasFeaturedIntro ? (
               <div className="max-w-2xl space-y-4 pb-10 sm:pb-14 lg:ml-[8%] lg:pb-16">
@@ -538,47 +506,6 @@ export default async function HomePage() {
           </Container>
         </section>
       ) : null}
-
-      <section className="py-20 sm:py-28 lg:py-32">
-        <Container className="grid gap-12 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,1fr)] lg:items-start lg:gap-20">
-          <div className="space-y-3 lg:pt-7">
-            <p className="text-charcoal/60 text-xs tracking-[0.24em] uppercase">
-              Continue exploring
-            </p>
-            <h2 className="font-serif-display text-charcoal text-4xl leading-[0.95] sm:text-5xl">
-              More of the work
-            </h2>
-          </div>
-
-          <nav
-            aria-label="Explore more of the portfolio"
-            className="border-t border-black/16"
-          >
-            {exploreLinks.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="group focus-visible:outline-accent grid min-h-28 grid-cols-[minmax(0,1fr)_auto] items-start gap-6 border-b border-black/16 py-6 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-32 sm:py-8 lg:grid-cols-[minmax(12rem,0.6fr)_minmax(0,1fr)_auto] lg:items-center"
-              >
-                <span className="font-serif-display text-charcoal block text-3xl leading-none transition-opacity duration-200 group-hover:opacity-60 sm:text-4xl">
-                  {item.label}
-                </span>
-                {item.description ? (
-                  <span className="text-charcoal/62 col-start-1 block max-w-[34ch] text-xs leading-6 sm:text-sm lg:col-start-2 lg:row-start-1">
-                    {item.description}
-                  </span>
-                ) : null}
-                <span
-                  className="text-charcoal/55 col-start-2 row-start-1 text-lg transition-transform duration-200 ease-out group-hover:translate-x-1"
-                  aria-hidden="true"
-                >
-                  {"\u2192"}
-                </span>
-              </Link>
-            ))}
-          </nav>
-        </Container>
-      </section>
 
       <script
         type="application/ld+json"
