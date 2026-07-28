@@ -16,7 +16,7 @@ export const aboutPageSettingsSchema = defineType({
       description: "Small label shown above the main heading.",
       type: "string",
       group: "hero",
-      validation: (rule) => rule.max(40),
+      validation: (rule) => rule.max(40).warning(),
     }),
     defineField({
       name: "pageTitle",
@@ -25,7 +25,7 @@ export const aboutPageSettingsSchema = defineType({
         "Photographer name or primary heading shown beside the portrait.",
       type: "string",
       group: "hero",
-      validation: (rule) => rule.required().max(80),
+      validation: (rule) => rule.max(80).warning(),
     }),
     defineField({
       name: "intro",
@@ -35,7 +35,7 @@ export const aboutPageSettingsSchema = defineType({
       type: "text",
       rows: 4,
       group: "hero",
-      validation: (rule) => rule.required().max(280),
+      validation: (rule) => rule.max(280).warning(),
     }),
     defineField({
       name: "locationLine",
@@ -43,7 +43,7 @@ export const aboutPageSettingsSchema = defineType({
       description: "Optional short line shown near the hero heading.",
       type: "string",
       group: "hero",
-      validation: (rule) => rule.max(100),
+      validation: (rule) => rule.max(100).warning(),
     }),
     defineField({
       name: "portraitImage",
@@ -61,21 +61,23 @@ export const aboutPageSettingsSchema = defineType({
       type: "string",
       group: "hero",
       validation: (rule) =>
-        rule.custom((value, context) => {
-          const hasPortrait = Boolean(
-            (
-              context.document as
-                | { portraitImage?: { asset?: { _ref?: string } } }
-                | undefined
-            )?.portraitImage?.asset?._ref,
-          );
+        rule
+          .custom((value, context) => {
+            const hasPortrait = Boolean(
+              (
+                context.document as
+                  | { portraitImage?: { asset?: { _ref?: string } } }
+                  | undefined
+              )?.portraitImage?.asset?._ref,
+            );
 
-          if (hasPortrait && !value?.trim()) {
-            return "Add alt text when a portrait image is uploaded.";
-          }
+            if (hasPortrait && !value?.trim()) {
+              return "Add alt text when a portrait image is uploaded.";
+            }
 
-          return true;
-        }),
+            return true;
+          })
+          .warning(),
     }),
     defineField({
       name: "body",
@@ -85,7 +87,6 @@ export const aboutPageSettingsSchema = defineType({
       type: "text",
       rows: 8,
       group: "biography",
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "secondaryHeading",
@@ -93,7 +94,7 @@ export const aboutPageSettingsSchema = defineType({
       description: "Optional label above the longer biography.",
       type: "string",
       group: "biography",
-      validation: (rule) => rule.max(80),
+      validation: (rule) => rule.max(80).warning(),
     }),
     defineField({
       name: "availabilityStatement",
@@ -103,7 +104,7 @@ export const aboutPageSettingsSchema = defineType({
       type: "text",
       rows: 3,
       group: "biography",
-      validation: (rule) => rule.max(220),
+      validation: (rule) => rule.max(220).warning(),
     }),
     defineField({
       name: "socialSectionHeading",
@@ -112,7 +113,7 @@ export const aboutPageSettingsSchema = defineType({
         "Optional label above social links sourced from Site Settings.",
       type: "string",
       group: "biography",
-      validation: (rule) => rule.max(60),
+      validation: (rule) => rule.max(60).warning(),
     }),
     defineField({
       name: "resumeFile",
@@ -132,7 +133,7 @@ export const aboutPageSettingsSchema = defineType({
       type: "string",
       group: "resume",
       hidden: ({ document }) => !document?.resumeFile,
-      validation: (rule) => rule.max(60),
+      validation: (rule) => rule.max(60).warning(),
     }),
     defineField({
       name: "resumeDescription",
@@ -142,7 +143,7 @@ export const aboutPageSettingsSchema = defineType({
       rows: 2,
       group: "resume",
       hidden: ({ document }) => !document?.resumeFile,
-      validation: (rule) => rule.max(220),
+      validation: (rule) => rule.max(220).warning(),
     }),
   ],
   preview: {
@@ -152,8 +153,13 @@ export const aboutPageSettingsSchema = defineType({
       hasResume: "resumeFile.asset",
     },
     prepare(selection) {
+      const title =
+        typeof selection.title === "string" && selection.title.trim()
+          ? selection.title.trim()
+          : "About Page";
+
       return {
-        title: selection.title || "About Page",
+        title,
         subtitle: selection.hasResume
           ? "About page content · Resume added"
           : "About page content",

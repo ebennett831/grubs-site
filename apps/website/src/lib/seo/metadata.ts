@@ -1,6 +1,7 @@
 import { type Metadata } from "next";
 
-import { urlFor } from "@/lib/sanity/image";
+import { getSanityImageUrl } from "@/lib/sanity/image";
+import { getTrimmedString } from "@/lib/utils/content";
 import { absoluteUrl } from "@/lib/utils/site";
 import { type SiteSettings } from "@/types/sanity";
 
@@ -17,21 +18,17 @@ export function buildMetadata({
   pathname = "/",
   siteSettings,
 }: BuildMetadataInput): Metadata {
-  const siteTitle = siteSettings?.siteTitle ?? "Photography Portfolio";
+  const siteTitle =
+    getTrimmedString(siteSettings?.siteTitle) ?? "Photography Portfolio";
   const siteDescription =
-    description ??
-    siteSettings?.siteDescription ??
+    getTrimmedString(description) ??
+    getTrimmedString(siteSettings?.siteDescription) ??
     "A professional photography portfolio with editorial galleries.";
-  const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
-
-  const ogImage = siteSettings?.ogImage
-    ? urlFor(siteSettings.ogImage)
-        .width(1200)
-        .height(630)
-        .fit("crop")
-        .auto("format")
-        .url()
-    : "https://images.unsplash.com/photo-1487412912498-0447578fcca8?auto=format&fit=crop&w=1200&h=630&q=80";
+  const pageTitle = getTrimmedString(title);
+  const fullTitle = pageTitle ? `${pageTitle} | ${siteTitle}` : siteTitle;
+  const ogImage = getSanityImageUrl(siteSettings?.ogImage, (imageBuilder) =>
+    imageBuilder.width(1200).height(630).fit("crop").auto("format"),
+  );
 
   const canonical = absoluteUrl(pathname);
 
@@ -46,13 +43,15 @@ export function buildMetadata({
       description: siteDescription,
       url: canonical,
       type: "website",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: fullTitle }],
+      images: ogImage
+        ? [{ url: ogImage, width: 1200, height: 630, alt: fullTitle }]
+        : undefined,
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description: siteDescription,
-      images: [ogImage],
+      images: ogImage ? [ogImage] : undefined,
     },
   };
 }

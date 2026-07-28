@@ -5,18 +5,33 @@ import Link from "next/link";
 
 import { motion, useReducedMotion } from "framer-motion";
 
-import { urlFor } from "@/lib/sanity/image";
+import { getSanityImageUrl, hasSanityImage } from "@/lib/sanity/image";
+import { getTrimmedString } from "@/lib/utils/content";
 import { type Gallery } from "@/types/sanity";
 
 interface GalleriesGridProps {
-  galleries: Gallery[];
+  galleries?: Array<Gallery | null | undefined> | null;
 }
 
 export function GalleriesGrid({ galleries }: GalleriesGridProps) {
   const shouldReduceMotion = useReducedMotion();
+  const displayGalleries = (galleries ?? []).filter(
+    (gallery): gallery is Gallery => {
+      const slug = getTrimmedString(gallery?.slug?.current);
+      const title = getTrimmedString(gallery?.title);
+      const description = getTrimmedString(gallery?.description);
+      const hasCover = hasSanityImage(gallery?.coverPhoto?.image);
+      const hasPhotos =
+        typeof gallery?.photoCount === "number" && gallery.photoCount > 0;
 
-  if (!galleries.length) {
-    return <p className="text-charcoal/70">No galleries published yet.</p>;
+      return Boolean(
+        gallery && slug && (title || description || hasCover || hasPhotos),
+      );
+    },
+  );
+
+  if (!displayGalleries.length) {
+    return null;
   }
 
   return (
@@ -34,22 +49,37 @@ export function GalleriesGrid({ galleries }: GalleriesGridProps) {
         },
       }}
     >
-      {galleries.map((gallery) => {
-        const galleryPath = gallery.slug?.current || gallery._id;
+      {displayGalleries.map((gallery, index) => {
+        const galleryPath = getTrimmedString(gallery.slug?.current);
+        const galleryTitle = getTrimmedString(gallery.title) || "Gallery";
+        const galleryDescription = getTrimmedString(gallery.description);
         const coverImage = gallery.coverPhoto?.image;
-        const imageUrl = coverImage?.asset?._ref
-          ? urlFor(coverImage)
-              .width(1400)
-              .fit("max")
-              .quality(82)
-              .auto("format")
-              .url()
-          : null;
+        const imageUrl = getSanityImageUrl(coverImage, (builder) =>
+          builder.width(1400).fit("max").quality(82).auto("format"),
+        );
         const lqip = coverImage?.lqip;
+        const imageWidth =
+          typeof coverImage?.dimensions?.width === "number" &&
+          coverImage.dimensions.width > 0
+            ? coverImage.dimensions.width
+            : 1800;
+        const imageHeight =
+          typeof coverImage?.dimensions?.height === "number" &&
+          coverImage.dimensions.height > 0
+            ? coverImage.dimensions.height
+            : 2200;
+        const photoCount =
+          typeof gallery.photoCount === "number" && gallery.photoCount > 0
+            ? gallery.photoCount
+            : null;
+
+        if (!galleryPath) {
+          return null;
+        }
 
         return (
           <motion.div
-            key={gallery._id}
+            key={`${getTrimmedString(gallery._id) || galleryPath || "gallery"}-${index}`}
             variants={{
               hidden: {
                 opacity: 0,
@@ -69,61 +99,63 @@ export function GalleriesGrid({ galleries }: GalleriesGridProps) {
             }}
           >
             <Link
-              href={`/galleries/${galleryPath}`}
+              href={`/galleries/${encodeURIComponent(galleryPath)}`}
               className="group focus-visible:outline-accent block overflow-hidden border border-black/10 bg-white shadow-[0_1px_0_rgba(255,255,255,0.6)] transition-shadow duration-300 hover:shadow-[0_18px_50px_rgba(0,0,0,0.12)] focus-visible:outline-2 focus-visible:outline-offset-4"
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-black/5">
-                {imageUrl ? (
+              {imageUrl ? (
+                <div className="relative aspect-[4/5] overflow-hidden bg-black/5">
                   <Image
                     src={imageUrl}
-                    alt={gallery.coverPhoto?.altText || gallery.title}
-                    width={coverImage?.dimensions?.width ?? 1800}
-                    height={coverImage?.dimensions?.height ?? 2200}
+                    alt={
+                      getTrimmedString(gallery.coverPhoto?.altText) ||
+                      galleryTitle
+                    }
+                    width={imageWidth}
+                    height={imageHeight}
                     sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                     placeholder={lqip ? "blur" : "empty"}
-                    blurDataURL={lqip}
+                    blurDataURL={lqip ?? undefined}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                   />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-black/50">
-                    No cover photo
-                  </div>
-                )}
 
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.15),transparent_35%),linear-gradient(to_top,rgba(17,24,39,0.8),rgba(17,24,39,0.08)_55%,transparent)]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.15),transparent_35%),linear-gradient(to_top,rgba(17,24,39,0.8),rgba(17,24,39,0.08)_55%,transparent)]" />
 
-                <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                  <div className="mb-4 flex items-center justify-between gap-4">
-                    <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold tracking-[0.22em] uppercase backdrop-blur-sm">
-                      Gallery
-                    </span>
-                    <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold tracking-[0.18em] uppercase backdrop-blur-sm transition-colors group-hover:bg-white/20">
-                      Open
-                    </span>
-                  </div>
-
-                  <div className="space-y-1">
-                    <h2 className="font-serif-display text-3xl leading-tight">
-                      {gallery.title}
-                    </h2>
-                    <p className="text-sm tracking-[0.2em] text-white/70 uppercase">
-                      {gallery.photoCount ?? 0} photos
-                    </p>
+                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                    <div className="space-y-1">
+                      <h2 className="font-serif-display text-3xl leading-tight">
+                        {galleryTitle}
+                      </h2>
+                      {photoCount ? (
+                        <p className="text-sm tracking-[0.2em] text-white/70 uppercase">
+                          {photoCount} {photoCount === 1 ? "photo" : "photos"}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-2 p-5 sm:p-6">
+                  <p className="text-charcoal/55 text-[11px] tracking-[0.22em] uppercase">
+                    Gallery
+                  </p>
+                  <h2 className="font-serif-display text-charcoal text-3xl leading-tight">
+                    {galleryTitle}
+                  </h2>
+                  {photoCount ? (
+                    <p className="text-charcoal/55 text-xs tracking-[0.18em] uppercase">
+                      {photoCount} {photoCount === 1 ? "photo" : "photos"}
+                    </p>
+                  ) : null}
+                </div>
+              )}
 
-              <div className="space-y-2 p-5">
-                {gallery.description ? (
+              {galleryDescription ? (
+                <div className="space-y-2 border-t border-black/10 p-5">
                   <p className="text-charcoal/70 line-clamp-3 text-sm leading-7">
-                    {gallery.description}
+                    {galleryDescription}
                   </p>
-                ) : (
-                  <p className="text-charcoal/50 text-sm leading-7">
-                    Browse the full set of photos.
-                  </p>
-                )}
-              </div>
+                </div>
+              ) : null}
             </Link>
           </motion.div>
         );

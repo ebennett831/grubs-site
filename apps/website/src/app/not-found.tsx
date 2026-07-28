@@ -13,10 +13,10 @@ export default function NotFound() {
           This page does not exist or is not published yet.
         </p>
         <Link
-          href="/work"
+          href="/galleries"
           className="border-charcoal hover:bg-charcoal hover:text-cream inline-flex border px-6 py-3 text-xs tracking-[0.2em] uppercase"
         >
-          Browse Work
+          Browse Galleries
         </Link>
       </Container>
     </section>

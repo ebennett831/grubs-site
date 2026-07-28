@@ -6,6 +6,7 @@ export const siteSettingsSchema = defineType({
   type: "document",
   groups: [
     { name: "identity", title: "Identity", default: true },
+    { name: "appearance", title: "Appearance" },
     { name: "social", title: "Social Links" },
     { name: "footer", title: "Footer" },
     { name: "seo", title: "SEO" },
@@ -17,7 +18,7 @@ export const siteSettingsSchema = defineType({
       description: "Website name shown in navigation and metadata.",
       type: "string",
       group: "identity",
-      validation: (rule) => rule.required().max(70),
+      validation: (rule) => rule.max(70).warning(),
     }),
     defineField({
       name: "siteDescription",
@@ -26,7 +27,25 @@ export const siteSettingsSchema = defineType({
       type: "text",
       rows: 5,
       group: "identity",
-      validation: (rule) => rule.required().max(220),
+      validation: (rule) => rule.max(220).warning(),
+    }),
+    defineField({
+      name: "accentColor",
+      title: "Site Accent Color",
+      description:
+        "Optional. Choose the warm accent used for focus states, subtle page texture, and the footer transition. Clear it to restore the default terracotta.",
+      type: "color",
+      group: "appearance",
+      options: {
+        disableAlpha: true,
+        colorList: [
+          { hex: "#9f5d3f" },
+          { hex: "#b4772d" },
+          { hex: "#48647a" },
+          { hex: "#4f6753" },
+          { hex: "#79566f" },
+        ],
+      },
     }),
     defineField({
       name: "contactEmail",
@@ -35,7 +54,16 @@ export const siteSettingsSchema = defineType({
         "Primary public email used by contact prompts. Add an Email item under Social Links to show it in the footer or About page.",
       type: "string",
       group: "identity",
-      validation: (rule) => rule.email(),
+      validation: (rule) =>
+        rule.custom((value) => {
+          if (!value?.trim()) {
+            return true;
+          }
+
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+            ? true
+            : "Enter a valid email address.";
+        }),
     }),
     defineField({
       name: "footerEyebrow",
@@ -43,8 +71,7 @@ export const siteSettingsSchema = defineType({
       description: "Short pre-heading above the footer heading.",
       type: "string",
       group: "footer",
-      initialValue: "Connect",
-      validation: (rule) => rule.max(40),
+      validation: (rule) => rule.max(40).warning(),
     }),
     defineField({
       name: "footerHeading",
@@ -52,8 +79,7 @@ export const siteSettingsSchema = defineType({
       description: "Main footer heading.",
       type: "string",
       group: "footer",
-      initialValue: "Let's work together",
-      validation: (rule) => rule.max(120),
+      validation: (rule) => rule.max(120).warning(),
     }),
     defineField({
       name: "footerDescription",
@@ -62,9 +88,7 @@ export const siteSettingsSchema = defineType({
       type: "text",
       rows: 3,
       group: "footer",
-      initialValue:
-        "Available for commissions, collaborations, and editorial work.",
-      validation: (rule) => rule.max(220),
+      validation: (rule) => rule.max(220).warning(),
     }),
     defineField({
       name: "footerLocation",
@@ -72,7 +96,7 @@ export const siteSettingsSchema = defineType({
       description: "Optional location line shown below social links.",
       type: "string",
       group: "footer",
-      validation: (rule) => rule.max(100),
+      validation: (rule) => rule.max(100).warning(),
     }),
     defineField({
       name: "footerCopyrightName",
@@ -81,7 +105,7 @@ export const siteSettingsSchema = defineType({
         "Optional name used in the copyright line. Falls back to Site Title.",
       type: "string",
       group: "footer",
-      validation: (rule) => rule.max(100),
+      validation: (rule) => rule.max(100).warning(),
     }),
     defineField({
       name: "ogImage",
@@ -116,9 +140,18 @@ export const siteSettingsSchema = defineType({
       media: "favicon",
     },
     prepare(selection) {
+      const title =
+        typeof selection.title === "string" && selection.title.trim()
+          ? selection.title.trim()
+          : "Site Settings";
+      const subtitle =
+        typeof selection.subtitle === "string" && selection.subtitle.trim()
+          ? selection.subtitle.trim()
+          : "Global website settings";
+
       return {
-        title: selection.title || "Site Settings",
-        subtitle: selection.subtitle || "Global website settings",
+        title,
+        subtitle,
         media: selection.media,
       };
     },

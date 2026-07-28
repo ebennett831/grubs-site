@@ -22,9 +22,13 @@ export const photoSchema = defineType({
         rule
           .custom((value, context) => {
             const hasImage = Boolean(
-              (context.document as { image?: { asset?: { _ref?: string } } } | undefined)?.image?.asset?._ref,
+              (
+                context.document as
+                  | { image?: { asset?: { _ref?: string } } }
+                  | undefined
+              )?.image?.asset?._ref,
             );
-            if (hasImage && !value) {
+            if (hasImage && !value?.trim()) {
               return "Add alt text for published accessibility.";
             }
 
@@ -37,7 +41,7 @@ export const photoSchema = defineType({
       title: "Title",
       description: "Optional short title used in captions and Studio lists.",
       type: "string",
-      validation: (rule) => rule.max(100),
+      validation: (rule) => rule.max(100).warning(),
     }),
     defineField({
       name: "caption",
@@ -45,14 +49,14 @@ export const photoSchema = defineType({
       description: "Optional caption shown under featured photos.",
       type: "text",
       rows: 3,
-      validation: (rule) => rule.max(220),
+      validation: (rule) => rule.max(220).warning(),
     }),
     defineField({
       name: "location",
       title: "Location",
       description: "Optional place where the photo was taken.",
       type: "string",
-      validation: (rule) => rule.max(80),
+      validation: (rule) => rule.max(80).warning(),
     }),
     defineField({
       name: "dateTaken",
@@ -82,8 +86,23 @@ export const photoSchema = defineType({
       media: "image",
     },
     prepare(selection) {
-      const previewTitle = selection.title || selection.altText || "Untitled photo";
-      const subtitleParts = [selection.location, selection.dateTaken, selection.galleryTitle].filter(Boolean);
+      const title =
+        typeof selection.title === "string" && selection.title.trim()
+          ? selection.title.trim()
+          : null;
+      const altText =
+        typeof selection.altText === "string" && selection.altText.trim()
+          ? selection.altText.trim()
+          : null;
+      const previewTitle = title || altText || "Untitled photo";
+      const subtitleParts = [
+        selection.location,
+        selection.dateTaken,
+        selection.galleryTitle,
+      ].filter(
+        (value): value is string =>
+          typeof value === "string" && value.trim().length > 0,
+      );
 
       return {
         title: previewTitle,

@@ -6,8 +6,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { type Gallery, type SiteSettings } from "@/types/sanity";
 
 export default async function GalleriesPage() {
-  const rawGalleries = await fetchSanity<Gallery[]>(galleriesQuery);
-  const galleries = rawGalleries ?? [];
+  const galleries = await fetchSanity<Array<Gallery | null>>(galleriesQuery);
 
   return (
     <section className="py-14 sm:py-18 lg:py-24">

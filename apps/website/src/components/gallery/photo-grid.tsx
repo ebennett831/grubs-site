@@ -4,19 +4,23 @@ import Image from "next/image";
 
 import { motion, useReducedMotion } from "framer-motion";
 
-import { urlFor } from "@/lib/sanity/image";
+import { getSanityImageUrl, hasSanityImage } from "@/lib/sanity/image";
+import { getTrimmedString } from "@/lib/utils/content";
 import { type Photo } from "@/types/sanity";
 
 interface PhotoGridProps {
-  photos: Photo[];
+  photos?: Array<Photo | null | undefined> | null;
   density?: number;
 }
 
 export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
   const shouldReduceMotion = useReducedMotion();
+  const displayPhotos = (photos ?? []).filter((photo): photo is Photo =>
+    Boolean(photo && hasSanityImage(photo.image)),
+  );
 
-  if (!photos.length) {
-    return <p className="text-charcoal/70">No photographs published yet.</p>;
+  if (!displayPhotos.length) {
+    return null;
   }
 
   const layoutClasses =
@@ -38,22 +42,35 @@ export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
 
   return (
     <div className={`${layoutClasses} [column-fill:_balance]`}>
-      {photos.map((photo) => {
+      {displayPhotos.map((photo, index) => {
         const image = photo.image;
-        const imageRef = image?.asset?._ref?.trim();
+
+        if (!hasSanityImage(image)) {
+          return null;
+        }
+
         const dimensions = image?.dimensions;
         const lqip = image?.lqip;
-        const width = dimensions?.width ?? 1600;
-        const height = dimensions?.height ?? 2000;
-        const imageUrl = imageRef
-          ? urlFor(image!)
-              .width(1200)
-              .fit("max")
-              .quality(80)
-              .auto("format")
-              .url()
-          : null;
-        const hash = photo._id
+        const width =
+          typeof dimensions?.width === "number" && dimensions.width > 0
+            ? dimensions.width
+            : 1600;
+        const height =
+          typeof dimensions?.height === "number" && dimensions.height > 0
+            ? dimensions.height
+            : 2000;
+        const imageUrl = getSanityImageUrl(image, (builder) =>
+          builder.width(1200).fit("max").quality(80).auto("format"),
+        );
+        const photoKey = `${
+          getTrimmedString(photo._id) || image.asset._ref || "photo"
+        }-${index}`;
+
+        if (!imageUrl) {
+          return null;
+        }
+
+        const hash = photoKey
           .split("")
           .reduce(
             (accumulator, character) => accumulator + character.charCodeAt(0),
@@ -66,7 +83,7 @@ export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
 
         return (
           <motion.figure
-            key={photo._id}
+            key={photoKey}
             className="group bg-charcoal/10 mb-6 break-inside-avoid overflow-hidden"
             initial={
               shouldReduceMotion
@@ -88,28 +105,26 @@ export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
               delay,
             }}
           >
-            {imageUrl ? (
-              <motion.div
-                whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Image
-                  src={imageUrl}
-                  alt={photo.altText}
-                  width={width}
-                  height={height}
-                  loading="lazy"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
-                  placeholder={lqip ? "blur" : "empty"}
-                  blurDataURL={lqip}
-                  className="h-auto w-full"
-                />
-              </motion.div>
-            ) : (
-              <div className="text-charcoal/60 flex aspect-[4/5] items-center justify-center text-sm">
-                Photo pending
-              </div>
-            )}
+            <motion.div
+              whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Image
+                src={imageUrl}
+                alt={
+                  getTrimmedString(photo.altText) ||
+                  getTrimmedString(photo.title) ||
+                  ""
+                }
+                width={width}
+                height={height}
+                loading="lazy"
+                sizes="(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
+                placeholder={lqip ? "blur" : "empty"}
+                blurDataURL={lqip ?? undefined}
+                className="h-auto w-full"
+              />
+            </motion.div>
           </motion.figure>
         );
       })}

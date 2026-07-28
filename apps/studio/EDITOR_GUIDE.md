@@ -19,11 +19,13 @@ Use the left sidebar in this order:
 
 1. Open Home Page.
 2. In Hero, update:
+
 - Hero Title
 - Hero Description
 - Hero Image
 - Hero Image Alt Text
 - Hero CTA Label / Hero CTA Link
+
 3. Click Publish.
 
 ### Choose featured photos on the homepage
@@ -41,9 +43,11 @@ If Featured Photos is empty, the website automatically shows recent photos.
 1. Open Photos.
 2. Click Create new.
 3. Fill in:
+
 - Image (required)
 - Alt Text (strongly recommended)
 - Optional: Title, Caption, Location, Date Taken, Gallery
+
 4. Click Publish.
 
 ### Create a gallery
@@ -51,9 +55,12 @@ If Featured Photos is empty, the website automatically shows recent photos.
 1. Open Galleries.
 2. Click Create new.
 3. Fill in:
-- Title (required)
+
+- Title (recommended before linking the gallery publicly)
+- Slug (generate this when the gallery is ready to be linked publicly)
 - Optional Description
 - Optional Cover Photo
+
 4. Click Publish.
 
 ### Update About page
@@ -66,8 +73,10 @@ If Featured Photos is empty, the website automatically shows recent photos.
 
 1. Open Site Settings.
 2. Update Site Title and Site Description.
-3. Optionally set Open Graph Image and Favicon.
-4. Click Publish.
+3. In Appearance, optionally choose a Site Accent Color. Clear it to use the
+   default terracotta.
+4. Optionally set Open Graph Image and Favicon.
+5. Click Publish.
 
 ## Good habits
 
@@ -80,3 +89,8 @@ If Featured Photos is empty, the website automatically shows recent photos.
 
 - Home Page, About Page, Photographer, and Site Settings are single documents.
 - Studio is configured to avoid accidental duplicates of these single pages.
+- Most content fields are optional. You can save and publish a sparse document while
+  preparing it; the public site omits sections that do not have usable content.
+- Yellow validation messages are editorial guidance and do not block publishing.
+- A photo's Image field is the only intentionally required content field because a
+  photo document without an image has no usable asset.

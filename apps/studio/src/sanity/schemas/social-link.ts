@@ -15,15 +15,26 @@ const COMMON_SOCIAL_HOSTS: Record<string, string[]> = {
 };
 
 function validateSocialUrl(url: unknown, platform: unknown) {
-  if (!url || typeof url !== "string") {
-    return "Add a link URL.";
+  if (url === undefined || url === null || url === "") {
+    return true;
+  }
+
+  if (typeof url !== "string") {
+    return "Enter a text URL or email address.";
   }
 
   const normalizedPlatform =
     typeof platform === "string" ? platform.toLowerCase() : "";
   const trimmed = url.trim();
 
-  if (normalizedPlatform === "email") {
+  if (!trimmed) {
+    return true;
+  }
+
+  if (
+    normalizedPlatform === "email" ||
+    (!normalizedPlatform && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed))
+  ) {
     if (trimmed.toLowerCase().startsWith("mailto:")) {
       const address = trimmed.replace(/^mailto:/i, "").trim();
       if (!address) {
@@ -51,19 +62,35 @@ function validateSocialUrl(url: unknown, platform: unknown) {
     return "Only https:// links are allowed for social and website links.";
   }
 
-  const allowedHosts = COMMON_SOCIAL_HOSTS[normalizedPlatform];
-  if (
-    allowedHosts &&
-    allowedHosts.length > 0 &&
-    !allowedHosts.some((host) => {
-      const hostname = parsedUrl.hostname.toLowerCase();
-      return hostname === host || hostname.endsWith(`.${host}`);
-    })
-  ) {
-    return `This URL does not look like ${normalizedPlatform}.`;
+  return true;
+}
+
+function validateSocialHost(url: unknown, platform: unknown) {
+  if (typeof url !== "string" || typeof platform !== "string") {
+    return true;
   }
 
-  return true;
+  const trimmed = url.trim();
+  const normalizedPlatform = platform.toLowerCase();
+  const allowedHosts = COMMON_SOCIAL_HOSTS[normalizedPlatform];
+
+  if (!trimmed || !allowedHosts?.length) {
+    return true;
+  }
+
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(trimmed);
+  } catch {
+    return true;
+  }
+
+  const hostname = parsedUrl.hostname.toLowerCase();
+  return allowedHosts.some(
+    (host) => hostname === host || hostname.endsWith(`.${host}`),
+  )
+    ? true
+    : `This URL does not look like ${normalizedPlatform}. Check the platform or use Custom.`;
 }
 
 export const socialLinkSchema = defineType({
@@ -93,8 +120,14 @@ export const socialLinkSchema = defineType({
         ],
         layout: "dropdown",
       },
-      initialValue: "instagram",
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule
+          .custom((value) =>
+            typeof value === "string" && value.trim()
+              ? true
+              : "Choose a platform so this link can be labeled and displayed.",
+          )
+          .warning(),
     }),
     defineField({
       name: "label",
@@ -102,7 +135,7 @@ export const socialLinkSchema = defineType({
       description:
         "Optional custom label. If empty, the platform name is used.",
       type: "string",
-      validation: (rule) => rule.max(60),
+      validation: (rule) => rule.max(60).warning(),
     }),
     defineField({
       name: "url",
@@ -110,13 +143,33 @@ export const socialLinkSchema = defineType({
       description:
         "Use an https:// profile link. For Email, enter the address only; mailto: is added automatically.",
       type: "string",
-      validation: (rule) =>
-        rule.required().custom((value, context) => {
+      validation: (rule) => [
+        rule.custom((value, context) => {
+          if (context.document?._type === "photographer") {
+            return true;
+          }
+
           return validateSocialUrl(
             value,
             (context.parent as { platform?: unknown } | undefined)?.platform,
           );
         }),
+        rule
+          .custom((value) =>
+            typeof value === "string" && value.trim()
+              ? true
+              : "Add a link before enabling this social item.",
+          )
+          .warning(),
+        rule
+          .custom((value, context) =>
+            validateSocialHost(
+              value,
+              (context.parent as { platform?: unknown } | undefined)?.platform,
+            ),
+          )
+          .warning(),
+      ],
     }),
     defineField({
       name: "showInFooter",
@@ -143,13 +196,25 @@ export const socialLinkSchema = defineType({
       const footer = selection.showInFooter !== false ? "Footer" : null;
       const about = selection.showOnAboutPage !== false ? "About page" : null;
       const placement = [footer, about].filter(Boolean).join(" \u00B7 ");
+      const platform =
+        typeof selection.platform === "string" &&
+        selection.platform.trim().length > 0
+          ? selection.platform.trim()
+          : "";
+      const label =
+        typeof selection.label === "string" && selection.label.trim()
+          ? selection.label.trim()
+          : null;
+      const url =
+        typeof selection.url === "string" && selection.url.trim()
+          ? selection.url.trim()
+          : null;
 
       return {
-        title: selection.platform
-          ? selection.platform.charAt(0).toUpperCase() +
-            selection.platform.slice(1)
-          : "Social Link",
-        subtitle: [selection.label || selection.url, placement || "Hidden"]
+        title: platform
+          ? platform.charAt(0).toUpperCase() + platform.slice(1)
+          : "Unconfigured social link",
+        subtitle: [label || url, placement || "Hidden"]
           .filter(Boolean)
           .join(" \u00B7 "),
       };

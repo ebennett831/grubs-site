@@ -1,5 +1,12 @@
 import { type SocialLink, type SocialPlatform } from "@/types/sanity";
 
+import {
+  getSafeEmailHref,
+  getSafeExternalHref,
+  getTrimmedString,
+  isExternalHref,
+} from "./content";
+
 const PLATFORM_LABELS: Record<SocialPlatform, string> = {
   instagram: "Instagram",
   linkedin: "LinkedIn",
@@ -16,7 +23,7 @@ const PLATFORM_LABELS: Record<SocialPlatform, string> = {
   custom: "Website",
 };
 
-const EXTERNAL_PROTOCOLS = new Set(["https:"]);
+const KNOWN_PLATFORMS = new Set<string>(Object.keys(PLATFORM_LABELS));
 
 type SocialVariant = "footer" | "about";
 
@@ -28,72 +35,35 @@ export interface NormalizedSocialLink {
   isExternal: boolean;
 }
 
-function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+function isKnownPlatform(value: string): value is SocialPlatform {
+  return KNOWN_PLATFORMS.has(value);
 }
 
 function normalizePlatform(
   platform: SocialLink["platform"],
 ): SocialPlatform | "unknown" {
-  if (!platform) {
+  const value = getTrimmedString(platform)?.toLowerCase();
+
+  if (!value) {
     return "unknown";
   }
 
-  const value = platform.trim().toLowerCase();
   if (value === "twitter") {
     return "x";
   }
 
-  const knownPlatforms = new Set<SocialPlatform>([
-    "instagram",
-    "linkedin",
-    "email",
-    "website",
-    "x",
-    "facebook",
-    "youtube",
-    "vimeo",
-    "tiktok",
-    "behance",
-    "threads",
-    "bluesky",
-    "custom",
-  ]);
-
-  return knownPlatforms.has(value as SocialPlatform)
-    ? (value as SocialPlatform)
-    : "unknown";
+  return isKnownPlatform(value) ? value : "unknown";
 }
 
 function normalizeHref(
   platform: SocialPlatform | "unknown",
   url: string,
 ): string | null {
-  const trimmed = url.trim();
-
-  if (!trimmed) {
-    return null;
-  }
-
   if (platform === "email") {
-    if (trimmed.toLowerCase().startsWith("mailto:")) {
-      const address = trimmed.slice(7);
-      return isValidEmail(address) ? `mailto:${address.trim()}` : null;
-    }
-
-    return isValidEmail(trimmed) ? `mailto:${trimmed}` : null;
+    return getSafeEmailHref(url);
   }
 
-  try {
-    const parsed = new URL(trimmed);
-    if (!EXTERNAL_PROTOCOLS.has(parsed.protocol)) {
-      return null;
-    }
-
-    return parsed.toString();
-  } catch {
-    return null;
-  }
+  return getSafeExternalHref(url);
 }
 
 function getDefaultLabel(platform: SocialPlatform | "unknown") {
@@ -108,37 +78,41 @@ function shouldShowInVariant(link: SocialLink, variant: SocialVariant) {
   return link.showOnAboutPage !== false;
 }
 
+export function normalizeSocialLink(
+  link: SocialLink | null | undefined,
+  variant: SocialVariant,
+  index = 0,
+): NormalizedSocialLink | null {
+  if (!link || !shouldShowInVariant(link, variant)) {
+    return null;
+  }
+
+  const platform = normalizePlatform(link.platform);
+  const href = normalizeHref(platform, link.url ?? "");
+  const label = getTrimmedString(link.label) ?? getDefaultLabel(platform);
+
+  if (!href) {
+    return null;
+  }
+
+  return {
+    key: getTrimmedString(link._key) ?? `${platform}-${index}-${href}`,
+    platform,
+    label,
+    href,
+    isExternal: isExternalHref(href),
+  };
+}
+
 export function normalizeSocialLinks(
-  links: SocialLink[] | undefined,
+  links: ReadonlyArray<SocialLink | null> | null | undefined,
   variant: SocialVariant,
 ): NormalizedSocialLink[] {
   if (!links?.length) {
     return [];
   }
 
-  const normalizedLinks = links
-    .filter((link) => shouldShowInVariant(link, variant))
-    .map((link, index) => {
-      const platform = normalizePlatform(link.platform);
-      const href = normalizeHref(platform, link.url ?? "");
-      const rawLabel = link.label?.trim();
-
-      if (!href) {
-        return null;
-      }
-
-      return {
-        key: link._key ?? `${platform}-${index}-${href}`,
-        platform,
-        label:
-          rawLabel && rawLabel.length > 0
-            ? rawLabel
-            : getDefaultLabel(platform),
-        href,
-        isExternal: href.startsWith("https://"),
-      } satisfies NormalizedSocialLink;
-    })
+  return links
+    .map((link, index) => normalizeSocialLink(link, variant, index))
     .filter((link): link is NormalizedSocialLink => Boolean(link));
-
-  return normalizedLinks;
 }

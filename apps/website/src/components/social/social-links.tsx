@@ -3,7 +3,7 @@ import { normalizeSocialLinks } from "@/lib/utils/social-links";
 import { type SocialLink } from "@/types/sanity";
 
 type SocialLinksProps = {
-  links: SocialLink[] | undefined;
+  links?: ReadonlyArray<SocialLink | null> | null;
   variant: "footer" | "about";
   tone?: "dark" | "light";
   className?: string;
@@ -34,8 +34,8 @@ export function SocialLinks({
 
   return (
     <ul className={`${variantListClasses[variant]} ${className ?? ""}`.trim()}>
-      {normalizedLinks.map((item) => (
-        <li key={item.key}>
+      {normalizedLinks.map((item, index) => (
+        <li key={`${item.key}-${index}`}>
           <a
             href={item.href}
             target={item.isExternal ? "_blank" : undefined}

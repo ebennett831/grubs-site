@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
+import { getTrimmedString } from "@/lib/utils/content";
 import { type SiteSettings } from "@/types/sanity";
 
 const navItems = [
@@ -16,6 +17,9 @@ interface SiteHeaderProps {
 }
 
 export function SiteHeader({ siteSettings }: SiteHeaderProps) {
+  const siteTitle =
+    getTrimmedString(siteSettings?.siteTitle) || "Photography Portfolio";
+
   return (
     <header className="bg-cream/95 sticky top-0 z-20 border-b border-black/10 backdrop-blur-sm">
       <Container className="flex flex-col gap-3 py-3 sm:h-16 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:py-0">
@@ -23,7 +27,7 @@ export function SiteHeader({ siteSettings }: SiteHeaderProps) {
           href="/"
           className="text-charcoal text-xs tracking-[0.2em] uppercase sm:text-sm"
         >
-          {siteSettings?.siteTitle ?? "Photography Portfolio"}
+          {siteTitle}
         </Link>
         <nav
           aria-label="Primary"

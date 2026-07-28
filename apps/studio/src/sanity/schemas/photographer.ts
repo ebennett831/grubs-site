@@ -15,7 +15,7 @@ export const photographerSchema = defineType({
       description: "Name shown on profile and structured data.",
       type: "string",
       group: "identity",
-      validation: (rule) => rule.required().max(80),
+      validation: (rule) => rule.max(80).warning(),
     }),
     defineField({
       name: "bio",
@@ -24,7 +24,6 @@ export const photographerSchema = defineType({
       type: "text",
       rows: 8,
       group: "identity",
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "profileImage",
@@ -50,13 +49,21 @@ export const photographerSchema = defineType({
       type: "string",
       group: "legacy",
       hidden: true,
-      validation: (rule) => rule.email(),
     }),
   ],
   preview: {
     select: {
       title: "name",
       media: "profileImage",
+    },
+    prepare(selection) {
+      return {
+        title:
+          typeof selection.title === "string" && selection.title.trim()
+            ? selection.title
+            : "Photographer Profile",
+        media: selection.media,
+      };
     },
   },
 });

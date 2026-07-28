@@ -5,17 +5,14 @@ import { notFound } from "next/navigation";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
-import { urlFor } from "@/lib/sanity/image";
+import { getSanityImageUrl, hasSanityImage } from "@/lib/sanity/image";
 import {
   galleryByIdentifierQuery,
   siteSettingsQuery,
 } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { type Gallery, type Photo, type SiteSettings } from "@/types/sanity";
-
-type GalleryWithPhotos = Gallery & {
-  photos: Photo[];
-};
+import { getTrimmedString } from "@/lib/utils/content";
+import { type GalleryWithPhotos, type SiteSettings } from "@/types/sanity";
 
 interface GalleryPageProps {
   params: Promise<{
@@ -24,7 +21,13 @@ interface GalleryPageProps {
 }
 
 export default async function GalleryPage({ params }: GalleryPageProps) {
-  const { identifier } = await params;
+  const { identifier: rawIdentifier } = await params;
+  const identifier = getTrimmedString(rawIdentifier);
+
+  if (!identifier) {
+    notFound();
+  }
+
   const gallery = await fetchSanity<GalleryWithPhotos>(
     galleryByIdentifierQuery,
     { identifier },
@@ -34,6 +37,18 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
     notFound();
   }
 
+  const galleryTitle = getTrimmedString(gallery.title) || "Gallery";
+  const galleryDescription = getTrimmedString(gallery.description);
+  const coverImage = gallery.coverPhoto?.image;
+  const coverImageUrl = getSanityImageUrl(coverImage, (builder) =>
+    builder.width(1800).fit("max").quality(82).auto("format"),
+  );
+  const coverAlt =
+    getTrimmedString(gallery.coverPhoto?.altText) || galleryTitle;
+  const photos = (gallery.photos ?? []).filter(
+    (photo) => photo && hasSanityImage(photo.image),
+  );
+
   return (
     <section className="py-14 sm:py-18 lg:py-24">
       <Container className="max-w-none space-y-10">
@@ -41,62 +56,57 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
           href="/galleries"
           className="text-charcoal/60 hover:text-charcoal focus-visible:outline-accent inline-flex items-center gap-2 text-sm tracking-[0.2em] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-4"
         >
-          <span aria-hidden="true">←</span>
+          <span aria-hidden="true">{"\u2190"}</span>
           Back to Galleries
         </Link>
 
         <div className="space-y-6 text-center">
           <h1 className="font-serif-display text-charcoal text-5xl sm:text-6xl">
-            {gallery.title}
+            {galleryTitle}
           </h1>
-          {gallery.description ? (
+          {galleryDescription ? (
             <p className="text-charcoal/70 mx-auto max-w-3xl text-sm leading-7 sm:text-base">
-              {gallery.description}
+              {galleryDescription}
             </p>
           ) : null}
         </div>
 
-        {gallery.coverPhoto?.image ? (
-          <div className="relative mx-auto aspect-[16/10] w-full max-w-4xl overflow-hidden rounded-2xl bg-black/5 sm:aspect-[16/9]">
+        {coverImageUrl ? (
+          <div className="relative mx-auto aspect-[16/10] w-full max-w-4xl overflow-hidden bg-black/5 sm:aspect-[16/9]">
             <Image
-              src={urlFor(gallery.coverPhoto.image)
-                .width(1400)
-                .fit("max")
-                .quality(82)
-                .auto("format")
-                .url()}
-              alt={gallery.coverPhoto.altText}
+              src={coverImageUrl}
+              alt={coverAlt}
               fill
               sizes="(max-width: 1024px) 100vw, 1024px"
-              placeholder={gallery.coverPhoto.image.lqip ? "blur" : "empty"}
-              blurDataURL={gallery.coverPhoto.image.lqip}
+              placeholder={coverImage?.lqip ? "blur" : "empty"}
+              blurDataURL={coverImage?.lqip ?? undefined}
               className="object-cover"
             />
           </div>
         ) : null}
 
-        {gallery.photos.length ? (
-          <PhotoGrid photos={gallery.photos} density={3} />
-        ) : (
-          <p className="text-charcoal/70">No photos in this gallery yet.</p>
-        )}
+        {photos.length ? <PhotoGrid photos={photos} density={3} /> : null}
       </Container>
     </section>
   );
 }
 
 export async function generateMetadata({ params }: GalleryPageProps) {
-  const { identifier } = await params;
+  const { identifier: rawIdentifier } = await params;
+  const identifier = getTrimmedString(rawIdentifier);
   const siteSettings = await fetchSanity<SiteSettings>(siteSettingsQuery);
-  const gallery = await fetchSanity<GalleryWithPhotos>(
-    galleryByIdentifierQuery,
-    { identifier },
-  );
+  const gallery = identifier
+    ? await fetchSanity<GalleryWithPhotos>(galleryByIdentifierQuery, {
+        identifier,
+      })
+    : null;
 
   return buildMetadata({
-    title: gallery?.title ?? "Gallery",
-    description: gallery?.description ?? "A photo gallery.",
-    pathname: `/galleries/${identifier}`,
+    title: getTrimmedString(gallery?.title) || "Gallery",
+    description: getTrimmedString(gallery?.description) || "A photo gallery.",
+    pathname: identifier
+      ? `/galleries/${encodeURIComponent(identifier)}`
+      : "/galleries",
     siteSettings,
   });
 }

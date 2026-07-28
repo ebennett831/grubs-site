@@ -9,23 +9,6 @@ export const homePageSettingsSchema = defineType({
     { name: "featured", title: "Featured work" },
     { name: "navigation", title: "Closing links" },
   ],
-  initialValue: {
-    heroEyebrow: "PHOTOGRAPHY",
-    heroTitle: "Photographs of people, places, and passing moments.",
-    heroDescription: "A refined sequence of selected photographs.",
-    ctaLabel: "View photography",
-    ctaHref: "/photography",
-    featuredEyebrow: "Featured work",
-    featuredTitle: "Selected photographs",
-    featuredDescription:
-      "A collection of recent portraits, landscapes, and observations.",
-    galleriesLinkLabel: "Galleries",
-    galleriesLinkDescription: "View grouped bodies of work",
-    photographyLinkLabel: "Photography",
-    photographyLinkDescription: "Browse individual photographs",
-    aboutLinkLabel: "About",
-    aboutLinkDescription: "Learn about the photographer",
-  },
   fields: [
     defineField({
       name: "heroEyebrow",
@@ -33,7 +16,7 @@ export const homePageSettingsSchema = defineType({
       description: "Small label above the main hero heading.",
       type: "string",
       group: "hero",
-      validation: (rule) => rule.max(30),
+      validation: (rule) => rule.max(30).warning(),
     }),
     defineField({
       name: "heroTitle",
@@ -41,7 +24,7 @@ export const homePageSettingsSchema = defineType({
       description: "Main homepage heading.",
       type: "string",
       group: "hero",
-      validation: (rule) => rule.required().max(80),
+      validation: (rule) => rule.max(80).warning(),
     }),
     defineField({
       name: "heroDescription",
@@ -50,7 +33,7 @@ export const homePageSettingsSchema = defineType({
       type: "text",
       rows: 4,
       group: "hero",
-      validation: (rule) => rule.max(220),
+      validation: (rule) => rule.max(220).warning(),
     }),
     defineField({
       name: "heroImage",
@@ -67,20 +50,22 @@ export const homePageSettingsSchema = defineType({
       type: "string",
       group: "hero",
       validation: (rule) =>
-        rule.custom((value, context) => {
-          const hasHeroImage = Boolean(
-            (
-              context.document as
-                | { heroImage?: { asset?: { _ref?: string } } }
-                | undefined
-            )?.heroImage?.asset?._ref,
-          );
-          if (hasHeroImage && !value?.trim()) {
-            return "Add alt text when a hero image is set.";
-          }
+        rule
+          .custom((value, context) => {
+            const hasHeroImage = Boolean(
+              (
+                context.document as
+                  | { heroImage?: { asset?: { _ref?: string } } }
+                  | undefined
+              )?.heroImage?.asset?._ref,
+            );
+            if (hasHeroImage && !value?.trim()) {
+              return "Add alt text when a hero image is set.";
+            }
 
-          return true;
-        }),
+            return true;
+          })
+          .warning(),
     }),
     defineField({
       name: "ctaLabel",
@@ -88,7 +73,7 @@ export const homePageSettingsSchema = defineType({
       description: "Button/link text (for example: View photography).",
       type: "string",
       group: "hero",
-      validation: (rule) => rule.max(40),
+      validation: (rule) => rule.max(40).warning(),
     }),
     defineField({
       name: "ctaHref",
@@ -99,13 +84,13 @@ export const homePageSettingsSchema = defineType({
       group: "hero",
       validation: (rule) =>
         rule.custom((value) => {
-          if (!value) {
+          if (!value?.trim()) {
             return true;
           }
 
-          return value.startsWith("/")
+          return /^\/(?!\/)/.test(value)
             ? true
-            : "Use a path that starts with /.";
+            : "Use a local path with one leading slash, such as /photography.";
         }),
     }),
     defineField({
@@ -114,7 +99,7 @@ export const homePageSettingsSchema = defineType({
       description: "Small label above the featured work heading.",
       type: "string",
       group: "featured",
-      validation: (rule) => rule.max(40),
+      validation: (rule) => rule.max(40).warning(),
     }),
     defineField({
       name: "featuredTitle",
@@ -122,7 +107,7 @@ export const homePageSettingsSchema = defineType({
       description: "Main heading above the featured image sequence.",
       type: "string",
       group: "featured",
-      validation: (rule) => rule.max(90),
+      validation: (rule) => rule.max(90).warning(),
     }),
     defineField({
       name: "featuredDescription",
@@ -131,7 +116,7 @@ export const homePageSettingsSchema = defineType({
       type: "text",
       rows: 3,
       group: "featured",
-      validation: (rule) => rule.max(220),
+      validation: (rule) => rule.max(220).warning(),
     }),
     defineField({
       name: "featuredPhotos",
@@ -143,13 +128,19 @@ export const homePageSettingsSchema = defineType({
       of: [
         {
           type: "reference",
+          weak: true,
           to: [{ type: "photo" }],
           options: {
             disableNew: true,
           },
         },
       ],
-      validation: (rule) => rule.max(8).unique(),
+      validation: (rule) => [
+        rule
+          .max(8)
+          .warning("Up to 8 photos are recommended for homepage pacing."),
+        rule.unique().warning("Repeated photos are usually unintentional."),
+      ],
     }),
     defineField({
       name: "galleriesLinkLabel",
@@ -157,7 +148,7 @@ export const homePageSettingsSchema = defineType({
       description: "Label for the compact Galleries link near the page end.",
       type: "string",
       group: "navigation",
-      validation: (rule) => rule.max(30),
+      validation: (rule) => rule.max(30).warning(),
     }),
     defineField({
       name: "galleriesLinkDescription",
@@ -165,7 +156,7 @@ export const homePageSettingsSchema = defineType({
       description: "Short supporting line beneath the Galleries link.",
       type: "string",
       group: "navigation",
-      validation: (rule) => rule.max(120),
+      validation: (rule) => rule.max(120).warning(),
     }),
     defineField({
       name: "photographyLinkLabel",
@@ -173,7 +164,7 @@ export const homePageSettingsSchema = defineType({
       description: "Label for the compact Photography link near the page end.",
       type: "string",
       group: "navigation",
-      validation: (rule) => rule.max(30),
+      validation: (rule) => rule.max(30).warning(),
     }),
     defineField({
       name: "photographyLinkDescription",
@@ -181,7 +172,7 @@ export const homePageSettingsSchema = defineType({
       description: "Short supporting line beneath the Photography link.",
       type: "string",
       group: "navigation",
-      validation: (rule) => rule.max(120),
+      validation: (rule) => rule.max(120).warning(),
     }),
     defineField({
       name: "aboutLinkLabel",
@@ -189,7 +180,7 @@ export const homePageSettingsSchema = defineType({
       description: "Label for the compact About link near the page end.",
       type: "string",
       group: "navigation",
-      validation: (rule) => rule.max(30),
+      validation: (rule) => rule.max(30).warning(),
     }),
     defineField({
       name: "aboutLinkDescription",
@@ -197,7 +188,7 @@ export const homePageSettingsSchema = defineType({
       description: "Short supporting line beneath the About link.",
       type: "string",
       group: "navigation",
-      validation: (rule) => rule.max(120),
+      validation: (rule) => rule.max(120).warning(),
     }),
   ],
   preview: {
@@ -208,11 +199,15 @@ export const homePageSettingsSchema = defineType({
     },
     prepare(selection) {
       const featuredCount = Array.isArray(selection.featuredPhotos)
-        ? selection.featuredPhotos.length
+        ? selection.featuredPhotos.filter(Boolean).length
         : 0;
+      const title =
+        typeof selection.heroTitle === "string" && selection.heroTitle.trim()
+          ? selection.heroTitle.trim()
+          : "Home Page Settings";
 
       return {
-        title: selection.heroTitle || "Home Page Settings",
+        title,
         subtitle: `${featuredCount} featured photo${featuredCount === 1 ? "" : "s"}`,
         media: selection.heroImage,
       };

@@ -5,13 +5,15 @@ import { RevealOnScroll } from "@/components/motion/reveal-on-scroll";
 import { SocialLinks } from "@/components/social/social-links";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
-import { urlFor } from "@/lib/sanity/image";
+import { getSanityFileUrl } from "@/lib/sanity/file";
+import { getSanityImageUrl, hasSanityImage } from "@/lib/sanity/image";
 import {
   aboutPageSettingsQuery,
   photographerQuery,
   siteSettingsQuery,
 } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
 import { normalizeSocialLinks } from "@/lib/utils/social-links";
 import {
   type AboutPageSettings,
@@ -26,21 +28,17 @@ export default async function AboutPage() {
     fetchSanity<Photographer>(photographerQuery, {}, 0),
   ]);
 
-  const heroPortrait =
-    aboutPageSettings?.portraitImage ?? photographer?.profileImage;
-  const hasPortrait = Boolean(heroPortrait?.asset?._ref);
-  const portraitUrl = hasPortrait
-    ? urlFor(heroPortrait!)
-        .width(1400)
-        .height(1750)
-        .fit("crop")
-        .quality(82)
-        .auto("format")
-        .url()
-    : null;
+  const heroPortrait = hasSanityImage(aboutPageSettings?.portraitImage)
+    ? aboutPageSettings.portraitImage
+    : photographer?.profileImage;
+  const portraitUrl = getSanityImageUrl(heroPortrait, (builder) =>
+    builder.width(1400).height(1750).fit("crop").quality(82).auto("format"),
+  );
 
   const biographySource =
-    aboutPageSettings?.body?.trim() || photographer?.bio?.trim() || "";
+    getTrimmedString(aboutPageSettings?.body) ||
+    getTrimmedString(photographer?.bio) ||
+    "";
   const biographyParagraphs = biographySource
     .split(/\n{2,}/)
     .map((paragraph) => paragraph.trim())
@@ -50,84 +48,116 @@ export default async function AboutPage() {
   const hasAboutSocialLinks =
     normalizeSocialLinks(socialLinks, "about").length > 0;
 
-  const resumeUrl = aboutPageSettings?.resumeFile?.asset?.url;
-  const resumeLabel = aboutPageSettings?.resumeLabel?.trim() || "View resume";
-  const resumeDescription = aboutPageSettings?.resumeDescription?.trim();
+  const resumeUrl = getSanityFileUrl(aboutPageSettings?.resumeFile);
+  const resumeLabel =
+    getTrimmedString(aboutPageSettings?.resumeLabel) || "View resume";
+  const resumeDescription = getTrimmedString(
+    aboutPageSettings?.resumeDescription,
+  );
 
   const pageTitle =
-    aboutPageSettings?.pageTitle?.trim() ||
-    photographer?.name?.trim() ||
-    siteSettings?.siteTitle?.trim() ||
-    "About";
-  const intro = aboutPageSettings?.intro?.trim();
-  const locationLine = aboutPageSettings?.locationLine?.trim();
-  const availabilityStatement =
-    aboutPageSettings?.availabilityStatement?.trim();
+    getTrimmedString(aboutPageSettings?.pageTitle) ||
+    getTrimmedString(photographer?.name);
+  const intro = getTrimmedString(aboutPageSettings?.intro);
+  const locationLine = getTrimmedString(aboutPageSettings?.locationLine);
+  const eyebrow = getTrimmedString(aboutPageSettings?.eyebrow);
+  const availabilityStatement = getTrimmedString(
+    aboutPageSettings?.availabilityStatement,
+  );
   const secondaryHeading =
-    aboutPageSettings?.secondaryHeading?.trim() || "Biography";
+    getTrimmedString(aboutPageSettings?.secondaryHeading) || "Biography";
   const socialHeading =
-    aboutPageSettings?.socialSectionHeading?.trim() || "Elsewhere";
-  const contactEmail = siteSettings?.contactEmail?.trim();
+    getTrimmedString(aboutPageSettings?.socialSectionHeading) || "Elsewhere";
+  const contactEmailHref = getSafeEmailHref(siteSettings?.contactEmail);
   const portraitAlt =
-    aboutPageSettings?.portraitImageAlt?.trim() ||
-    (photographer?.name?.trim()
-      ? `Portrait of ${photographer.name.trim()}`
-      : `Portrait for ${pageTitle}`);
+    getTrimmedString(aboutPageSettings?.portraitImageAlt) ||
+    (getTrimmedString(photographer?.name)
+      ? `Portrait of ${getTrimmedString(photographer?.name)}`
+      : "");
+  const hasHeroText = Boolean(eyebrow || pageTitle || locationLine || intro);
+  const hasSupportingContent = Boolean(
+    biographyParagraphs.length ||
+    resumeUrl ||
+    availabilityStatement ||
+    hasAboutSocialLinks,
+  );
+  const showHero = Boolean(portraitUrl || hasHeroText || !hasSupportingContent);
+  const showVisibleFallbackHeading = Boolean(
+    !portraitUrl && !hasHeroText && !hasSupportingContent,
+  );
 
   return (
     <article className="pt-10 pb-16 sm:pt-14 sm:pb-20 lg:pt-18 lg:pb-28">
-      <Container className="space-y-20 sm:space-y-24 lg:space-y-28">
-        <section
-          aria-labelledby="about-heading"
-          className={
-            portraitUrl
-              ? "grid gap-10 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:items-center lg:gap-16 xl:gap-20"
-              : "max-w-4xl py-10 sm:py-16"
-          }
-        >
-          {portraitUrl ? (
-            <RevealOnScroll>
-              <div className="bg-charcoal/8 relative aspect-[4/5] overflow-hidden">
-                <Image
-                  src={portraitUrl}
-                  alt={portraitAlt}
-                  width={1400}
-                  height={1750}
-                  priority
-                  fetchPriority="high"
-                  sizes="(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) calc(100vw - 4rem), (max-width: 1279px) 50vw, 630px"
-                  placeholder={heroPortrait?.lqip ? "blur" : "empty"}
-                  blurDataURL={heroPortrait?.lqip}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </RevealOnScroll>
-          ) : null}
+      {!pageTitle && !showVisibleFallbackHeading ? (
+        <h1 className="sr-only">About</h1>
+      ) : null}
 
-          <RevealOnScroll delay={0.05}>
-            <div className="space-y-5 lg:py-10">
-              <p className="text-charcoal/58 text-xs tracking-[0.28em] uppercase">
-                {aboutPageSettings?.eyebrow?.trim() || "About"}
-              </p>
-              <h1
-                id="about-heading"
-                className="font-serif-display text-charcoal text-5xl leading-[0.94] sm:text-6xl xl:text-7xl"
-              >
-                {pageTitle}
-              </h1>
-              {locationLine ? (
-                <p className="text-charcoal/62 text-sm tracking-[0.12em] uppercase">
-                  {locationLine}
-                </p>
-              ) : null}
-              {intro ? (
-                <p className="text-charcoal/80 max-w-xl text-lg leading-8 sm:text-xl sm:leading-9">
-                  {intro}
-                </p>
-              ) : null}
-            </div>
-          </RevealOnScroll>
-        </section>
+      <Container className="space-y-20 sm:space-y-24 lg:space-y-28">
+        {showHero ? (
+          <section
+            aria-labelledby={pageTitle ? "about-heading" : undefined}
+            className={
+              portraitUrl && hasHeroText
+                ? "grid gap-10 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:items-center lg:gap-16 xl:gap-20"
+                : portraitUrl
+                  ? "mx-auto w-full max-w-3xl"
+                  : "max-w-4xl py-10 sm:py-16"
+            }
+          >
+            {portraitUrl ? (
+              <RevealOnScroll>
+                <div className="bg-charcoal/8 relative aspect-[4/5] overflow-hidden">
+                  <Image
+                    src={portraitUrl}
+                    alt={portraitAlt}
+                    width={1400}
+                    height={1750}
+                    priority
+                    fetchPriority="high"
+                    sizes={
+                      hasHeroText
+                        ? "(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) calc(100vw - 4rem), (max-width: 1279px) 50vw, 630px"
+                        : "(max-width: 639px) calc(100vw - 2.5rem), (max-width: 1023px) calc(100vw - 4rem), 768px"
+                    }
+                    placeholder={heroPortrait?.lqip ? "blur" : "empty"}
+                    blurDataURL={heroPortrait?.lqip ?? undefined}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </RevealOnScroll>
+            ) : null}
+
+            {hasHeroText || showVisibleFallbackHeading ? (
+              <RevealOnScroll delay={portraitUrl ? 0.05 : 0}>
+                <div className="space-y-5 lg:py-10">
+                  {eyebrow ? (
+                    <p className="text-charcoal/58 text-xs tracking-[0.28em] uppercase">
+                      {eyebrow}
+                    </p>
+                  ) : null}
+                  {pageTitle || showVisibleFallbackHeading ? (
+                    <h1
+                      id={pageTitle ? "about-heading" : undefined}
+                      className="font-serif-display text-charcoal text-5xl leading-[0.94] sm:text-6xl xl:text-7xl"
+                    >
+                      {pageTitle || "About"}
+                    </h1>
+                  ) : null}
+                  {locationLine ? (
+                    <p className="text-charcoal/62 text-sm tracking-[0.12em] uppercase">
+                      {locationLine}
+                    </p>
+                  ) : null}
+                  {intro ? (
+                    <p className="text-charcoal/80 max-w-xl text-lg leading-8 sm:text-xl sm:leading-9">
+                      {intro}
+                    </p>
+                  ) : null}
+                </div>
+              </RevealOnScroll>
+            ) : null}
+          </section>
+        ) : null}
 
         {biographyParagraphs.length > 0 ? (
           <RevealOnScroll>
@@ -198,10 +228,10 @@ export default async function AboutPage() {
                   {availabilityStatement}
                 </p>
                 <Link
-                  href={contactEmail ? `mailto:${contactEmail}` : "/contact"}
+                  href={contactEmailHref || "/contact"}
                   className="border-charcoal/30 text-charcoal/88 hover:border-charcoal hover:text-charcoal focus-visible:outline-accent mt-5 inline-flex min-h-11 items-center border-b pb-1 text-sm tracking-[0.16em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
                 >
-                  {contactEmail ? "Email the photographer" : "Get in touch"}
+                  {contactEmailHref ? "Email the photographer" : "Get in touch"}
                 </Link>
               </div>
             </section>
@@ -230,10 +260,10 @@ export async function generateMetadata() {
   ]);
 
   return buildMetadata({
-    title: aboutPageSettings?.pageTitle?.trim() || "About",
+    title: getTrimmedString(aboutPageSettings?.pageTitle) || "About",
     description:
-      aboutPageSettings?.intro?.trim() ||
-      siteSettings?.siteDescription ||
+      getTrimmedString(aboutPageSettings?.intro) ||
+      getTrimmedString(siteSettings?.siteDescription) ||
       "Photographer profile and background.",
     pathname: "/about",
     siteSettings,

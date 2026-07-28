@@ -1,20 +1,53 @@
 import { groq } from "next-sanity";
 
-const photoProjection = groq`{
+export const imageProjection = groq`{
+  _type,
+  asset,
+  crop,
+  hotspot,
+  "dimensions": asset->metadata.dimensions{
+    aspectRatio,
+    height,
+    width
+  },
+  "lqip": asset->metadata.lqip
+}`;
+
+export const socialLinkProjection = groq`{
+  _key,
+  _type,
+  platform,
+  label,
+  url,
+  showInFooter,
+  showOnAboutPage
+}`;
+
+export const gallerySummaryProjection = groq`{
   _id,
   _type,
-  image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
+  title,
+  slug,
+  sortOrder
+}`;
+
+export const photoProjection = groq`{
+  _id,
+  _type,
+  image${imageProjection},
   altText,
   title,
   caption,
   location,
   dateTaken,
-  gallery->{
-    _id,
-    _type,
-    title,
-    sortOrder
-  }
+  gallery->${gallerySummaryProjection}
+}`;
+
+export const galleryCoverPhotoProjection = groq`{
+  _id,
+  _type,
+  image${imageProjection},
+  altText
 }`;
 
 export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
@@ -22,22 +55,16 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
   _type,
   siteTitle,
   siteDescription,
+  accentColor{hex},
   contactEmail,
   footerEyebrow,
   footerHeading,
   footerDescription,
   footerLocation,
   footerCopyrightName,
-  ogImage,
-  favicon,
-  socialLinks[]{
-    _key,
-    platform,
-    label,
-    url,
-    showInFooter,
-    showOnAboutPage
-  }
+  ogImage${imageProjection},
+  favicon${imageProjection},
+  "socialLinks": coalesce(socialLinks[]${socialLinkProjection}, [])
 }`;
 
 export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
@@ -46,29 +73,17 @@ export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
   heroEyebrow,
   heroTitle,
   heroDescription,
-  heroImage{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
+  heroImage${imageProjection},
   heroImageAlt,
   ctaLabel,
   ctaHref,
   featuredEyebrow,
   featuredTitle,
   featuredDescription,
-  featuredPhotos[]->{
-    _id,
-    _type,
-    image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
-    altText,
-    title,
-    caption,
-    location,
-    dateTaken,
-    gallery->{
-      _id,
-      _type,
-      title,
-      sortOrder
-    }
-  },
+  "featuredPhotos": coalesce(
+    array::compact(featuredPhotos[]->${photoProjection}),
+    []
+  ),
   galleriesLinkLabel,
   galleriesLinkDescription,
   photographyLinkLabel,
@@ -91,14 +106,18 @@ export const aboutPageSettingsQuery = groq`*[_type == "aboutPageSettings"][0]{
   resumeLabel,
   resumeDescription,
   "resumeFile": resumeFile{
+    _type,
     "asset": asset->{
+      _id,
+      _type,
       url,
       originalFilename,
-      mimeType
+      mimeType,
+      size
     }
   },
   portraitImageAlt,
-  portraitImage{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip}
+  portraitImage${imageProjection}
 }`;
 
 export const photographerQuery = groq`*[_type == "photographer"][0]{
@@ -106,70 +125,57 @@ export const photographerQuery = groq`*[_type == "photographer"][0]{
   _type,
   name,
   bio,
-  profileImage{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
-  socialLinks[]{
-    _key,
-    platform,
-    label,
-    url,
-    showInFooter,
-    showOnAboutPage
-  },
+  profileImage${imageProjection},
+  "socialLinks": coalesce(socialLinks[]${socialLinkProjection}, []),
   email
 }`;
 
-export const allPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc){
-  _id,
-  _type,
-  image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
-  altText,
-  title,
-  caption,
-  location,
-  dateTaken
-}`;
+export const allPhotosQuery = groq`*[
+  _type == "photo" &&
+  defined(image.asset._ref)
+] | order(_createdAt desc) ${photoProjection}`;
 
-export const homepageFallbackPhotosQuery = groq`*[_type == "photo"] | order(_createdAt desc)[0...6]{
-  _id,
-  _type,
-  image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
-  altText,
-  title,
-  caption,
-  location,
-  dateTaken
-}`;
+export const homepageFallbackPhotosQuery = groq`*[
+  _type == "photo" &&
+  defined(image.asset._ref)
+] | order(_createdAt desc)[0...6] ${photoProjection}`;
 
-export const galleriesQuery = groq`*[_type == "gallery"] | order(coalesce(sortOrder, 0) desc, _createdAt desc){
+export const galleriesQuery = groq`*[_type == "gallery"] |
+  order(coalesce(sortOrder, 0) desc, _createdAt desc){
+    _id,
+    _type,
+    title,
+    description,
+    slug,
+    sortOrder,
+    coverPhoto->${galleryCoverPhotoProjection},
+    "photoCount": count(*[
+      _type == "photo" &&
+      defined(image.asset._ref) &&
+      references(^._id)
+    ])
+  }`;
+
+export const ungroupedPhotosQuery = groq`*[
+  _type == "photo" &&
+  !defined(gallery) &&
+  defined(image.asset._ref)
+] | order(_createdAt desc) ${photoProjection}`;
+
+export const galleryByIdentifierQuery = groq`*[
+  _type == "gallery" &&
+  (slug.current == $identifier || _id == $identifier)
+][0]{
   _id,
   _type,
   title,
   description,
   slug,
   sortOrder,
-  coverPhoto->{
-    _id,
-    _type,
-    image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
-    altText
-  },
-  "photoCount": count(*[_type == "photo" && references(^._id)])
-}`;
-
-export const ungroupedPhotosQuery = groq`*[_type == "photo" && !defined(gallery)] | order(_createdAt desc) ${photoProjection}`;
-
-export const galleryByIdentifierQuery = groq`*[_type == "gallery" && (slug.current == $identifier || _id == $identifier)][0]{
-  _id,
-  _type,
-  title,
-  description,
-  slug,
-  sortOrder,
-  coverPhoto->{
-    _id,
-    _type,
-    image{..., "dimensions": asset->metadata.dimensions, "lqip": asset->metadata.lqip},
-    altText
-  },
-  "photos": *[_type == "photo" && references(^._id)] | order(_createdAt desc) ${photoProjection}
+  coverPhoto->${galleryCoverPhotoProjection},
+  "photos": *[
+    _type == "photo" &&
+    defined(image.asset._ref) &&
+    references(^._id)
+  ] | order(_createdAt desc) ${photoProjection}
 }`;

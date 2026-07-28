@@ -1,4 +1,4 @@
-import {defineField, defineType} from "sanity";
+import { defineField, defineType } from "sanity";
 
 export const gallerySchema = defineType({
   name: "gallery",
@@ -10,7 +10,14 @@ export const gallerySchema = defineType({
       title: "Title",
       description: "Public name for this gallery.",
       type: "string",
-      validation: (rule) => rule.required(),
+      validation: (rule) =>
+        rule
+          .custom((value) =>
+            value?.trim()
+              ? true
+              : "Add a title before linking this gallery publicly.",
+          )
+          .warning(),
     }),
     defineField({
       name: "description",
@@ -25,17 +32,18 @@ export const gallerySchema = defineType({
       description: "Optional photo used as the gallery thumbnail.",
       type: "reference",
       weak: true,
-      to: [{type: "photo"}],
+      to: [{ type: "photo" }],
     }),
     defineField({
       name: "slug",
       title: "Slug",
+      description:
+        "Optional URL segment. Add one when this gallery is ready to be linked publicly.",
       type: "slug",
       options: {
         source: "title",
         maxLength: 96,
       },
-      hidden: () => true,
     }),
     defineField({
       name: "sortOrder",
@@ -52,8 +60,14 @@ export const gallerySchema = defineType({
     },
     prepare(selection) {
       return {
-        title: selection.title,
-        subtitle: typeof selection.subtitle === "number" ? `Order ${selection.subtitle}` : "Gallery",
+        title:
+          typeof selection.title === "string" && selection.title.trim()
+            ? selection.title
+            : "Untitled gallery",
+        subtitle:
+          typeof selection.subtitle === "number"
+            ? `Order ${selection.subtitle}`
+            : "Gallery",
       };
     },
   },

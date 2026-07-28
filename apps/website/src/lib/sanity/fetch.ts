@@ -8,22 +8,18 @@ export async function fetchSanity<T>(
   query: string,
   params: QueryParams = {},
   revalidate: number = DEFAULT_REVALIDATE_SECONDS,
-) {
+): Promise<T | null> {
   if (!hasValidSanityEnv) {
-    return null as T | null;
+    return null;
   }
 
-  try {
-    if (revalidate <= 0) {
-      return await sanityClient.fetch<T>(query, params);
-    }
-
-    return await sanityClient.fetch<T>(query, params, {
-      next: {
-        revalidate,
-      },
-    });
-  } catch {
-    return null as T | null;
+  if (revalidate <= 0) {
+    return sanityClient.fetch<T | null>(query, params);
   }
+
+  return sanityClient.fetch<T | null>(query, params, {
+    next: {
+      revalidate,
+    },
+  });
 }

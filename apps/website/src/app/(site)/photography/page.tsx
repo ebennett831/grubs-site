@@ -6,8 +6,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { type Photo, type SiteSettings } from "@/types/sanity";
 
 export default async function PhotographyPage() {
-  const rawPhotos = await fetchSanity<Photo[]>(allPhotosQuery);
-  const photos = rawPhotos ?? [];
+  const photos = await fetchSanity<Array<Photo | null>>(allPhotosQuery);
 
   return (
     <section className="py-14 sm:py-18 lg:py-24">
@@ -22,11 +21,7 @@ export default async function PhotographyPage() {
           />
         </div>
 
-        {photos.length ? (
-          <PhotoGrid photos={photos} density={3} />
-        ) : (
-          <p className="text-charcoal/70">No photos published yet.</p>
-        )}
+        <PhotoGrid photos={photos} density={3} />
       </Container>
     </section>
   );

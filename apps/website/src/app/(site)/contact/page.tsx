@@ -1,10 +1,9 @@
-import Link from "next/link";
-
 import { SocialLinks } from "@/components/social/social-links";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
 import { photographerQuery, siteSettingsQuery } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
 import { type Photographer, type SiteSettings } from "@/types/sanity";
 
 import { submitContactForm } from "./actions";
@@ -26,7 +25,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     status === "invalid"
       ? "Please complete all fields with valid details."
       : null;
-  const contactEmail = siteSettings?.contactEmail ?? photographer?.email;
+  const contactEmail =
+    getTrimmedString(siteSettings?.contactEmail) ||
+    getTrimmedString(photographer?.email);
+  const contactEmailHref = getSafeEmailHref(contactEmail);
   const socialLinks = siteSettings?.socialLinks?.length
     ? siteSettings.socialLinks
     : (photographer?.socialLinks ?? []);
@@ -39,18 +41,16 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             Contact
           </h1>
           <p className="text-charcoal/80 leading-relaxed break-words whitespace-pre-wrap">
-            Share your project details or inquiry. Form validation is
-            server-side and structured for a secure provider integration in
-            production.
+            Share a little about your project, timing, or collaboration.
           </p>
-          {contactEmail ? (
+          {contactEmailHref && contactEmail ? (
             <p>
-              <Link
-                href={`mailto:${contactEmail}`}
+              <a
+                href={contactEmailHref}
                 className="text-charcoal decoration-charcoal/40 hover:decoration-charcoal underline underline-offset-4"
               >
                 {contactEmail}
-              </Link>
+              </a>
             </p>
           ) : null}
 

@@ -1,10 +1,19 @@
+import { getSafeExternalHref, getTrimmedString } from "./content";
+
 const DEFAULT_SITE_URL = "http://localhost:3000";
 
 export function getSiteUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL;
+  const configuredUrl = getSafeExternalHref(process.env.NEXT_PUBLIC_SITE_URL);
+
+  return (configuredUrl ?? DEFAULT_SITE_URL).replace(/\/$/, "");
 }
 
 export function absoluteUrl(pathname: string) {
-  const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
+  const candidate = getTrimmedString(pathname) ?? "/";
+  const normalizedPath =
+    candidate.startsWith("/") && !candidate.startsWith("//")
+      ? candidate
+      : `/${candidate.replace(/^\/+/, "")}`;
+
   return new URL(normalizedPath, getSiteUrl()).toString();
 }
