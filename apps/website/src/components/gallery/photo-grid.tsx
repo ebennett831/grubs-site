@@ -17,42 +17,42 @@ interface PhotoGridProps {
 const centeredRowLayouts = {
   1: {
     container: "flex flex-wrap items-start justify-center gap-8",
-    item: "w-full shrink-0 lg:w-[calc((100%_-_2rem)/2)]",
+    item: "w-full max-w-full shrink-0 sm:h-96 sm:w-auto lg:h-[28rem]",
     sizes: "(max-width: 1024px) 100vw, 50vw",
   },
   2: {
     container: "flex flex-wrap items-start justify-center gap-6",
-    item: "w-full shrink-0 sm:w-[calc((100%_-_1.5rem)/2)] lg:w-[calc((100%_-_3rem)/3)]",
+    item: "w-full max-w-full shrink-0 sm:h-80 sm:w-auto lg:h-96",
     sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   },
   3: {
     container: "flex flex-wrap items-start justify-center gap-5",
-    item: "w-full shrink-0 sm:w-[calc((100%_-_1.25rem)/2)] lg:w-[calc((100%_-_3.75rem)/4)]",
+    item: "w-full max-w-full shrink-0 sm:h-64 sm:w-auto lg:h-72",
     sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw",
   },
   4: {
     container: "flex flex-wrap items-start justify-center gap-4",
-    item: "w-full shrink-0 sm:w-[calc((100%_-_2rem)/3)] lg:w-[calc((100%_-_4rem)/5)]",
+    item: "w-full max-w-full shrink-0 sm:h-56 sm:w-auto lg:h-64",
     sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 20vw",
   },
   5: {
     container: "flex flex-wrap items-start justify-center gap-4",
-    item: "w-full shrink-0 sm:w-[calc((100%_-_2rem)/3)] lg:w-[calc((100%_-_5rem)/6)]",
+    item: "w-full max-w-full shrink-0 sm:h-48 sm:w-auto lg:h-56",
     sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 17vw",
   },
   6: {
     container: "flex flex-wrap items-start justify-center gap-3",
-    item: "w-full shrink-0 sm:w-[calc((100%_-_2.25rem)/4)] lg:w-[calc((100%_-_4.5rem)/7)]",
+    item: "w-full max-w-full shrink-0 sm:h-44 sm:w-auto lg:h-48",
     sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 25vw, 15vw",
   },
   7: {
     container: "flex flex-wrap items-start justify-center gap-3",
-    item: "w-full shrink-0 sm:w-[calc((100%_-_2.25rem)/4)] lg:w-[calc((100%_-_5.25rem)/8)]",
+    item: "w-full max-w-full shrink-0 sm:h-40 sm:w-auto lg:h-44",
     sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 25vw, 13vw",
   },
   8: {
     container: "flex flex-wrap items-start justify-center gap-3",
-    item: "w-full shrink-0 sm:w-[calc((100%_-_3rem)/5)] lg:w-[calc((100%_-_6rem)/9)]",
+    item: "w-full max-w-full shrink-0 sm:h-36 sm:w-auto lg:h-40",
     sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 20vw, 12vw",
   },
 } as const;
@@ -143,6 +143,11 @@ export function PhotoGrid({
             className={`group bg-charcoal/10 break-inside-avoid overflow-hidden ${
               centerIncompleteRows ? centeredLayout.item : "mb-6"
             }`}
+            style={
+              centerIncompleteRows
+                ? { aspectRatio: `${width} / ${height}` }
+                : undefined
+            }
             initial={
               shouldReduceMotion
                 ? { opacity: 1, x: 0, y: 0, rotate: 0 }
@@ -164,6 +169,7 @@ export function PhotoGrid({
             }}
           >
             <motion.div
+              className={centerIncompleteRows ? "h-full w-full" : undefined}
               whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
               transition={{ duration: 0.2 }}
             >
@@ -184,7 +190,11 @@ export function PhotoGrid({
                 }
                 placeholder={lqip ? "blur" : "empty"}
                 blurDataURL={lqip ?? undefined}
-                className="h-auto w-full"
+                className={
+                  centerIncompleteRows
+                    ? "h-full w-full object-contain"
+                    : "h-auto w-full"
+                }
               />
             </motion.div>
           </motion.figure>
