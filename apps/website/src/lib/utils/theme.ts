@@ -1,7 +1,7 @@
 import { getTrimmedString } from "@/lib/utils/content";
 
 const DEFAULT_ACCENT = "#9f5d3f";
-const CREAM = "#f7f2ea";
+const CREAM = "#f2e8da";
 const CHARCOAL = "#181513";
 const HEX_COLOR_PATTERN = /^#[\da-f]{6}$/i;
 
