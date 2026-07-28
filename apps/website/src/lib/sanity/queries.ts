@@ -50,7 +50,10 @@ export const galleryCoverPhotoProjection = groq`{
   altText
 }`;
 
-export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
+export const siteSettingsQuery = groq`*[
+  _type == "siteSettings" &&
+  _id == "siteSettings"
+][0]{
   _id,
   _type,
   siteTitle,
