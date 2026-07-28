@@ -7,10 +7,9 @@ import {
   useState,
 } from "react";
 
-import { definePlugin, type Tool, useClient } from "sanity";
-import { route } from "sanity/router";
+import { definePlugin, type Tool } from "sanity";
 
-const apiVersion = "2025-02-01";
+import { usePublishedClient } from "../use-published-client";
 
 function toAltText(fileName: string) {
   const baseName = fileName.replace(/\.[^.]+$/, "");
@@ -40,13 +39,12 @@ export const bulkPhotoImportTool = definePlugin(() => ({
       name: "bulk-photo-import",
       title: "Bulk Photo Import",
       component: BulkPhotoImportComponent,
-      router: route.create("/*"),
     },
   ],
 }));
 
 function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
-  const client = useClient({ apiVersion });
+  const client = usePublishedClient();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isImporting, setIsImporting] = useState(false);

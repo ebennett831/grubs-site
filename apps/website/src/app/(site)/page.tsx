@@ -33,6 +33,14 @@ type FeaturedLayout = {
   wrapperClassName: string;
 };
 
+const heroTitleSizeOptions = {
+  1: "text-3xl leading-[0.98] sm:text-5xl lg:text-6xl",
+  2: "text-4xl leading-[0.97] sm:text-5xl lg:text-[4rem]",
+  3: "text-4xl leading-[0.95] sm:text-6xl lg:text-7xl",
+  4: "text-5xl leading-[0.93] sm:text-7xl lg:text-8xl",
+  5: "text-5xl leading-[0.9] sm:text-7xl lg:text-[7rem] xl:text-[8rem]",
+} as const;
+
 const PRIMARY_FEATURED_LAYOUTS: FeaturedLayout[] = [
   {
     requestWidth: 2000,
@@ -315,6 +323,12 @@ export default async function HomePage() {
   const heroAlt = getTrimmedString(homePageSettings?.heroImageAlt) || "";
   const heroEyebrow = getTrimmedString(homePageSettings?.heroEyebrow);
   const heroTitle = getTrimmedString(homePageSettings?.heroTitle);
+  const heroTitleSize =
+    typeof homePageSettings?.heroTitleSize === "number"
+      ? Math.min(5, Math.max(1, Math.round(homePageSettings.heroTitleSize)))
+      : 3;
+  const heroTitleClass =
+    heroTitleSizeOptions[heroTitleSize as keyof typeof heroTitleSizeOptions];
   const heroDescription = getTrimmedString(homePageSettings?.heroDescription);
   const ctaHref = getSafeLinkHref(homePageSettings?.ctaHref);
   const ctaLabel =
@@ -379,7 +393,7 @@ export default async function HomePage() {
           className={
             heroImageUrl
               ? "relative isolate h-[80svh] min-h-[32rem] md:h-[90svh]"
-              : "relative isolate flex min-h-[28rem] items-center py-20 sm:min-h-[34rem] sm:py-28"
+              : "bg-charcoal relative isolate flex min-h-[28rem] items-center overflow-hidden py-20 sm:min-h-[34rem] sm:py-28"
           }
         >
           {heroImageUrl ? (
@@ -403,6 +417,23 @@ export default async function HomePage() {
             />
           ) : null}
 
+          {!heroImageUrl ? (
+            <>
+              <div
+                className="bg-accent absolute inset-y-0 left-0 w-1 sm:w-1.5"
+                aria-hidden="true"
+              />
+              <div
+                className="bg-cream/12 absolute inset-x-0 bottom-0 h-px"
+                aria-hidden="true"
+              />
+              <div
+                className="bg-accent absolute bottom-0 left-0 h-[3px] w-[clamp(5rem,18vw,18rem)]"
+                aria-hidden="true"
+              />
+            </>
+          ) : null}
+
           {hasHeroText ? (
             <Container
               className={`relative flex h-full ${
@@ -410,28 +441,30 @@ export default async function HomePage() {
               }`}
             >
               <div
-                className={`max-w-3xl space-y-4 sm:space-y-5 ${
-                  heroImageUrl ? "text-white" : "text-charcoal"
+                className={`max-w-5xl space-y-4 sm:space-y-5 ${
+                  heroImageUrl ? "text-white" : "text-cream"
                 }`}
               >
                 {heroEyebrow ? (
                   <p
                     className={`text-xs tracking-[0.28em] uppercase ${
-                      heroImageUrl ? "text-white/85" : "text-charcoal/62"
+                      heroImageUrl ? "text-white/85" : "text-cream/62"
                     }`}
                   >
                     {heroEyebrow}
                   </p>
                 ) : null}
                 {heroTitle ? (
-                  <h1 className="font-serif-display text-4xl leading-[0.95] sm:text-6xl lg:text-7xl">
+                  <h1
+                    className={`font-serif-display max-w-[16ch] ${heroTitleClass}`}
+                  >
                     {heroTitle}
                   </h1>
                 ) : null}
                 {heroDescription ? (
                   <p
                     className={`max-w-xl text-sm leading-7 sm:text-base ${
-                      heroImageUrl ? "text-white/88" : "text-charcoal/76"
+                      heroImageUrl ? "text-white/88" : "text-cream/72"
                     }`}
                   >
                     {heroDescription}
@@ -444,7 +477,7 @@ export default async function HomePage() {
                       className={`inline-flex min-h-11 items-center gap-2 border-b pb-1 text-sm tracking-[0.12em] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 ${
                         heroImageUrl
                           ? "border-white/80 text-white hover:text-white/80 focus-visible:outline-white"
-                          : "border-charcoal/70 text-charcoal hover:text-charcoal/65 focus-visible:outline-accent"
+                          : "border-cream/55 text-cream hover:text-cream/70 focus-visible:outline-accent"
                       }`}
                     >
                       {ctaLabel}
@@ -462,7 +495,7 @@ export default async function HomePage() {
                       className={`inline-flex min-h-11 items-center gap-2 border-b pb-1 text-sm tracking-[0.12em] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 ${
                         heroImageUrl
                           ? "border-white/80 text-white hover:text-white/80 focus-visible:outline-white"
-                          : "border-charcoal/70 text-charcoal hover:text-charcoal/65 focus-visible:outline-accent"
+                          : "border-cream/55 text-cream hover:text-cream/70 focus-visible:outline-accent"
                       }`}
                     >
                       {ctaLabel}

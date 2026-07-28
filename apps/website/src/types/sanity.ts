@@ -96,6 +96,7 @@ export interface HomePageSettings {
   _type?: "homePageSettings" | null;
   heroEyebrow?: string | null;
   heroTitle?: string | null;
+  heroTitleSize?: number | null;
   heroDescription?: string | null;
   heroImage?: SanityImage | null;
   heroImageAlt?: string | null;
@@ -180,6 +181,7 @@ export interface SiteSettings {
   siteTitle?: string | null;
   siteDescription?: string | null;
   accentColor?: SanityColor | null;
+  headerSize?: number | null;
   contactEmail?: string | null;
   footerEyebrow?: string | null;
   footerHeading?: string | null;

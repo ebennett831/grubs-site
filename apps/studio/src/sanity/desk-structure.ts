@@ -1,12 +1,19 @@
 import type { StructureBuilder } from "sanity/structure";
 
+import { singletonDocuments } from "./singletons";
+
 function singletonItem(
   S: StructureBuilder,
-  title: string,
-  schemaType: string,
-  documentId: string,
+  definition: {
+    title: string;
+    schemaType: string;
+    documentId: string;
+  },
 ) {
+  const { title, schemaType, documentId } = definition;
+
   return S.listItem()
+    .id(documentId)
     .title(title)
     .child(S.document().schemaType(schemaType).documentId(documentId));
 }
@@ -15,10 +22,11 @@ export function buildDeskStructure(S: StructureBuilder) {
   return S.list()
     .title("Content")
     .items([
-      singletonItem(S, "Home Page", "homePageSettings", "homePageSettings"),
-      singletonItem(S, "About Page", "aboutPageSettings", "aboutPageSettings"),
+      singletonItem(S, singletonDocuments.homePage),
+      singletonItem(S, singletonDocuments.aboutPage),
       S.divider(),
       S.listItem()
+        .id("photos")
         .title("Photos")
         .child(
           S.documentTypeList("photo")
@@ -26,19 +34,15 @@ export function buildDeskStructure(S: StructureBuilder) {
             .defaultOrdering([{ field: "_updatedAt", direction: "desc" }]),
         ),
       S.listItem()
+        .id("galleries")
         .title("Galleries")
         .child(
           S.documentTypeList("gallery")
             .title("Galleries")
             .defaultOrdering([{ field: "title", direction: "asc" }]),
         ),
-      singletonItem(
-        S,
-        "Photo Grid Display",
-        "gallerySettings",
-        "gallerySettings",
-      ),
+      singletonItem(S, singletonDocuments.galleryDisplay),
       S.divider(),
-      singletonItem(S, "Site Settings", "siteSettings", "siteSettings"),
+      singletonItem(S, singletonDocuments.siteSettings),
     ]);
 }

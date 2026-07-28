@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+import { HeaderSizeSlider } from "../inputs/scale-slider";
+
 export const siteSettingsSchema = defineType({
   name: "siteSettings",
   title: "Site Settings",
@@ -47,6 +49,19 @@ export const siteSettingsSchema = defineType({
           { hex: "#4f6753" },
           { hex: "#79566f" },
         ],
+      },
+    }),
+    defineField({
+      name: "headerSize",
+      title: "Header Size",
+      description:
+        "Controls the height of the global header and the size of the site name. Level 3 is the default.",
+      type: "number",
+      group: "appearance",
+      initialValue: 3,
+      validation: (rule) => rule.min(1).max(5).warning(),
+      components: {
+        input: HeaderSizeSlider,
       },
     }),
     defineField({

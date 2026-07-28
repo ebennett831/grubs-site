@@ -24,12 +24,17 @@ Photo Delete.
 2. In Hero, update:
 
 - Hero Title
+- Hero Title Size
 - Hero Description
 - Hero Image
 - Hero Image Alt Text
 - Hero CTA Label / Hero CTA Link
 
 3. Click Publish.
+
+Hero Title Size has five levels and defaults to level 3. If Hero Image is
+empty, the website uses a charcoal hero with a restrained accent rule so the
+opening still feels intentional.
 
 ### Choose featured photos on the homepage
 
@@ -114,10 +119,11 @@ Only configured social items are displayed.
 
 1. Open Site Settings.
 2. Use Identity for Site Title, Site Description, and Contact Email.
-3. In Appearance, optionally choose a Site Accent Color. Clear it to use the
+3. In Appearance, use Header Size to choose one of five global header scales.
+4. In Appearance, optionally choose a Site Accent Color. Clear it to use the
    default terracotta.
-4. Use SEO for the Open Graph Image and Favicon.
-5. Click Publish.
+5. Use SEO for the Open Graph Image and Favicon.
+6. Click Publish.
 
 ## Good habits
 

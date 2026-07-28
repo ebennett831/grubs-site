@@ -4,6 +4,10 @@ import { structureTool } from "sanity/structure";
 
 import { buildDeskStructure } from "./src/sanity/desk-structure";
 import { schema } from "./src/sanity/schemas";
+import {
+  isCanonicalSingletonDocument,
+  singletonSchemaTypes,
+} from "./src/sanity/singletons";
 import { bulkPhotoDeleteTool } from "./src/sanity/tools/bulk-photo-delete";
 import { bulkPhotoImportTool } from "./src/sanity/tools/bulk-photo-import";
 import { galleryManagerTool } from "./src/sanity/tools/gallery-manager";
@@ -16,13 +20,6 @@ const dataset =
   process.env.SANITY_STUDIO_DATASET ||
   process.env.NEXT_PUBLIC_SANITY_DATASET ||
   "";
-const singletonTypes = [
-  "homePageSettings",
-  "aboutPageSettings",
-  "gallerySettings",
-  "siteSettings",
-];
-
 export default defineConfig({
   name: "default",
   title: "Photography Portfolio CMS",
@@ -31,6 +28,8 @@ export default defineConfig({
   plugins: [
     colorInput(),
     structureTool({
+      name: "structure",
+      title: "Structure",
       structure: buildDeskStructure,
     }),
     galleryManagerTool(),
@@ -45,11 +44,13 @@ export default defineConfig({
       }
 
       return previous.filter(
-        (templateItem) => !singletonTypes.includes(templateItem.templateId),
+        (templateItem) => !singletonSchemaTypes.has(templateItem.templateId),
       );
     },
     actions: (previous, context) => {
-      if (!singletonTypes.includes(context.schemaType)) {
+      if (
+        !isCanonicalSingletonDocument(context.schemaType, context.documentId)
+      ) {
         return previous;
       }
 

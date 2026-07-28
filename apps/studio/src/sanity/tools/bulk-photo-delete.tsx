@@ -1,11 +1,9 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 
-import { definePlugin, type Tool, useClient } from "sanity";
-import { route } from "sanity/router";
+import { definePlugin, type Tool } from "sanity";
 
 import { urlFor } from "../image";
-
-const apiVersion = "2025-02-01";
+import { usePublishedClient } from "../use-published-client";
 
 type GalleryOption = {
   _id: string;
@@ -37,13 +35,12 @@ export const bulkPhotoDeleteTool = definePlugin(() => ({
       name: "bulk-photo-delete",
       title: "Bulk Photo Delete",
       component: BulkPhotoDeleteComponent,
-      router: route.create("/*"),
     },
   ],
 }));
 
 function BulkPhotoDeleteComponent({ tool }: { tool: Tool }) {
-  const client = useClient({ apiVersion });
+  const client = usePublishedClient();
   const [galleries, setGalleries] = useState<GalleryOption[]>([]);
   const [photos, setPhotos] = useState<PhotoOption[]>([]);
   const [galleryId, setGalleryId] = useState<string>("");

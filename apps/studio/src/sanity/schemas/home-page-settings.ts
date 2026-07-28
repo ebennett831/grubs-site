@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 
+import { HeroTitleSizeSlider } from "../inputs/scale-slider";
+
 export const homePageSettingsSchema = defineType({
   name: "homePageSettings",
   title: "Home Page",
@@ -28,6 +30,19 @@ export const homePageSettingsSchema = defineType({
       validation: (rule) => rule.max(80).warning(),
     }),
     defineField({
+      name: "heroTitleSize",
+      title: "Hero Title Size",
+      description:
+        "Controls the responsive display size of the main hero heading. Level 3 is the default.",
+      type: "number",
+      group: "hero",
+      initialValue: 3,
+      validation: (rule) => rule.min(1).max(5).warning(),
+      components: {
+        input: HeroTitleSizeSlider,
+      },
+    }),
+    defineField({
       name: "heroDescription",
       title: "Hero Description",
       description: "Optional short supporting paragraph under the hero title.",
@@ -39,7 +54,8 @@ export const homePageSettingsSchema = defineType({
     defineField({
       name: "heroImage",
       title: "Hero Image",
-      description: "Main full-width image shown at the top of the homepage.",
+      description:
+        "Optional full-width image shown at the top of the homepage. Leave empty to use the charcoal hero with the site accent rule.",
       type: "image",
       group: "hero",
       options: { hotspot: true },
