@@ -36,13 +36,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const siteSettings = await fetchSanity<SiteSettings>(siteSettingsQuery);
-  const { accent, accentSurface, accentContrast } = getThemeColors(
+  const { accent, accentSurface } = getThemeColors(
     siteSettings?.accentColor?.hex,
   );
   const themeStyles = {
     "--color-accent": accent,
     "--color-accent-surface": accentSurface,
-    "--color-accent-contrast": accentContrast,
   } as CSSProperties;
 
   return (

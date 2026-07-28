@@ -24,12 +24,12 @@ export function RevealOnScroll({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 32, scale: 0.99 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}
       transition={{
-        duration: 0.78,
-        delay: Math.min(delay, 0.28),
+        duration: 0.68,
+        delay: Math.min(delay, 0.18),
         ease: [0.22, 1, 0.36, 1],
       }}
     >

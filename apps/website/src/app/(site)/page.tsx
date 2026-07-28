@@ -44,20 +44,20 @@ const PRIMARY_FEATURED_LAYOUTS: FeaturedLayout[] = [
     sizes:
       "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 72vw, 55vw",
     wrapperClassName:
-      "mt-12 w-full sm:mt-16 sm:ml-auto sm:w-[72%] lg:mt-24 lg:w-[55%]",
+      "mt-12 w-full sm:mt-18 sm:ml-auto sm:w-[72%] lg:mt-20 lg:w-[55%]",
   },
   {
     requestWidth: 1600,
     sizes:
       "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 78vw, 68vw",
-    wrapperClassName: "mt-10 w-full sm:mt-12 sm:w-[78%] lg:mt-16 lg:w-[68%]",
+    wrapperClassName: "mt-10 w-full sm:mt-14 sm:w-[78%] lg:mt-16 lg:w-[68%]",
   },
   {
     requestWidth: 2000,
     sizes:
       "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 92vw, 84vw",
     wrapperClassName:
-      "mx-auto mt-14 w-full sm:mt-18 sm:w-[92%] lg:mt-22 lg:w-[84%]",
+      "mx-auto mt-14 w-full sm:mt-20 sm:w-[92%] lg:mt-24 lg:w-[84%]",
   },
 ];
 
@@ -73,20 +73,20 @@ const PORTRAIT_FEATURED_LAYOUTS: FeaturedLayout[] = [
     sizes:
       "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 62vw, 46vw",
     wrapperClassName:
-      "mt-12 w-full sm:mt-16 sm:ml-auto sm:w-[62%] lg:mt-24 lg:w-[46%]",
+      "mt-12 w-full sm:mt-18 sm:ml-auto sm:w-[62%] lg:mt-20 lg:w-[46%]",
   },
   {
     requestWidth: 1400,
     sizes:
       "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 62vw, 48vw",
-    wrapperClassName: "mt-10 w-full sm:mt-12 sm:w-[62%] lg:mt-16 lg:w-[48%]",
+    wrapperClassName: "mt-10 w-full sm:mt-14 sm:w-[62%] lg:mt-16 lg:w-[48%]",
   },
   {
     requestWidth: 1600,
     sizes:
       "(max-width: 640px) calc(100vw - 2.5rem), (max-width: 1024px) 64vw, 52vw",
     wrapperClassName:
-      "mx-auto mt-14 w-full sm:mt-18 sm:w-[64%] lg:mt-22 lg:w-[52%]",
+      "mx-auto mt-14 w-full sm:mt-20 sm:w-[64%] lg:mt-24 lg:w-[52%]",
   },
 ];
 
@@ -163,9 +163,17 @@ function FeaturedPhoto({
           className="h-auto w-full"
         />
         {caption || captionParts.length ? (
-          <figcaption className="text-charcoal/62 mt-3 max-w-[64ch] space-y-1 text-xs leading-6 sm:text-sm">
-            {caption ? <p>{caption}</p> : null}
-            {captionParts.length ? <p>{captionParts.join(" | ")}</p> : null}
+          <figcaption className="mt-2.5 max-w-[64ch] space-y-0.5">
+            {caption ? (
+              <p className="text-charcoal/60 text-xs leading-5 sm:text-sm">
+                {caption}
+              </p>
+            ) : null}
+            {captionParts.length ? (
+              <p className="text-charcoal/62 text-[10px] leading-5 tracking-[0.1em] uppercase sm:text-[11px]">
+                {captionParts.join(" \u00B7 ")}
+              </p>
+            ) : null}
           </figcaption>
         ) : null}
       </figure>
@@ -196,7 +204,7 @@ function FeaturedSequence({ photos }: { photos: Photo[] }) {
               requestWidth: 1400,
               sizes:
                 "(max-width: 640px) calc(100vw - 2.5rem), calc(50vw - 2.5rem)",
-              wrapperClassName: index === 1 ? "sm:mt-12 lg:mt-18" : "",
+              wrapperClassName: index === 1 ? "sm:mt-12 lg:mt-16" : "",
             }}
             delay={index * 0.05}
           />
@@ -214,7 +222,7 @@ function FeaturedSequence({ photos }: { photos: Photo[] }) {
           layout={getPrimaryFeaturedLayout(leadPhoto, 0)}
           delay={0}
         />
-        <div className="mt-10 grid gap-10 sm:mt-14 sm:grid-cols-2 sm:items-start sm:gap-6 lg:mt-18 lg:gap-10">
+        <div className="mt-14 grid gap-10 sm:mt-20 sm:grid-cols-2 sm:items-start sm:gap-8 lg:mt-24 lg:gap-10">
           {pairedPhotos.map((photo, index) => (
             <FeaturedPhoto
               key={getPhotoKey(photo, index + 1)}
@@ -223,7 +231,7 @@ function FeaturedSequence({ photos }: { photos: Photo[] }) {
                 requestWidth: 1400,
                 sizes:
                   "(max-width: 640px) calc(100vw - 2.5rem), calc(50vw - 2.5rem)",
-                wrapperClassName: index === 1 ? "sm:mt-12" : "",
+                wrapperClassName: index === 1 ? "sm:mt-12 lg:mt-16" : "",
               }}
               delay={(index + 1) * 0.05}
             />
@@ -248,7 +256,7 @@ function FeaturedSequence({ photos }: { photos: Photo[] }) {
       ))}
 
       {closingPhotos.length ? (
-        <div className="mt-12 grid gap-x-6 gap-y-10 sm:mt-16 sm:grid-cols-2 sm:gap-y-14 lg:mt-20 lg:gap-x-10">
+        <div className="mt-14 grid gap-x-6 gap-y-10 sm:mt-20 sm:grid-cols-2 sm:gap-y-14 lg:mt-24 lg:gap-x-10">
           {closingPhotos.map((photo, index) => {
             const isOnlyClosingPhoto = closingPhotos.length === 1;
             const isUnpairedLastPhoto =
@@ -341,6 +349,23 @@ export default async function HomePage() {
   const aboutLinkDescription = getTrimmedString(
     homePageSettings?.aboutLinkDescription,
   );
+  const exploreLinks = [
+    {
+      href: "/galleries",
+      label: galleriesLinkLabel,
+      description: galleriesLinkDescription,
+    },
+    {
+      href: "/photography",
+      label: photographyLinkLabel,
+      description: photographyLinkDescription,
+    },
+    {
+      href: "/about",
+      label: aboutLinkLabel,
+      description: aboutLinkDescription,
+    },
+  ];
 
   const organizationSchema = buildOrganizationSchema(siteSettings, null);
   const websiteSchema = buildWebsiteSchema(siteSettings);
@@ -454,10 +479,10 @@ export default async function HomePage() {
       ) : null}
 
       {featuredPhotos.length ? (
-        <section className="pt-14 pb-18 sm:pt-18 sm:pb-22 lg:pt-24 lg:pb-28">
+        <section className="pt-16 sm:pt-20 lg:pt-24">
           <Container className="max-w-none">
             {hasFeaturedIntro ? (
-              <div className="max-w-2xl space-y-4 pb-12 sm:pb-16 lg:ml-[8%] lg:pb-20">
+              <div className="max-w-2xl space-y-4 pb-10 sm:pb-14 lg:ml-[8%] lg:pb-16">
                 {featuredEyebrow ? (
                   <p className="text-charcoal/70 text-xs tracking-[0.24em] uppercase">
                     {featuredEyebrow}
@@ -481,86 +506,43 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      <section className="border-t border-black/15 py-10 sm:py-12">
-        <Container className="grid gap-8 lg:grid-cols-[minmax(0,0.38fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
-          <div className="space-y-2">
+      <section className="py-20 sm:py-28 lg:py-32">
+        <Container className="grid gap-12 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,1fr)] lg:items-start lg:gap-20">
+          <div className="space-y-3 lg:pt-7">
             <p className="text-charcoal/60 text-xs tracking-[0.24em] uppercase">
               Continue exploring
             </p>
-            <h2 className="font-serif-display text-charcoal text-3xl leading-none sm:text-4xl">
+            <h2 className="font-serif-display text-charcoal text-4xl leading-[0.95] sm:text-5xl">
               More of the work
             </h2>
           </div>
 
           <nav
             aria-label="Explore more of the portfolio"
-            className="grid border-t border-black/12 sm:grid-cols-3 sm:border-t-0"
+            className="border-t border-black/16"
           >
-            <Link
-              href="/galleries"
-              className="group hover:text-charcoal/65 focus-visible:outline-charcoal flex min-h-24 items-start justify-between gap-4 border-b border-black/12 py-5 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-32 sm:border-r sm:px-5 sm:first:pl-0"
-            >
-              <div className="space-y-2">
-                <span className="font-serif-display block text-2xl leading-none sm:text-3xl">
-                  {galleriesLinkLabel}
+            {exploreLinks.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group focus-visible:outline-accent grid min-h-28 grid-cols-[minmax(0,1fr)_auto] items-start gap-6 border-b border-black/16 py-6 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-32 sm:py-8 lg:grid-cols-[minmax(12rem,0.6fr)_minmax(0,1fr)_auto] lg:items-center"
+              >
+                <span className="font-serif-display text-charcoal block text-3xl leading-none transition-opacity duration-200 group-hover:opacity-60 sm:text-4xl">
+                  {item.label}
                 </span>
-                {galleriesLinkDescription ? (
-                  <span className="text-charcoal/58 block max-w-[22ch] text-xs leading-5 sm:text-sm">
-                    {galleriesLinkDescription}
+                {item.description ? (
+                  <span className="text-charcoal/62 col-start-1 block max-w-[34ch] text-xs leading-6 sm:text-sm lg:col-start-2 lg:row-start-1">
+                    {item.description}
                   </span>
                 ) : null}
-              </div>
-              <span
-                className="text-lg transition-transform duration-200 ease-out group-hover:translate-x-1"
-                aria-hidden="true"
-              >
-                {"->"}
-              </span>
-            </Link>
-
-            <Link
-              href="/photography"
-              className="group hover:text-charcoal/65 focus-visible:outline-charcoal flex min-h-24 items-start justify-between gap-4 border-b border-black/12 py-5 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-32 sm:border-r sm:px-5"
-            >
-              <div className="space-y-2">
-                <span className="font-serif-display block text-2xl leading-none sm:text-3xl">
-                  {photographyLinkLabel}
+                <span
+                  className="text-charcoal/55 col-start-2 row-start-1 text-lg transition-transform duration-200 ease-out group-hover:translate-x-1"
+                  aria-hidden="true"
+                >
+                  {"\u2192"}
                 </span>
-                {photographyLinkDescription ? (
-                  <span className="text-charcoal/58 block max-w-[22ch] text-xs leading-5 sm:text-sm">
-                    {photographyLinkDescription}
-                  </span>
-                ) : null}
-              </div>
-              <span
-                className="text-lg transition-transform duration-200 ease-out group-hover:translate-x-1"
-                aria-hidden="true"
-              >
-                {"->"}
-              </span>
-            </Link>
-
-            <Link
-              href="/about"
-              className="group hover:text-charcoal/65 focus-visible:outline-charcoal flex min-h-24 items-start justify-between gap-4 py-5 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:min-h-32 sm:pl-5"
-            >
-              <div className="space-y-2">
-                <span className="font-serif-display block text-2xl leading-none sm:text-3xl">
-                  {aboutLinkLabel}
-                </span>
-                {aboutLinkDescription ? (
-                  <span className="text-charcoal/58 block max-w-[22ch] text-xs leading-5 sm:text-sm">
-                    {aboutLinkDescription}
-                  </span>
-                ) : null}
-              </div>
-              <span
-                className="text-lg transition-transform duration-200 ease-out group-hover:translate-x-1"
-                aria-hidden="true"
-              >
-                {"->"}
-              </span>
-            </Link>
+              </Link>
+            ))}
           </nav>
         </Container>
       </section>

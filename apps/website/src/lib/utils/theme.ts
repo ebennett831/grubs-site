@@ -79,12 +79,9 @@ export function getThemeColors(value: unknown) {
     configuredAccent && HEX_COLOR_PATTERN.test(configuredAccent)
       ? configuredAccent.toLowerCase()
       : DEFAULT_ACCENT;
-  const creamContrast = getContrastRatio(accentSurface, CREAM);
-  const charcoalContrast = getContrastRatio(accentSurface, CHARCOAL);
 
   return {
     accent: getReadableAccent(accentSurface),
     accentSurface,
-    accentContrast: creamContrast >= charcoalContrast ? CREAM : CHARCOAL,
   };
 }
