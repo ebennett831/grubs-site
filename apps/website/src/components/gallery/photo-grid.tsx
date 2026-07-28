@@ -11,9 +11,57 @@ import { type Photo } from "@/types/sanity";
 interface PhotoGridProps {
   photos?: Array<Photo | null | undefined> | null;
   density?: number;
+  centerIncompleteRows?: boolean;
 }
 
-export function PhotoGrid({ photos, density = 3 }: PhotoGridProps) {
+const centeredRowLayouts = {
+  1: {
+    container: "flex flex-wrap items-start justify-center gap-8",
+    item: "w-full shrink-0 lg:w-[calc((100%_-_2rem)/2)]",
+    sizes: "(max-width: 1024px) 100vw, 50vw",
+  },
+  2: {
+    container: "flex flex-wrap items-start justify-center gap-6",
+    item: "w-full shrink-0 sm:w-[calc((100%_-_1.5rem)/2)] lg:w-[calc((100%_-_3rem)/3)]",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+  },
+  3: {
+    container: "flex flex-wrap items-start justify-center gap-5",
+    item: "w-full shrink-0 sm:w-[calc((100%_-_1.25rem)/2)] lg:w-[calc((100%_-_3.75rem)/4)]",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw",
+  },
+  4: {
+    container: "flex flex-wrap items-start justify-center gap-4",
+    item: "w-full shrink-0 sm:w-[calc((100%_-_2rem)/3)] lg:w-[calc((100%_-_4rem)/5)]",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 20vw",
+  },
+  5: {
+    container: "flex flex-wrap items-start justify-center gap-4",
+    item: "w-full shrink-0 sm:w-[calc((100%_-_2rem)/3)] lg:w-[calc((100%_-_5rem)/6)]",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 17vw",
+  },
+  6: {
+    container: "flex flex-wrap items-start justify-center gap-3",
+    item: "w-full shrink-0 sm:w-[calc((100%_-_2.25rem)/4)] lg:w-[calc((100%_-_4.5rem)/7)]",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 25vw, 15vw",
+  },
+  7: {
+    container: "flex flex-wrap items-start justify-center gap-3",
+    item: "w-full shrink-0 sm:w-[calc((100%_-_2.25rem)/4)] lg:w-[calc((100%_-_5.25rem)/8)]",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 25vw, 13vw",
+  },
+  8: {
+    container: "flex flex-wrap items-start justify-center gap-3",
+    item: "w-full shrink-0 sm:w-[calc((100%_-_3rem)/5)] lg:w-[calc((100%_-_6rem)/9)]",
+    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 20vw, 12vw",
+  },
+} as const;
+
+export function PhotoGrid({
+  photos,
+  density = 3,
+  centerIncompleteRows = false,
+}: PhotoGridProps) {
   const shouldReduceMotion = useReducedMotion();
   const normalizedDensity = Number.isFinite(density)
     ? Math.min(8, Math.max(1, Math.round(density)))
@@ -42,9 +90,14 @@ export function PhotoGrid({ photos, density = 3 }: PhotoGridProps) {
                 : normalizedDensity === 7
                   ? "columns-1 sm:columns-4 lg:columns-8 xl:columns-8 gap-3"
                   : "columns-1 sm:columns-5 lg:columns-9 xl:columns-9 gap-3";
+  const centeredLayout =
+    centeredRowLayouts[normalizedDensity as keyof typeof centeredRowLayouts];
+  const containerClassName = centerIncompleteRows
+    ? centeredLayout.container
+    : `${layoutClasses} [column-fill:_balance]`;
 
   return (
-    <div className={`${layoutClasses} [column-fill:_balance]`}>
+    <div className={containerClassName}>
       {displayPhotos.map((photo, index) => {
         const image = photo.image;
 
@@ -87,7 +140,9 @@ export function PhotoGrid({ photos, density = 3 }: PhotoGridProps) {
         return (
           <motion.figure
             key={photoKey}
-            className="group bg-charcoal/10 mb-6 break-inside-avoid overflow-hidden"
+            className={`group bg-charcoal/10 break-inside-avoid overflow-hidden ${
+              centerIncompleteRows ? centeredLayout.item : "mb-6"
+            }`}
             initial={
               shouldReduceMotion
                 ? { opacity: 1, x: 0, y: 0, rotate: 0 }
@@ -122,7 +177,11 @@ export function PhotoGrid({ photos, density = 3 }: PhotoGridProps) {
                 width={width}
                 height={height}
                 loading="lazy"
-                sizes="(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
+                sizes={
+                  centerIncompleteRows
+                    ? centeredLayout.sizes
+                    : "(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
+                }
                 placeholder={lqip ? "blur" : "empty"}
                 blurDataURL={lqip ?? undefined}
                 className="h-auto w-full"

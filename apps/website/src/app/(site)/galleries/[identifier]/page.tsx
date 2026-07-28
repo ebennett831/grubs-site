@@ -94,6 +94,7 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
           <PhotoGrid
             photos={photos}
             density={gallerySettings?.density ?? undefined}
+            centerIncompleteRows
           />
         ) : null}
       </Container>
