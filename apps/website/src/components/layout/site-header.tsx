@@ -9,7 +9,6 @@ const navItems = [
   { href: "/photography", label: "Photography" },
   { href: "/galleries", label: "Galleries" },
   { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
 ];
 
 interface SiteHeaderProps {
@@ -31,7 +30,7 @@ export function SiteHeader({ siteSettings }: SiteHeaderProps) {
         </Link>
         <nav
           aria-label="Primary"
-          className="text-charcoal/68 grid w-full grid-cols-4 items-center text-[9px] tracking-[0.04em] uppercase sm:flex sm:w-auto sm:justify-start sm:gap-6 sm:text-[11px] sm:tracking-[0.08em]"
+          className="text-charcoal/68 grid w-full grid-cols-3 items-center text-[9px] tracking-[0.04em] uppercase sm:flex sm:w-auto sm:justify-start sm:gap-6 sm:text-[11px] sm:tracking-[0.08em]"
         >
           {navItems.map((item) => (
             <Link
@@ -42,7 +41,7 @@ export function SiteHeader({ siteSettings }: SiteHeaderProps) {
               } ${
                 item.href === "/photography"
                   ? "justify-start"
-                  : item.href === "/contact"
+                  : item.href === "/about"
                     ? "justify-end"
                     : "justify-center"
               }`}

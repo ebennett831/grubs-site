@@ -8,7 +8,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/photography",
     "/galleries",
     "/about",
-    "/contact",
   ].map((path) => ({
     url: absoluteUrl(path),
     changeFrequency: "weekly",

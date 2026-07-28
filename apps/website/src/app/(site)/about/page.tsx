@@ -227,12 +227,14 @@ export default async function AboutPage() {
                 <p className="text-charcoal/82 max-w-3xl text-lg leading-8">
                   {availabilityStatement}
                 </p>
-                <Link
-                  href={contactEmailHref || "/contact"}
-                  className="border-charcoal/30 text-charcoal/88 hover:border-charcoal hover:text-charcoal focus-visible:outline-accent mt-5 inline-flex min-h-11 items-center border-b pb-1 text-sm tracking-[0.16em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
-                >
-                  {contactEmailHref ? "Email the photographer" : "Get in touch"}
-                </Link>
+                {contactEmailHref ? (
+                  <Link
+                    href={contactEmailHref}
+                    className="border-charcoal/30 text-charcoal/88 hover:border-charcoal hover:text-charcoal focus-visible:outline-accent mt-5 inline-flex min-h-11 items-center border-b pb-1 text-sm tracking-[0.16em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
+                  >
+                    Email the photographer
+                  </Link>
+                ) : null}
               </div>
             </section>
           </RevealOnScroll>
