@@ -148,6 +148,12 @@ export interface GalleryWithPhotos extends Gallery {
   photos?: Array<Photo | null>;
 }
 
+export interface GallerySettings {
+  _id?: string | null;
+  _type?: "gallerySettings" | null;
+  density?: number | null;
+}
+
 export interface AboutPageSettings {
   _id?: string | null;
   _type?: "aboutPageSettings" | null;

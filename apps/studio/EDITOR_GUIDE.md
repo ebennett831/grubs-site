@@ -9,9 +9,13 @@ Use the left sidebar in this order:
 1. Home Page
 2. Photos
 3. Galleries
-4. About Page
-5. Photographer
-6. Site Settings
+4. Gallery Display
+5. About Page
+6. Photographer
+7. Site Settings
+
+The top navigation also includes Gallery Manager, Bulk Photo Import, and Bulk
+Photo Delete.
 
 ## Typical updates
 
@@ -50,6 +54,9 @@ If Featured Photos is empty, the website automatically shows recent photos.
 
 4. Click Publish.
 
+For several images at once, open Bulk Photo Import from the top navigation,
+choose an optional destination gallery, select the files, and confirm the import.
+
 ### Create a gallery
 
 1. Open Galleries.
@@ -62,6 +69,17 @@ If Featured Photos is empty, the website automatically shows recent photos.
 - Optional Cover Photo
 
 4. Click Publish.
+
+Gallery Manager provides a faster way to create galleries and reorder them.
+
+### Change gallery image density
+
+1. Open Gallery Display.
+2. Move Gallery Density toward Large or Dense.
+3. Click Publish.
+
+Gallery Display controls both the Photography page and individual galleries. If
+it has not been published yet, the website uses density 3.
 
 ### Update About page
 

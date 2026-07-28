@@ -13,8 +13,11 @@ interface PhotoGridProps {
   density?: number;
 }
 
-export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
+export function PhotoGrid({ photos, density = 3 }: PhotoGridProps) {
   const shouldReduceMotion = useReducedMotion();
+  const normalizedDensity = Number.isFinite(density)
+    ? Math.min(8, Math.max(1, Math.round(density)))
+    : 3;
   const displayPhotos = (photos ?? []).filter((photo): photo is Photo =>
     Boolean(photo && hasSanityImage(photo.image)),
   );
@@ -24,19 +27,19 @@ export function PhotoGrid({ photos, density = 2 }: PhotoGridProps) {
   }
 
   const layoutClasses =
-    density <= 1
+    normalizedDensity <= 1
       ? "columns-1 sm:columns-1 lg:columns-2 xl:columns-2 gap-8"
-      : density === 2
+      : normalizedDensity === 2
         ? "columns-1 sm:columns-2 lg:columns-3 xl:columns-3 gap-6"
-        : density === 3
+        : normalizedDensity === 3
           ? "columns-1 sm:columns-2 lg:columns-4 xl:columns-4 gap-5"
-          : density === 4
+          : normalizedDensity === 4
             ? "columns-1 sm:columns-3 lg:columns-5 xl:columns-5 gap-4"
-            : density === 5
+            : normalizedDensity === 5
               ? "columns-1 sm:columns-3 lg:columns-6 xl:columns-6 gap-4"
-              : density === 6
+              : normalizedDensity === 6
                 ? "columns-1 sm:columns-4 lg:columns-7 xl:columns-7 gap-3"
-                : density === 7
+                : normalizedDensity === 7
                   ? "columns-1 sm:columns-4 lg:columns-8 xl:columns-8 gap-3"
                   : "columns-1 sm:columns-5 lg:columns-9 xl:columns-9 gap-3";
 

@@ -1,6 +1,7 @@
 import { type SchemaTypeDefinition } from "sanity";
 
 import { aboutPageSettingsSchema } from "./about-page-settings";
+import { gallerySettingsSchema } from "./gallery-settings";
 import { gallerySchema } from "./gallery";
 import { homePageSettingsSchema } from "./home-page-settings";
 import { photographerSchema } from "./photographer";
@@ -15,6 +16,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     homePageSettingsSchema,
     aboutPageSettingsSchema,
     photographerSchema,
+    gallerySettingsSchema,
     gallerySchema,
     photoSchema,
   ],

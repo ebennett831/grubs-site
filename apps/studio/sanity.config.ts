@@ -1,9 +1,13 @@
 import { colorInput } from "@sanity/color-input";
+import { visionTool } from "@sanity/vision";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 
 import { buildDeskStructure } from "./src/sanity/desk-structure";
 import { schema } from "./src/sanity/schemas";
+import { bulkPhotoDeleteTool } from "./src/sanity/tools/bulk-photo-delete";
+import { bulkPhotoImportTool } from "./src/sanity/tools/bulk-photo-import";
+import { galleryManagerTool } from "./src/sanity/tools/gallery-manager";
 
 const projectId =
   process.env.SANITY_STUDIO_PROJECT_ID ||
@@ -16,6 +20,7 @@ const dataset =
 const singletonTypes = [
   "homePageSettings",
   "aboutPageSettings",
+  "gallerySettings",
   "photographer",
   "siteSettings",
 ];
@@ -30,6 +35,10 @@ export default defineConfig({
     structureTool({
       structure: buildDeskStructure,
     }),
+    galleryManagerTool(),
+    bulkPhotoImportTool(),
+    bulkPhotoDeleteTool(),
+    visionTool(),
   ],
   schema,
   document: {

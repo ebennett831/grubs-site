@@ -67,6 +67,15 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
   "socialLinks": coalesce(socialLinks[]${socialLinkProjection}, [])
 }`;
 
+export const gallerySettingsQuery = groq`*[
+  _type == "gallerySettings" &&
+  _id == "gallerySettings"
+][0]{
+    _id,
+    _type,
+    density
+  }`;
+
 export const homePageSettingsQuery = groq`*[_type == "homePageSettings"][0]{
   _id,
   _type,

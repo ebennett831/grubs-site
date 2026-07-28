@@ -1,12 +1,23 @@
 import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
-import { allPhotosQuery, siteSettingsQuery } from "@/lib/sanity/queries";
+import {
+  allPhotosQuery,
+  gallerySettingsQuery,
+  siteSettingsQuery,
+} from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { type Photo, type SiteSettings } from "@/types/sanity";
+import {
+  type GallerySettings,
+  type Photo,
+  type SiteSettings,
+} from "@/types/sanity";
 
 export default async function PhotographyPage() {
-  const photos = await fetchSanity<Array<Photo | null>>(allPhotosQuery);
+  const [photos, gallerySettings] = await Promise.all([
+    fetchSanity<Array<Photo | null>>(allPhotosQuery),
+    fetchSanity<GallerySettings>(gallerySettingsQuery),
+  ]);
 
   return (
     <section className="py-14 sm:py-18 lg:py-24">
@@ -21,7 +32,10 @@ export default async function PhotographyPage() {
           />
         </div>
 
-        <PhotoGrid photos={photos} density={3} />
+        <PhotoGrid
+          photos={photos}
+          density={gallerySettings?.density ?? undefined}
+        />
       </Container>
     </section>
   );

@@ -30,6 +30,7 @@ export function buildDeskStructure(S: StructureBuilder) {
             .title("Galleries")
             .defaultOrdering([{ field: "title", direction: "asc" }]),
         ),
+      singletonItem(S, "Gallery Display", "gallerySettings", "gallerySettings"),
       singletonItem(S, "About Page", "aboutPageSettings", "aboutPageSettings"),
       singletonItem(S, "Photographer Profile", "photographer", "photographer"),
       singletonItem(S, "Site Settings", "siteSettings", "siteSettings"),

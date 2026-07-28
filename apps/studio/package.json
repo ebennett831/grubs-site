@@ -9,6 +9,7 @@
   "dependencies": {
     "@sanity/color-input": "^5.0.4",
     "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^4.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sanity": "^4.22.0",

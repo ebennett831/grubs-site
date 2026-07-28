@@ -8,11 +8,16 @@ import { fetchSanity } from "@/lib/sanity/fetch";
 import { getSanityImageUrl, hasSanityImage } from "@/lib/sanity/image";
 import {
   galleryByIdentifierQuery,
+  gallerySettingsQuery,
   siteSettingsQuery,
 } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getTrimmedString } from "@/lib/utils/content";
-import { type GalleryWithPhotos, type SiteSettings } from "@/types/sanity";
+import {
+  type GallerySettings,
+  type GalleryWithPhotos,
+  type SiteSettings,
+} from "@/types/sanity";
 
 interface GalleryPageProps {
   params: Promise<{
@@ -28,10 +33,10 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
     notFound();
   }
 
-  const gallery = await fetchSanity<GalleryWithPhotos>(
-    galleryByIdentifierQuery,
-    { identifier },
-  );
+  const [gallery, gallerySettings] = await Promise.all([
+    fetchSanity<GalleryWithPhotos>(galleryByIdentifierQuery, { identifier }),
+    fetchSanity<GallerySettings>(gallerySettingsQuery),
+  ]);
 
   if (!gallery) {
     notFound();
@@ -85,7 +90,12 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
           </div>
         ) : null}
 
-        {photos.length ? <PhotoGrid photos={photos} density={3} /> : null}
+        {photos.length ? (
+          <PhotoGrid
+            photos={photos}
+            density={gallerySettings?.density ?? undefined}
+          />
+        ) : null}
       </Container>
     </section>
   );
