@@ -150,8 +150,8 @@ export function GalleriesGrid({ galleries }: GalleriesGridProps) {
               )}
 
               {galleryDescription ? (
-                <div className="border-charcoal/20 space-y-2 border-t p-5">
-                  <p className="text-charcoal/70 line-clamp-3 text-sm leading-7">
+                <div className="border-accent-surface bg-charcoal space-y-2 border-t-2 p-5">
+                  <p className="text-cream/72 line-clamp-3 text-sm leading-7">
                     {galleryDescription}
                   </p>
                 </div>
