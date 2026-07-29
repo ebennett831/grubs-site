@@ -5,6 +5,8 @@ import { hasValidSanityEnv, sanityClient } from "@/lib/sanity/client";
 const DEFAULT_REVALIDATE_SECONDS = 60;
 const isDevelopment = process.env.NODE_ENV === "development";
 
+export const SANITY_CACHE_TAG = "sanity-content";
+
 export async function fetchSanity<T>(
   query: string,
   params: QueryParams = {},
@@ -27,6 +29,7 @@ export async function fetchSanity<T>(
   return sanityClient.fetch<T | null>(query, params, {
     next: {
       revalidate,
+      tags: [SANITY_CACHE_TAG],
     },
   });
 }

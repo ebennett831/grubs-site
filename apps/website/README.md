@@ -21,13 +21,16 @@ During setup:
 5. Set the deploy command to
    `npx opennextjs-cloudflare deploy -- --keep-vars`.
 6. Confirm the supplied Sanity project, dataset, and API version.
-7. Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS site URL.
-8. Deploy.
+7. Generate a private `SANITY_REVALIDATE_SECRET` value. Save it somewhere
+   temporarily because the same value is added to Sanity after deployment.
+8. Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS site URL.
+9. Deploy.
 
 Cloudflare reads `wrangler.jsonc` and creates the R2 incremental-cache bucket
-and Durable Object binding during setup. The configuration intentionally has no
-custom-domain route, so it works in accounts that do not own
-`bennettethan.com`.
+and Durable Object bindings during setup. One Durable Object handles background
+revalidation and another stores cache-tag invalidations. The configuration
+intentionally has no custom-domain route, so it works in accounts that do not
+own `bennettethan.com`.
 
 Before every build, `scripts/sync-cloudflare-worker-name.mjs` reads the Worker
 name selected by Cloudflare CI and updates both the Wrangler Worker name and its
@@ -52,6 +55,35 @@ Sanity token.
 
 Editing access is separate. Invite each editor to the Sanity project instead of
 sharing a password or personal token.
+
+### Instant published-content updates
+
+The website keeps a 60-second revalidation interval as a safety fallback, but a
+signed Sanity webhook normally invalidates cached content immediately after a
+publish, unpublish, or delete.
+
+After the Worker has its final URL, create a Sanity webhook with:
+
+- URL: `https://your-site.example/api/revalidate`
+- Dataset: `production`
+- Trigger on: Create, Update, and Delete
+- Filter:
+  `!(_id in path("drafts.**")) && _type in ["siteSettings", "homePageSettings", "aboutPageSettings", "gallerySettings", "photo", "gallery"]`
+- Projection: `{_id, _type}`
+- HTTP method: `POST`
+- Secret: the exact `SANITY_REVALIDATE_SECRET` configured in Cloudflare
+
+Keep the webhook secret private. The endpoint rejects unsigned or incorrectly
+signed requests.
+
+An authenticated project administrator can configure the same webhook from the
+repository without re-entering all fields:
+
+```bash
+SANITY_REVALIDATION_URL=https://your-site.example/api/revalidate \
+SANITY_REVALIDATE_SECRET=your-private-value \
+npm run webhook:configure -w apps/studio
+```
 
 ## Local development
 

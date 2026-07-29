@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "sanity dev",
     "build": "sanity build",
-    "deploy": "sanity deploy"
+    "deploy": "sanity deploy",
+    "webhook:configure": "sanity exec scripts/configure-revalidation-webhook.mjs --with-user-token"
   },
   "dependencies": {
     "@sanity/color-input": "^5.0.4",

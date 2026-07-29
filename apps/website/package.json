@@ -58,6 +58,9 @@
       },
       "NEXT_PUBLIC_SANITY_API_VERSION": {
         "description": "The Sanity API version in YYYY-MM-DD format. Keep the provided value unless the Studio configuration changes."
+      },
+      "SANITY_REVALIDATE_SECRET": {
+        "description": "A private random value shared with the Sanity webhook. This securely triggers near-instant cache refreshes after publishing."
       }
     }
   }
