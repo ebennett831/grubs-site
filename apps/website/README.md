@@ -71,10 +71,12 @@ After the Worker has its final URL, create a Sanity webhook with:
   `!(_id in path("drafts.**")) && _type in ["siteSettings", "homePageSettings", "aboutPageSettings", "gallerySettings", "photo", "gallery"]`
 - Projection: `{_id, _type}`
 - HTTP method: `POST`
+- HTTP header: `Authorization: Bearer <SANITY_REVALIDATE_SECRET>`
 - Secret: the exact `SANITY_REVALIDATE_SECRET` configured in Cloudflare
 
 Keep the webhook secret private. The endpoint rejects unsigned or incorrectly
-signed requests.
+authorized requests. The repository helper configures both Sanity's signed
+payload secret and the encrypted authorization header automatically.
 
 An authenticated project administrator can configure the same webhook from the
 repository without re-entering all fields:

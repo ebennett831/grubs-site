@@ -67,6 +67,9 @@ await client.request({
     httpMethod: "POST",
     includeDrafts: false,
     includeAllVersions: false,
+    headers: {
+      Authorization: `Bearer ${webhookSecret}`,
+    },
     secret: webhookSecret,
     isDisabledByUser: false,
   },

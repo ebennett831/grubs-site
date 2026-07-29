@@ -10,6 +10,33 @@ type SanityWebhookPayload = {
   _type?: string;
 };
 
+async function tokensMatch(actual: string, expected: string) {
+  const encoder = new TextEncoder();
+  const [actualHash, expectedHash] = await Promise.all([
+    crypto.subtle.digest("SHA-256", encoder.encode(actual)),
+    crypto.subtle.digest("SHA-256", encoder.encode(expected)),
+  ]);
+  const actualBytes = new Uint8Array(actualHash);
+  const expectedBytes = new Uint8Array(expectedHash);
+  let difference = 0;
+
+  for (let index = 0; index < actualBytes.length; index += 1) {
+    difference |= actualBytes[index] ^ expectedBytes[index];
+  }
+
+  return difference === 0;
+}
+
+async function hasValidBearerToken(request: NextRequest, secret: string) {
+  const authorization = request.headers.get("authorization");
+
+  if (!authorization?.startsWith("Bearer ")) {
+    return false;
+  }
+
+  return tokensMatch(authorization.slice("Bearer ".length), secret);
+}
+
 function getRevalidationSecret() {
   try {
     const { env } = getCloudflareContext();
@@ -39,17 +66,26 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { body, isValidSignature } = await parseBody<SanityWebhookPayload>(
-      request,
-      secret,
-      true,
-    );
+    let body: SanityWebhookPayload | null;
 
-    if (!isValidSignature) {
-      return Response.json(
-        { message: "Invalid Sanity webhook signature." },
-        { status: 401 },
+    if (await hasValidBearerToken(request, secret)) {
+      await new Promise((resolve) => setTimeout(resolve, 3_000));
+      body = (await request.json()) as SanityWebhookPayload;
+    } else {
+      const parsedWebhook = await parseBody<SanityWebhookPayload>(
+        request,
+        secret,
+        true,
       );
+
+      if (!parsedWebhook.isValidSignature) {
+        return Response.json(
+          { message: "Invalid Sanity webhook authorization." },
+          { status: 401 },
+        );
+      }
+
+      body = parsedWebhook.body;
     }
 
     revalidateTag(SANITY_CACHE_TAG);
