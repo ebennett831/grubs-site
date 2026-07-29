@@ -22,7 +22,8 @@ During setup:
    `npx opennextjs-cloudflare deploy -- --keep-vars`.
 6. Confirm the supplied Sanity project, dataset, and API version.
 7. Generate a private `SANITY_REVALIDATE_SECRET` value. Save it somewhere
-   temporarily because the same value is added to Sanity after deployment.
+   temporarily because Cloudflare will not display it again and the same value
+   is added to Sanity after deployment.
 8. Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS site URL.
 9. Deploy.
 
@@ -86,6 +87,11 @@ SANITY_REVALIDATION_URL=https://your-site.example/api/revalidate \
 SANITY_REVALIDATE_SECRET=your-private-value \
 npm run webhook:configure -w apps/studio
 ```
+
+Every Cloudflare deployment should use its own random revalidation secret. The
+helper names each webhook after its deployment hostname, so multiple Workers
+can safely read the same Sanity project without replacing one another's
+webhooks.
 
 ## Local development
 

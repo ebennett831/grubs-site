@@ -1,7 +1,5 @@
 import { getCliClient } from "sanity/cli";
 
-const webhookName =
-  process.env.SANITY_WEBHOOK_NAME ?? "Published website cache revalidation";
 const webhookUrl = process.env.SANITY_REVALIDATION_URL;
 const webhookSecret = process.env.SANITY_REVALIDATE_SECRET;
 
@@ -26,6 +24,9 @@ if (
   );
 }
 
+const webhookName =
+  process.env.SANITY_WEBHOOK_NAME ??
+  `Published website cache revalidation (${parsedUrl.hostname})`;
 const client = getCliClient({ apiVersion: "2025-02-19" });
 const { dataset, projectId } = client.config();
 
@@ -38,12 +39,17 @@ const hooks = await client.request({
   method: "GET",
   uri: hooksPath,
 });
-const existingHook = hooks.find((hook) => hook.name === webhookName);
+const hooksToReplace = hooks.filter(
+  (hook) =>
+    hook.name === webhookName ||
+    (hook.name === "Published website cache revalidation" &&
+      hook.url === parsedUrl.toString()),
+);
 
-if (existingHook) {
+for (const hook of hooksToReplace) {
   await client.request({
     method: "DELETE",
-    uri: `${hooksPath}/${existingHook.id}`,
+    uri: `${hooksPath}/${hook.id}`,
   });
 }
 
