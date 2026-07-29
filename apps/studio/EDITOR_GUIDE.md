@@ -62,8 +62,10 @@ comfortably full width on phones.
 4. Click Publish.
 
 For several images at once, open Bulk Photo Import from the top navigation,
-choose an optional destination gallery, select the files, and confirm the
-import. Imported photo documents are created immediately.
+choose an optional destination gallery, and optionally add a shared Date Taken
+or Location before selecting the files and confirming the import. Shared values
+are copied into each new Photo and remain independently editable. Imported
+photo documents are created immediately.
 
 ### Create a gallery
 

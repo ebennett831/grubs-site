@@ -53,6 +53,8 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
   const [error, setError] = useState<string>("");
   const [galleries, setGalleries] = useState<GalleryOption[]>([]);
   const [selectedGalleryId, setSelectedGalleryId] = useState<string>("");
+  const [sharedDateTaken, setSharedDateTaken] = useState<string>("");
+  const [sharedLocation, setSharedLocation] = useState<string>("");
 
   const selectedImageFiles = useMemo(
     () => selectedFiles.filter(isImageFile),
@@ -85,6 +87,14 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
     }
 
     const galleryRef = selectedGalleryId;
+    const destination = galleryRef
+      ? galleries.find((gallery) => gallery._id === galleryRef)?.title ||
+        "selected gallery"
+      : "ungrouped";
+    const dateTaken = sharedDateTaken.trim();
+    const location = sharedLocation.trim();
+    let completedCount = 0;
+    let activeFileName = "";
 
     setIsImporting(true);
     setError("");
@@ -96,6 +106,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
     try {
       for (let index = 0; index < files.length; index += 1) {
         const file = files[index];
+        activeFileName = file.name;
         const asset = await client.assets.upload("image", file, {
           filename: file.name,
         });
@@ -104,6 +115,8 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
           {
             _type: "photo",
             altText: toAltText(file.name),
+            ...(dateTaken ? { dateTaken } : {}),
+            ...(location ? { location } : {}),
             ...(galleryRef
               ? {
                   gallery: {
@@ -123,23 +136,21 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
           { visibility: "deferred" },
         );
 
+        completedCount = index + 1;
         setStatus(`Imported ${index + 1} of ${files.length}: ${file.name}`);
       }
-
-      const destination = selectedGalleryId
-        ? galleries.find((gallery) => gallery._id === selectedGalleryId)
-            ?.title || "selected gallery"
-        : "ungrouped";
 
       setStatus(
         `Imported ${files.length} photo document${files.length === 1 ? "" : "s"}.`,
       );
       setSuccess(
-        selectedGalleryId
+        galleryRef
           ? `Success: added ${files.length} photo${files.length === 1 ? "" : "s"} to ${destination}.`
           : `Success: added ${files.length} ungrouped photo${files.length === 1 ? "" : "s"}.`,
       );
       setSelectedFiles([]);
+      setSharedDateTaken("");
+      setSharedLocation("");
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -147,9 +158,22 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
 
       await loadGalleries();
     } catch (importError) {
-      setError(
-        importError instanceof Error ? importError.message : "Import failed.",
+      const remainingFiles = files.slice(completedCount);
+      const reason =
+        importError instanceof Error ? importError.message : "Import failed.";
+      setSelectedFiles(remainingFiles);
+      setStatus(
+        completedCount
+          ? `Imported ${completedCount} of ${files.length} before the error.`
+          : "",
       );
+      setError(
+        `Could not import ${activeFileName || "the selected file"}: ${reason}`,
+      );
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } finally {
       setIsImporting(false);
     }
@@ -177,6 +201,11 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  }
+
+  function clearSharedMetadata() {
+    setSharedDateTaken("");
+    setSharedLocation("");
   }
 
   const selectedCountLabel = `${selectedImageFiles.length} selected`;
@@ -289,6 +318,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
             <select
               value={selectedGalleryId}
               onChange={(event) => setSelectedGalleryId(event.target.value)}
+              disabled={isImporting}
               style={{
                 minHeight: 44,
                 borderRadius: 10,
@@ -296,6 +326,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
                 padding: "0 12px",
                 background: "var(--card-bg-color, #ffffff)",
                 color: "var(--input-fg-color, var(--card-fg-color, #111827))",
+                cursor: isImporting ? "wait" : "pointer",
               }}
             >
               <option value="">Ungrouped</option>
@@ -316,6 +347,120 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
           >
             Destination: {galleryLabel}
           </p>
+
+          <div
+            style={{
+              display: "grid",
+              gap: 12,
+              paddingTop: 16,
+              marginTop: 4,
+              borderTop: "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 12,
+                flexWrap: "wrap",
+                alignItems: "start",
+              }}
+            >
+              <div style={{ display: "grid", gap: 4 }}>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>
+                  Shared Metadata
+                </h3>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 13,
+                    color: "var(--card-muted-fg-color, #6b7280)",
+                  }}
+                >
+                  Optional — these values will be applied to every photo in this
+                  import.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={clearSharedMetadata}
+                disabled={
+                  isImporting || (!sharedDateTaken && !sharedLocation.trim())
+                }
+                style={{
+                  appearance: "none",
+                  border: "none",
+                  padding: "4px 0",
+                  background: "transparent",
+                  color: "var(--card-muted-fg-color, #6b7280)",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor:
+                    isImporting || (!sharedDateTaken && !sharedLocation.trim())
+                      ? "not-allowed"
+                      : "pointer",
+                  opacity:
+                    isImporting || (!sharedDateTaken && !sharedLocation.trim())
+                      ? 0.55
+                      : 1,
+                }}
+              >
+                Clear shared metadata
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 12,
+              }}
+            >
+              <label style={{ display: "grid", gap: 8 }}>
+                <span style={{ fontSize: 14, fontWeight: 700 }}>
+                  Date Taken
+                </span>
+                <input
+                  type="date"
+                  value={sharedDateTaken}
+                  onChange={(event) => setSharedDateTaken(event.target.value)}
+                  disabled={isImporting}
+                  style={{
+                    minHeight: 44,
+                    borderRadius: 10,
+                    border:
+                      "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
+                    padding: "0 12px",
+                    background: "var(--card-bg-color, #ffffff)",
+                    color:
+                      "var(--input-fg-color, var(--card-fg-color, #111827))",
+                  }}
+                />
+              </label>
+
+              <label style={{ display: "grid", gap: 8 }}>
+                <span style={{ fontSize: 14, fontWeight: 700 }}>Location</span>
+                <input
+                  type="text"
+                  value={sharedLocation}
+                  onChange={(event) => setSharedLocation(event.target.value)}
+                  disabled={isImporting}
+                  maxLength={80}
+                  placeholder="Optional location"
+                  style={{
+                    minHeight: 44,
+                    borderRadius: 10,
+                    border:
+                      "1px solid var(--card-border-color, rgba(0,0,0,0.12))",
+                    padding: "0 12px",
+                    background: "var(--card-bg-color, #ffffff)",
+                    color:
+                      "var(--input-fg-color, var(--card-fg-color, #111827))",
+                  }}
+                />
+              </label>
+            </div>
+          </div>
         </section>
 
         <section
@@ -471,8 +616,11 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
               }}
             >
               <div style={{ display: "grid", gap: 4 }}>
-                {selectedImageFiles.map((file) => (
-                  <p key={file.name} style={{ margin: 0, fontSize: 13 }}>
+                {selectedImageFiles.map((file, index) => (
+                  <p
+                    key={`${file.name}-${file.size}-${file.lastModified}-${index}`}
+                    style={{ margin: 0, fontSize: 13 }}
+                  >
                     {file.name}
                   </p>
                 ))}
