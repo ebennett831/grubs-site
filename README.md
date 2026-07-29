@@ -84,6 +84,7 @@ compiled into that artifact.
 SANITY_STUDIO_PROJECT_ID=your-project-id
 SANITY_STUDIO_DATASET=production
 SANITY_STUDIO_API_VERSION=2025-02-01
+SANITY_STUDIO_HOSTNAME=your-studio-hostname
 ```
 
 Use the same project ID and dataset in both apps.
