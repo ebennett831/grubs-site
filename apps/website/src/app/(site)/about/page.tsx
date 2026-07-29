@@ -11,14 +11,13 @@ import {
   siteSettingsQuery,
 } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
+import { getTrimmedString } from "@/lib/utils/content";
 import { type AboutPageSettings, type SiteSettings } from "@/types/sanity";
 
 export default async function AboutPage() {
-  const [aboutPageSettings, siteSettings] = await Promise.all([
-    fetchSanity<AboutPageSettings>(aboutPageSettingsQuery),
-    fetchSanity<SiteSettings>(siteSettingsQuery),
-  ]);
+  const aboutPageSettings = await fetchSanity<AboutPageSettings>(
+    aboutPageSettingsQuery,
+  );
 
   const heroPortrait = aboutPageSettings?.portraitImage;
   const portraitUrl = getSanityImageUrl(heroPortrait, (builder) =>
@@ -42,28 +41,11 @@ export default async function AboutPage() {
   const intro = getTrimmedString(aboutPageSettings?.intro);
   const locationLine = getTrimmedString(aboutPageSettings?.locationLine);
   const eyebrow = getTrimmedString(aboutPageSettings?.eyebrow);
-  const availabilityStatement = getTrimmedString(
-    aboutPageSettings?.availabilityStatement,
-  );
-  const socialEmail = siteSettings?.socialLinks?.find(
-    (link) => getTrimmedString(link?.platform)?.toLowerCase() === "email",
-  );
-  const contactEmail =
-    getTrimmedString(siteSettings?.contactEmail) ||
-    getTrimmedString(socialEmail?.url)
-      ?.replace(/^mailto:/i, "")
-      .trim();
-  const contactEmailHref = getSafeEmailHref(contactEmail);
   const portraitAlt =
     getTrimmedString(aboutPageSettings?.portraitImageAlt) ||
     (pageTitle ? `Portrait of ${pageTitle}` : "");
   const hasHeroText = Boolean(eyebrow || pageTitle || locationLine || intro);
-  const hasSupportingContent = Boolean(
-    biographyParagraphs.length ||
-    resumeUrl ||
-    availabilityStatement ||
-    contactEmailHref,
-  );
+  const hasSupportingContent = Boolean(biographyParagraphs.length || resumeUrl);
   const showHero = Boolean(portraitUrl || hasHeroText || !hasSupportingContent);
   const showVisibleFallbackHeading = Boolean(
     !portraitUrl && !hasHeroText && !hasSupportingContent,
@@ -190,33 +172,6 @@ export default async function AboutPage() {
                         &#8599;
                       </span>
                     </Link>
-                  </div>
-                </section>
-              </RevealOnScroll>
-            ) : null}
-
-            {availabilityStatement || contactEmailHref ? (
-              <RevealOnScroll>
-                <section className="grid gap-6 border-t border-black/14 py-12 sm:py-14 lg:grid-cols-[minmax(0,28%)_minmax(0,64%)] lg:justify-between lg:gap-0 lg:py-16">
-                  <h2 className="font-serif-display text-charcoal text-3xl leading-none sm:text-4xl">
-                    Work Together
-                  </h2>
-                  <div>
-                    {availabilityStatement ? (
-                      <p className="text-charcoal/78 max-w-[42rem] text-lg leading-8 sm:text-xl sm:leading-9">
-                        {availabilityStatement}
-                      </p>
-                    ) : null}
-                    {contactEmailHref && contactEmail ? (
-                      <a
-                        href={contactEmailHref}
-                        className={`border-charcoal/35 text-charcoal hover:border-accent hover:text-accent focus-visible:outline-accent inline-flex min-h-11 max-w-full items-center border-b pb-1 text-base font-medium break-all transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:text-lg sm:break-normal ${
-                          availabilityStatement ? "mt-5" : ""
-                        }`}
-                      >
-                        {contactEmail}
-                      </a>
-                    ) : null}
                   </div>
                 </section>
               </RevealOnScroll>

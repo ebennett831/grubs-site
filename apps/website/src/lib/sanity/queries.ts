@@ -113,7 +113,6 @@ export const aboutPageSettingsQuery = groq`*[
   intro,
   body,
   locationLine,
-  availabilityStatement,
   resumeLabel,
   resumeDescription,
   "resumeFile": resumeFile{

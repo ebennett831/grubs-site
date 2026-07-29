@@ -95,12 +95,11 @@ If it has not been published yet, the website uses density 3.
    Portrait Image.
 3. Use Biography for the longer story.
 4. Use Resume to upload an optional PDF and customize its link text.
-5. Use Work together for the availability statement.
-6. Add Portrait Alt Text whenever a portrait is uploaded.
-7. Click Publish.
+5. Add Portrait Alt Text whenever a portrait is uploaded.
+6. Click Publish.
 
-The public email comes from Site Settings. Social destinations are shown once
-in the global footer rather than repeated on the About page.
+The public email comes from Site Settings and is shown in the global footer
+rather than repeated on the About page.
 
 ### Update footer and social links
 

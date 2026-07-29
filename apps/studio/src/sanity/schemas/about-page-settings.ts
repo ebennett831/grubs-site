@@ -4,13 +4,12 @@ export const aboutPageSettingsSchema = defineType({
   name: "aboutPageSettings",
   title: "About Page",
   description:
-    "Controls the photographer portrait, biography, resume, and availability shown on /about.",
+    "Controls the photographer portrait, biography, and resume shown on /about.",
   type: "document",
   groups: [
     { name: "hero", title: "Hero", default: true },
     { name: "biography", title: "Biography" },
     { name: "resume", title: "Resume" },
-    { name: "contact", title: "Work together" },
   ],
   fields: [
     defineField({
@@ -90,16 +89,6 @@ export const aboutPageSettingsSchema = defineType({
       type: "text",
       rows: 8,
       group: "biography",
-    }),
-    defineField({
-      name: "availabilityStatement",
-      title: "Availability Statement",
-      description:
-        "Optional commissions or collaboration note shown near the page end.",
-      type: "text",
-      rows: 3,
-      group: "contact",
-      validation: (rule) => rule.max(220).warning(),
     }),
     defineField({
       name: "resumeFile",

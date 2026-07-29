@@ -146,7 +146,6 @@ export interface AboutPageSettings {
   intro?: string | null;
   body?: string | null;
   locationLine?: string | null;
-  availabilityStatement?: string | null;
   portraitImage?: SanityImage | null;
   portraitImageAlt?: string | null;
   resumeLabel?: string | null;
