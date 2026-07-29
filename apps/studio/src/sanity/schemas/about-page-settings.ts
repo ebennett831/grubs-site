@@ -10,6 +10,7 @@ export const aboutPageSettingsSchema = defineType({
     { name: "hero", title: "Hero", default: true },
     { name: "biography", title: "Biography" },
     { name: "resume", title: "Resume" },
+    { name: "contact", title: "Work together" },
   ],
   fields: [
     defineField({
@@ -91,31 +92,14 @@ export const aboutPageSettingsSchema = defineType({
       group: "biography",
     }),
     defineField({
-      name: "secondaryHeading",
-      title: "Biography Section Label",
-      description: "Optional label above the longer biography.",
-      type: "string",
-      group: "biography",
-      validation: (rule) => rule.max(80).warning(),
-    }),
-    defineField({
       name: "availabilityStatement",
       title: "Availability Statement",
       description:
         "Optional commissions or collaboration note shown near the page end.",
       type: "text",
       rows: 3,
-      group: "biography",
+      group: "contact",
       validation: (rule) => rule.max(220).warning(),
-    }),
-    defineField({
-      name: "socialSectionHeading",
-      title: "Social Section Label",
-      description:
-        "Optional label above social links sourced from Site Settings.",
-      type: "string",
-      group: "biography",
-      validation: (rule) => rule.max(60).warning(),
     }),
     defineField({
       name: "resumeFile",

@@ -11,7 +11,7 @@ interface SiteFooterProps {
 export function SiteFooter({ siteSettings }: SiteFooterProps) {
   const currentYear = new Date().getFullYear();
   const hasFooterSocialLinks =
-    normalizeSocialLinks(siteSettings?.socialLinks, "footer").length > 0;
+    normalizeSocialLinks(siteSettings?.socialLinks).length > 0;
   const eyebrow = getTrimmedString(siteSettings?.footerEyebrow);
   const heading = getTrimmedString(siteSettings?.footerHeading);
   const description = getTrimmedString(siteSettings?.footerDescription);
@@ -79,10 +79,7 @@ export function SiteFooter({ siteSettings }: SiteFooterProps) {
                     : "max-w-2xl lg:ml-auto lg:w-full"
                 }
               >
-                <SocialLinks
-                  links={siteSettings?.socialLinks}
-                  variant="footer"
-                />
+                <SocialLinks links={siteSettings?.socialLinks} />
               </nav>
             ) : null}
           </div>

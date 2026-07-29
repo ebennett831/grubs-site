@@ -25,8 +25,6 @@ const PLATFORM_LABELS: Record<SocialPlatform, string> = {
 
 const KNOWN_PLATFORMS = new Set<string>(Object.keys(PLATFORM_LABELS));
 
-type SocialVariant = "footer" | "about";
-
 export interface NormalizedSocialLink {
   key: string;
   platform: SocialPlatform | "unknown";
@@ -70,20 +68,11 @@ function getDefaultLabel(platform: SocialPlatform | "unknown") {
   return platform === "unknown" ? "Website" : PLATFORM_LABELS[platform];
 }
 
-function shouldShowInVariant(link: SocialLink, variant: SocialVariant) {
-  if (variant === "footer") {
-    return link.showInFooter !== false;
-  }
-
-  return link.showOnAboutPage !== false;
-}
-
 export function normalizeSocialLink(
   link: SocialLink | null | undefined,
-  variant: SocialVariant,
   index = 0,
 ): NormalizedSocialLink | null {
-  if (!link || !shouldShowInVariant(link, variant)) {
+  if (!link || link.showInFooter === false) {
     return null;
   }
 
@@ -106,13 +95,12 @@ export function normalizeSocialLink(
 
 export function normalizeSocialLinks(
   links: ReadonlyArray<SocialLink | null> | null | undefined,
-  variant: SocialVariant,
 ): NormalizedSocialLink[] {
   if (!links?.length) {
     return [];
   }
 
   return links
-    .map((link, index) => normalizeSocialLink(link, variant, index))
+    .map((link, index) => normalizeSocialLink(link, index))
     .filter((link): link is NormalizedSocialLink => Boolean(link));
 }

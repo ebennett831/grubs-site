@@ -173,12 +173,6 @@ export const socialLinkSchema = defineType({
       type: "boolean",
       initialValue: true,
     }),
-    defineField({
-      name: "showOnAboutPage",
-      title: "Show on About page",
-      type: "boolean",
-      initialValue: false,
-    }),
   ],
   preview: {
     select: {
@@ -186,12 +180,9 @@ export const socialLinkSchema = defineType({
       label: "label",
       url: "url",
       showInFooter: "showInFooter",
-      showOnAboutPage: "showOnAboutPage",
     },
     prepare(selection) {
       const footer = selection.showInFooter !== false ? "Footer" : null;
-      const about = selection.showOnAboutPage !== false ? "About page" : null;
-      const placement = [footer, about].filter(Boolean).join(" \u00B7 ");
       const platform =
         typeof selection.platform === "string" &&
         selection.platform.trim().length > 0
@@ -210,7 +201,7 @@ export const socialLinkSchema = defineType({
         title: platform
           ? platform.charAt(0).toUpperCase() + platform.slice(1)
           : "Unconfigured social link",
-        subtitle: [label || url, placement || "Hidden"]
+        subtitle: [label || url, footer || "Hidden"]
           .filter(Boolean)
           .join(" \u00B7 "),
       };

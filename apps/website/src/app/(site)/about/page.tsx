@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { RevealOnScroll } from "@/components/motion/reveal-on-scroll";
-import { SocialLinks } from "@/components/social/social-links";
 import { Container } from "@/components/ui/container";
 import { fetchSanity } from "@/lib/sanity/fetch";
 import { getSanityFileUrl } from "@/lib/sanity/file";
@@ -13,7 +12,6 @@ import {
 } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
-import { normalizeSocialLinks } from "@/lib/utils/social-links";
 import { type AboutPageSettings, type SiteSettings } from "@/types/sanity";
 
 export default async function AboutPage() {
@@ -33,10 +31,6 @@ export default async function AboutPage() {
     .map((paragraph) => paragraph.trim())
     .filter(Boolean);
 
-  const socialLinks = siteSettings?.socialLinks ?? [];
-  const hasAboutSocialLinks =
-    normalizeSocialLinks(socialLinks, "about").length > 0;
-
   const resumeUrl = getSanityFileUrl(aboutPageSettings?.resumeFile);
   const resumeLabel =
     getTrimmedString(aboutPageSettings?.resumeLabel) || "View resume";
@@ -51,11 +45,15 @@ export default async function AboutPage() {
   const availabilityStatement = getTrimmedString(
     aboutPageSettings?.availabilityStatement,
   );
-  const secondaryHeading =
-    getTrimmedString(aboutPageSettings?.secondaryHeading) || "Biography";
-  const socialHeading =
-    getTrimmedString(aboutPageSettings?.socialSectionHeading) || "Elsewhere";
-  const contactEmailHref = getSafeEmailHref(siteSettings?.contactEmail);
+  const socialEmail = siteSettings?.socialLinks?.find(
+    (link) => getTrimmedString(link?.platform)?.toLowerCase() === "email",
+  );
+  const contactEmail =
+    getTrimmedString(siteSettings?.contactEmail) ||
+    getTrimmedString(socialEmail?.url)
+      ?.replace(/^mailto:/i, "")
+      .trim();
+  const contactEmailHref = getSafeEmailHref(contactEmail);
   const portraitAlt =
     getTrimmedString(aboutPageSettings?.portraitImageAlt) ||
     (pageTitle ? `Portrait of ${pageTitle}` : "");
@@ -64,7 +62,7 @@ export default async function AboutPage() {
     biographyParagraphs.length ||
     resumeUrl ||
     availabilityStatement ||
-    hasAboutSocialLinks,
+    contactEmailHref,
   );
   const showHero = Boolean(portraitUrl || hasHeroText || !hasSupportingContent);
   const showVisibleFallbackHeading = Boolean(
@@ -72,7 +70,7 @@ export default async function AboutPage() {
   );
 
   return (
-    <article className="pt-10 pb-16 sm:pt-14 sm:pb-20 lg:pt-18 lg:pb-28">
+    <article className="pt-10 pb-8 sm:pt-14 sm:pb-10 lg:pt-18 lg:pb-12">
       {!pageTitle && !showVisibleFallbackHeading ? (
         <h1 className="sr-only">About</h1>
       ) : null}
@@ -144,96 +142,86 @@ export default async function AboutPage() {
           </section>
         ) : null}
 
-        {biographyParagraphs.length > 0 ? (
-          <RevealOnScroll>
-            <section className="grid gap-8 border-t border-black/12 pt-10 sm:pt-12 lg:grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] lg:gap-16">
-              <h2 className="text-charcoal/58 text-xs tracking-[0.28em] uppercase">
-                {secondaryHeading}
-              </h2>
-              <div className="text-charcoal/82 max-w-[66ch] space-y-6 text-base leading-8 sm:text-lg sm:leading-9">
-                {biographyParagraphs.map((paragraph, index) => (
-                  <p
-                    key={`${index}-${paragraph.slice(0, 24)}`}
-                    className={
-                      index === 0
-                        ? "font-serif-display text-2xl leading-9 sm:text-3xl sm:leading-10"
-                        : undefined
-                    }
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </section>
-          </RevealOnScroll>
-        ) : null}
+        {hasSupportingContent ? (
+          <div>
+            {biographyParagraphs.length > 0 ? (
+              <RevealOnScroll>
+                <section className="grid gap-6 border-t border-black/14 py-14 sm:py-16 lg:grid-cols-[minmax(0,28%)_minmax(0,64%)] lg:justify-between lg:gap-0 lg:py-20">
+                  <h2 className="font-serif-display text-charcoal text-3xl leading-none sm:text-4xl">
+                    Biography
+                  </h2>
+                  <div className="font-serif-display text-charcoal/82 max-w-[42rem] space-y-5 text-lg leading-[1.65] sm:space-y-6 sm:text-xl sm:leading-[1.65]">
+                    {biographyParagraphs.map((paragraph, index) => (
+                      <p key={`${index}-${paragraph.slice(0, 24)}`}>
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </section>
+              </RevealOnScroll>
+            ) : null}
 
-        {resumeUrl ? (
-          <RevealOnScroll>
-            <section className="grid gap-8 border-t border-black/12 pt-10 sm:pt-12 lg:grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] lg:gap-16">
-              <h2 className="text-charcoal/58 text-xs tracking-[0.28em] uppercase">
-                Resume
-              </h2>
-              <div>
-                {resumeDescription ? (
-                  <p className="text-charcoal/76 max-w-2xl leading-8">
-                    {resumeDescription}
-                  </p>
-                ) : null}
-                <Link
-                  href={resumeUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  aria-label={`${resumeLabel} (PDF, opens in a new tab)`}
-                  className={`group border-charcoal/30 text-charcoal/88 hover:border-charcoal hover:text-charcoal focus-visible:outline-accent inline-flex min-h-11 items-center gap-3 border-b pb-1 text-sm tracking-[0.16em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 ${
-                    resumeDescription ? "mt-6" : ""
-                  }`}
-                >
-                  <span>{resumeLabel}</span>
-                  <span
-                    className="text-charcoal/50 transition-transform duration-200 group-hover:translate-x-1"
-                    aria-hidden="true"
-                  >
-                    PDF &#8599;
-                  </span>
-                </Link>
-              </div>
-            </section>
-          </RevealOnScroll>
-        ) : null}
+            {resumeUrl ? (
+              <RevealOnScroll>
+                <section className="grid gap-6 border-t border-black/14 py-12 sm:py-14 lg:grid-cols-[minmax(0,28%)_minmax(0,64%)] lg:justify-between lg:gap-0 lg:py-16">
+                  <h2 className="font-serif-display text-charcoal text-3xl leading-none sm:text-4xl">
+                    Resume
+                  </h2>
+                  <div>
+                    {resumeDescription ? (
+                      <p className="text-charcoal/72 max-w-[42rem] text-base leading-7 sm:text-lg sm:leading-8">
+                        {resumeDescription}
+                      </p>
+                    ) : null}
+                    <Link
+                      href={resumeUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      aria-label={`${resumeLabel} (PDF, opens in a new tab)`}
+                      className={`group bg-charcoal text-cream hover:bg-accent focus-visible:outline-accent inline-flex min-h-12 items-center gap-3 px-5 py-3 text-sm font-medium tracking-[0.12em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 ${
+                        resumeDescription ? "mt-6" : ""
+                      }`}
+                    >
+                      <span>{resumeLabel}</span>
+                      <span
+                        className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        aria-hidden="true"
+                      >
+                        &#8599;
+                      </span>
+                    </Link>
+                  </div>
+                </section>
+              </RevealOnScroll>
+            ) : null}
 
-        {availabilityStatement ? (
-          <RevealOnScroll>
-            <section className="grid gap-8 border-t border-black/12 pt-10 sm:pt-12 lg:grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] lg:gap-16">
-              <h2 className="text-charcoal/58 text-xs tracking-[0.28em] uppercase">
-                Work together
-              </h2>
-              <div>
-                <p className="text-charcoal/82 max-w-3xl text-lg leading-8">
-                  {availabilityStatement}
-                </p>
-                {contactEmailHref ? (
-                  <Link
-                    href={contactEmailHref}
-                    className="border-charcoal/30 text-charcoal/88 hover:border-charcoal hover:text-charcoal focus-visible:outline-accent mt-5 inline-flex min-h-11 items-center border-b pb-1 text-sm tracking-[0.16em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4"
-                  >
-                    Email the photographer
-                  </Link>
-                ) : null}
-              </div>
-            </section>
-          </RevealOnScroll>
-        ) : null}
-
-        {hasAboutSocialLinks ? (
-          <RevealOnScroll>
-            <section className="grid gap-8 border-t border-black/12 pt-10 sm:pt-12 lg:grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] lg:gap-16">
-              <h2 className="text-charcoal/58 text-xs tracking-[0.28em] uppercase">
-                {socialHeading}
-              </h2>
-              <SocialLinks links={socialLinks} variant="about" />
-            </section>
-          </RevealOnScroll>
+            {availabilityStatement || contactEmailHref ? (
+              <RevealOnScroll>
+                <section className="grid gap-6 border-t border-black/14 py-12 sm:py-14 lg:grid-cols-[minmax(0,28%)_minmax(0,64%)] lg:justify-between lg:gap-0 lg:py-16">
+                  <h2 className="font-serif-display text-charcoal text-3xl leading-none sm:text-4xl">
+                    Work Together
+                  </h2>
+                  <div>
+                    {availabilityStatement ? (
+                      <p className="text-charcoal/78 max-w-[42rem] text-lg leading-8 sm:text-xl sm:leading-9">
+                        {availabilityStatement}
+                      </p>
+                    ) : null}
+                    {contactEmailHref && contactEmail ? (
+                      <a
+                        href={contactEmailHref}
+                        className={`border-charcoal/35 text-charcoal hover:border-accent hover:text-accent focus-visible:outline-accent inline-flex min-h-11 max-w-full items-center border-b pb-1 text-base font-medium break-all transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 sm:text-lg sm:break-normal ${
+                          availabilityStatement ? "mt-5" : ""
+                        }`}
+                      >
+                        {contactEmail}
+                      </a>
+                    ) : null}
+                  </div>
+                </section>
+              </RevealOnScroll>
+            ) : null}
+          </div>
         ) : null}
       </Container>
     </article>

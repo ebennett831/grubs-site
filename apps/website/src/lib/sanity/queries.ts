@@ -19,8 +19,7 @@ export const socialLinkProjection = groq`{
   platform,
   label,
   url,
-  showInFooter,
-  showOnAboutPage
+  showInFooter
 }`;
 
 export const gallerySummaryProjection = groq`{
@@ -113,10 +112,8 @@ export const aboutPageSettingsQuery = groq`*[
   pageTitle,
   intro,
   body,
-  secondaryHeading,
   locationLine,
   availabilityStatement,
-  socialSectionHeading,
   resumeLabel,
   resumeDescription,
   "resumeFile": resumeFile{

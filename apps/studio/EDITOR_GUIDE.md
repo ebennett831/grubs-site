@@ -93,21 +93,21 @@ If it has not been published yet, the website uses density 3.
 1. Open About Page.
 2. Use Hero for the Photographer Name / Heading, Intro Paragraph, location, and
    Portrait Image.
-3. Use Biography for the longer story, availability statement, and social
-   section label.
+3. Use Biography for the longer story.
 4. Use Resume to upload an optional PDF and customize its link text.
-5. Add Portrait Alt Text whenever a portrait is uploaded.
-6. Click Publish.
+5. Use Work together for the availability statement.
+6. Add Portrait Alt Text whenever a portrait is uploaded.
+7. Click Publish.
 
-The About page uses only this document. Social destinations and the public email
-come from Site Settings.
+The public email comes from Site Settings. Social destinations are shown once
+in the global footer rather than repeated on the About page.
 
 ### Update footer and social links
 
 1. Open Site Settings.
 2. Use Socials to add Instagram, YouTube, LinkedIn, Email, or another supported
    destination.
-3. For each item, choose whether it appears in the footer and/or About page.
+3. For each item, choose whether it appears in the footer.
 4. For Email, enter the address without `mailto:`.
 5. Use Footer to edit the closing heading, description, location, and copyright
    name.

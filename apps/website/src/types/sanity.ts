@@ -69,7 +69,6 @@ export interface SocialLink {
   label?: string | null;
   url?: string | null;
   showInFooter?: boolean | null;
-  showOnAboutPage?: boolean | null;
 }
 
 export interface SanityFileAsset {
@@ -146,12 +145,10 @@ export interface AboutPageSettings {
   pageTitle?: string | null;
   intro?: string | null;
   body?: string | null;
-  secondaryHeading?: string | null;
   locationLine?: string | null;
   availabilityStatement?: string | null;
   portraitImage?: SanityImage | null;
   portraitImageAlt?: string | null;
-  socialSectionHeading?: string | null;
   resumeLabel?: string | null;
   resumeDescription?: string | null;
   resumeFile?: SanityFile | null;

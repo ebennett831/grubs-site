@@ -4,10 +4,7 @@ import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
 import { type SiteSettings } from "@/types/sanity";
 
 export function buildOrganizationSchema(siteSettings: SiteSettings | null) {
-  const normalizedSocialLinks = [
-    ...normalizeSocialLinks(siteSettings?.socialLinks, "footer"),
-    ...normalizeSocialLinks(siteSettings?.socialLinks, "about"),
-  ];
+  const normalizedSocialLinks = normalizeSocialLinks(siteSettings?.socialLinks);
   const sameAs = [
     ...new Set(
       normalizedSocialLinks
