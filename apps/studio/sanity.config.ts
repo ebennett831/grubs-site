@@ -12,14 +12,8 @@ import { bulkPhotoDeleteTool } from "./src/sanity/tools/bulk-photo-delete";
 import { bulkPhotoImportTool } from "./src/sanity/tools/bulk-photo-import";
 import { galleryManagerTool } from "./src/sanity/tools/gallery-manager";
 
-const projectId =
-  process.env.SANITY_STUDIO_PROJECT_ID ||
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ||
-  "";
-const dataset =
-  process.env.SANITY_STUDIO_DATASET ||
-  process.env.NEXT_PUBLIC_SANITY_DATASET ||
-  "";
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "";
+const dataset = process.env.SANITY_STUDIO_DATASET || "";
 export default defineConfig({
   name: "default",
   title: "Photography Portfolio CMS",

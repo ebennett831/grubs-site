@@ -489,13 +489,29 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
             </p>
           </div>
 
-          <label
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+            disabled={isImporting}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isImporting}
             style={{
+              appearance: "none",
               display: "grid",
               gap: 10,
               placeItems: "center",
+              width: "100%",
               minHeight: 140,
               padding: 20,
+              font: "inherit",
+              color: "var(--card-fg-color, #111827)",
               borderRadius: 16,
               border: "2px dashed var(--card-accent-fg-color, #111827)",
               background: "var(--card-muted-bg-color, rgba(17,24,39,0.04))",
@@ -503,15 +519,6 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
               textAlign: "center",
             }}
           >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-              disabled={isImporting}
-            />
             <div style={{ display: "grid", gap: 8 }}>
               <span style={{ fontSize: 18, fontWeight: 700 }}>
                 {isImporting ? "Importing files..." : "Choose photo files"}
@@ -533,7 +540,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
             >
               After selecting files, click Import selected photos to confirm.
             </span>
-          </label>
+          </button>
 
           <div
             style={{
@@ -630,6 +637,8 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
 
           {status ? (
             <div
+              role="status"
+              aria-live="polite"
               style={{
                 padding: 12,
                 borderRadius: 10,
@@ -642,6 +651,8 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
 
           {success ? (
             <div
+              role="status"
+              aria-live="polite"
               style={{
                 padding: 12,
                 borderRadius: 10,
@@ -656,6 +667,7 @@ function BulkPhotoImportComponent({ tool }: { tool: Tool }) {
 
           {error ? (
             <div
+              role="alert"
               style={{
                 padding: 12,
                 borderRadius: 10,

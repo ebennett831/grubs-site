@@ -53,6 +53,22 @@ function toSlug(value: string) {
   return slug || `gallery-${Date.now()}`;
 }
 
+function getAvailableSlug(baseSlug: string, existingSlugs: string[]) {
+  const usedSlugs = new Set(existingSlugs);
+
+  if (!usedSlugs.has(baseSlug)) {
+    return baseSlug;
+  }
+
+  let suffix = 2;
+
+  while (usedSlugs.has(`${baseSlug}-${suffix}`)) {
+    suffix += 1;
+  }
+
+  return `${baseSlug}-${suffix}`;
+}
+
 export const galleryManagerTool = definePlugin(() => ({
   name: "gallery-manager",
   tools: [
@@ -172,12 +188,18 @@ function GalleryManagerComponent({ tool }: { tool: Tool }) {
     setIsSaving(true);
 
     try {
+      const baseSlug = toSlug(title);
+      const existingSlugs = await client.fetch<string[]>(
+        `*[_type == "gallery" && defined(slug.current)].slug.current`,
+      );
+      const slug = getAvailableSlug(baseSlug, existingSlugs ?? []);
+
       await client.create({
         _type: "gallery",
         title: title.trim(),
         slug: {
           _type: "slug",
-          current: toSlug(title),
+          current: slug,
         },
         description: description.trim() || undefined,
         ...(coverPhotoId

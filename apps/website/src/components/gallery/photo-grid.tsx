@@ -98,7 +98,7 @@ export function PhotoGrid({
     : `${layoutClasses} [column-fill:_balance]`;
 
   return (
-    <div className={containerClassName}>
+    <div className={`${containerClassName} overflow-x-clip`}>
       {displayPhotos.map((photo, index) => {
         const image = photo.image;
 

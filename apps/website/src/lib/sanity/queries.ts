@@ -150,6 +150,23 @@ export const photoByIdentifierQuery = groq`*[
   dateTaken
 }`;
 
+export const sitemapEntriesQuery = groq`{
+  "photos": *[
+    _type == "photo" &&
+    defined(image.asset._ref)
+  ]{
+    "identifier": _id,
+    "updatedAt": _updatedAt
+  },
+  "galleries": *[
+    _type == "gallery" &&
+    (defined(slug.current) || defined(_id))
+  ]{
+    "identifier": coalesce(slug.current, _id),
+    "updatedAt": _updatedAt
+  }
+}`;
+
 export const homepageFallbackPhotosQuery = groq`*[
   _type == "photo" &&
   defined(image.asset._ref)

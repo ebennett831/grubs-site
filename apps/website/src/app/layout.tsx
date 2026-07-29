@@ -4,6 +4,7 @@ import { type CSSProperties } from "react";
 import { fetchSanity } from "@/lib/sanity/fetch";
 import { siteSettingsQuery } from "@/lib/sanity/queries";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { getSiteUrl } from "@/lib/utils/site";
 import { getThemeColors } from "@/lib/utils/theme";
 import { type SiteSettings } from "@/types/sanity";
 
@@ -23,9 +24,7 @@ const manrope = Manrope({
 export async function generateMetadata() {
   const siteSettings = await fetchSanity<SiteSettings>(siteSettingsQuery);
   return {
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-    ),
+    metadataBase: new URL(getSiteUrl()),
     ...buildMetadata({ siteSettings }),
   };
 }

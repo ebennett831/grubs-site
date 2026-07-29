@@ -1,14 +1,17 @@
 import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
+const developmentScriptPolicy =
+  process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.sanity.io https://core.sanity-cdn.com",
+      `script-src 'self' 'unsafe-inline'${developmentScriptPolicy}`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' blob: data: https://cdn.sanity.io https://images.unsplash.com https://lh3.googleusercontent.com",
+      "img-src 'self' blob: data: https://cdn.sanity.io",
       "font-src 'self' data:",
       "connect-src 'self' https://*.apicdn.sanity.io https://*.api.sanity.io wss://*.api.sanity.io wss://*.apicdn.sanity.io https://sanity-cdn.com https://*.sanity-cdn.com https://core.sanity-cdn.com",
       "frame-ancestors 'none'",
@@ -33,10 +36,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "cdn.sanity.io",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
       },
     ],
   },

@@ -14,6 +14,12 @@ const parsedSanityEnv = sanityEnvSchema.safeParse({
   SANITY_API_READ_TOKEN: process.env.SANITY_API_READ_TOKEN,
 });
 
+if (!parsedSanityEnv.success && process.env.NODE_ENV === "production") {
+  throw new Error(
+    "Missing or invalid required Sanity environment variables. Check NEXT_PUBLIC_SANITY_PROJECT_ID, NEXT_PUBLIC_SANITY_DATASET, and NEXT_PUBLIC_SANITY_API_VERSION.",
+  );
+}
+
 export const hasValidSanityEnv = parsedSanityEnv.success;
 
 export const sanityEnv = parsedSanityEnv.success

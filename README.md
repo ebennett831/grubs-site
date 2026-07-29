@@ -31,7 +31,7 @@ package.json
 From repo root:
 
 ```bash
-npm install
+npm ci
 npm run dev:website
 npm run dev:studio
 npm run build
@@ -40,20 +40,30 @@ npm run lint
 
 ## Environment Variables
 
+Copy the committed `.env.example` in each app to an ignored `.env` for local
+development. Never put secrets in a `NEXT_PUBLIC_*` or `SANITY_STUDIO_*`
+variable.
+
 ### Website (`apps/website/.env`)
 
 ```bash
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_SANITY_PROJECT_ID=
+NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
 NEXT_PUBLIC_SANITY_DATASET=production
 NEXT_PUBLIC_SANITY_API_VERSION=2025-02-01
 SANITY_API_READ_TOKEN=
 ```
 
+`SANITY_API_READ_TOKEN` is not needed for the current public dataset and should
+remain blank. If the dataset is made private later, configure it only as a
+Cloudflare Worker runtime secret. Do not place secrets in `.env` when creating
+an OpenNext production artifact because build-time environment values are
+compiled into that artifact.
+
 ### Studio (`apps/studio/.env`)
 
 ```bash
-SANITY_STUDIO_PROJECT_ID=
+SANITY_STUDIO_PROJECT_ID=your-project-id
 SANITY_STUDIO_DATASET=production
 SANITY_STUDIO_API_VERSION=2025-02-01
 ```
@@ -64,26 +74,55 @@ Use the same project ID and dataset in both apps.
 
 Website app path: `apps/website`
 
-Local build/deploy:
+This app uses Next.js with `@opennextjs/cloudflare` on Cloudflare Workers. It is
+not a Pages static-output deployment. Use Node.js 22 for builds.
+
+Before the first deployment, authenticate Wrangler and create the configured R2
+incremental-cache bucket:
 
 ```bash
-npm run build:website
-npm run deploy:website
+npx wrangler login
+npx wrangler r2 bucket create grubs-site-opennext-cache
 ```
 
-Direct commands:
+Configure these public values in the Cloudflare build environment and as Worker
+runtime variables:
+
+```text
+NEXT_PUBLIC_SITE_URL
+NEXT_PUBLIC_SANITY_PROJECT_ID
+NEXT_PUBLIC_SANITY_DATASET
+NEXT_PUBLIC_SANITY_API_VERSION
+```
+
+`NEXT_PUBLIC_SITE_URL` must be the final HTTPS site origin when the production
+artifact is built. Do not configure `SANITY_API_READ_TOKEN` for the current
+public dataset.
+
+Validate without deploying:
+
+```bash
+npm ci
+npm run build:website
+cd apps/website
+npx opennextjs-cloudflare build
+```
+
+Deploy manually only when ready:
 
 ```bash
 cd apps/website
-npx @opennextjs/cloudflare build
-npx @opennextjs/cloudflare deploy
+npx opennextjs-cloudflare deploy -- --keep-vars
 ```
 
-Cloudflare Workers Builds settings:
+For Git-connected Cloudflare Workers Builds:
 
+- Production branch: `master`
 - Root directory: `apps/website`
-- Build command: `npx @opennextjs/cloudflare build`
-- Deploy command: `npx @opennextjs/cloudflare deploy`
+- Build command: `npx opennextjs-cloudflare build`
+- Deploy command: `npx opennextjs-cloudflare deploy -- --keep-vars`
+- Node version: `22`
+- Output directory: none
 
 Only the website app is built and deployed to Cloudflare.
 
@@ -93,11 +132,20 @@ Studio app path: `apps/studio`
 
 ```bash
 cd apps/studio
-npm run dev
-npm run deploy
+npx sanity login
+npm run build
+npm run deploy -- --schema-required
 ```
 
-This deploys Studio independently and can later be mapped to a custom domain like `studio.example.com`.
+The first deployment prompts for the Sanity-hosted Studio name. Afterward,
+verify that the exact `https://<host>.sanity.studio` origin appears in the
+project CORS list with credentials enabled. Keep `http://localhost:3333` with
+credentials for local Studio development. The public website performs Sanity
+queries server-side, so its origin does not currently require Sanity CORS.
+Avoid wildcard CORS origins.
+
+This deploys Studio independently and can later be mapped to a custom domain
+such as `studio.example.com`.
 
 ## Content Editing Guide
 
