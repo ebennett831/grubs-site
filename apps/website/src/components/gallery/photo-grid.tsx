@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -121,6 +122,14 @@ export function PhotoGrid({
         const photoKey = `${
           getTrimmedString(photo._id) || image.asset._ref || "photo"
         }-${index}`;
+        const photoIdentifier = getTrimmedString(photo._id);
+        const photoHref = photoIdentifier
+          ? `/photos/${encodeURIComponent(photoIdentifier)}`
+          : null;
+        const linkLabel =
+          getTrimmedString(photo.title) ||
+          getTrimmedString(photo.altText) ||
+          "photograph";
 
         if (!imageUrl) {
           return null;
@@ -136,6 +145,37 @@ export function PhotoGrid({
         const entranceY = shouldReduceMotion ? 0 : ((hash % 5) - 2) * 18;
         const entranceRotate = shouldReduceMotion ? 0 : ((hash % 7) - 3) * 1.5;
         const delay = shouldReduceMotion ? 0 : (hash % 10) * 0.035;
+        const imageContent = (
+          <motion.div
+            className={centerIncompleteRows ? "h-full w-full" : undefined}
+            whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Image
+              src={imageUrl}
+              alt={
+                getTrimmedString(photo.altText) ||
+                getTrimmedString(photo.title) ||
+                ""
+              }
+              width={width}
+              height={height}
+              loading="lazy"
+              sizes={
+                centerIncompleteRows
+                  ? centeredLayout.sizes
+                  : "(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
+              }
+              placeholder={lqip ? "blur" : "empty"}
+              blurDataURL={lqip ?? undefined}
+              className={
+                centerIncompleteRows
+                  ? "h-full w-full object-contain"
+                  : "h-auto w-full"
+              }
+            />
+          </motion.div>
+        );
 
         return (
           <motion.figure
@@ -168,35 +208,20 @@ export function PhotoGrid({
               delay,
             }}
           >
-            <motion.div
-              className={centerIncompleteRows ? "h-full w-full" : undefined}
-              whileHover={shouldReduceMotion ? undefined : { scale: 1.01 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Image
-                src={imageUrl}
-                alt={
-                  getTrimmedString(photo.altText) ||
-                  getTrimmedString(photo.title) ||
-                  ""
-                }
-                width={width}
-                height={height}
-                loading="lazy"
-                sizes={
-                  centerIncompleteRows
-                    ? centeredLayout.sizes
-                    : "(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
-                }
-                placeholder={lqip ? "blur" : "empty"}
-                blurDataURL={lqip ?? undefined}
-                className={
-                  centerIncompleteRows
-                    ? "h-full w-full object-contain"
-                    : "h-auto w-full"
-                }
-              />
-            </motion.div>
+            {photoHref ? (
+              <Link
+                href={photoHref}
+                prefetch={false}
+                aria-label={`View photo: ${linkLabel}`}
+                className={`focus-visible:outline-accent block cursor-pointer overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-[-4px] ${
+                  centerIncompleteRows ? "h-full w-full" : ""
+                }`}
+              >
+                {imageContent}
+              </Link>
+            ) : (
+              imageContent
+            )}
           </motion.figure>
         );
       })}

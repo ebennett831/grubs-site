@@ -135,6 +135,21 @@ export const allPhotosQuery = groq`*[
   defined(image.asset._ref)
 ] | order(_createdAt desc) ${photoProjection}`;
 
+export const photoByIdentifierQuery = groq`*[
+  _type == "photo" &&
+  _id == $identifier &&
+  defined(image.asset._ref)
+][0]{
+  _id,
+  _type,
+  image${imageProjection},
+  altText,
+  title,
+  caption,
+  location,
+  dateTaken
+}`;
+
 export const homepageFallbackPhotosQuery = groq`*[
   _type == "photo" &&
   defined(image.asset._ref)

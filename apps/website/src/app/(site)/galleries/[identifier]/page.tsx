@@ -50,6 +50,10 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
   );
   const coverAlt =
     getTrimmedString(gallery.coverPhoto?.altText) || galleryTitle;
+  const coverPhotoIdentifier = getTrimmedString(gallery.coverPhoto?._id);
+  const coverPhotoHref = coverPhotoIdentifier
+    ? `/photos/${encodeURIComponent(coverPhotoIdentifier)}`
+    : null;
   const photos = (gallery.photos ?? []).filter(
     (photo) => photo && hasSanityImage(photo.image),
   );
@@ -76,7 +80,24 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
           ) : null}
         </div>
 
-        {coverImageUrl ? (
+        {coverImageUrl && coverPhotoHref ? (
+          <Link
+            href={coverPhotoHref}
+            prefetch={false}
+            aria-label={`View photo: ${coverAlt}`}
+            className="group focus-visible:outline-accent relative mx-auto block aspect-[16/10] w-full max-w-4xl cursor-pointer overflow-hidden bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-4 sm:aspect-[16/9]"
+          >
+            <Image
+              src={coverImageUrl}
+              alt={coverAlt}
+              fill
+              sizes="(max-width: 1024px) 100vw, 1024px"
+              placeholder={coverImage?.lqip ? "blur" : "empty"}
+              blurDataURL={coverImage?.lqip ?? undefined}
+              className="object-cover transition-transform duration-200 ease-out group-hover:scale-[1.005] motion-reduce:transform-none motion-reduce:transition-none"
+            />
+          </Link>
+        ) : coverImageUrl ? (
           <div className="relative mx-auto aspect-[16/10] w-full max-w-4xl overflow-hidden bg-black/5 sm:aspect-[16/9]">
             <Image
               src={coverImageUrl}
