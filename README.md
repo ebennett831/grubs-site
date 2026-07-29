@@ -12,17 +12,18 @@ Both apps point to the same Sanity project and dataset.
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ebennett831/grubs-site/tree/master/apps/website)
 
 This is the easiest handoff for a new Cloudflare account. The link starts from
-`apps/website` automatically, creates a new repository for the recipient, and
-provisions the R2 cache bucket and Durable Object declared by the website.
-Account-specific custom domains are intentionally not committed.
+the public repository and provisions the R2 cache bucket and Durable Object
+declared by the website. Account-specific custom domains are intentionally not
+committed.
 
 See [`apps/website/README.md`](apps/website/README.md) for the short deployment
 walkthrough and custom-domain follow-up.
 
-Root-directory rule:
+Cloudflare setup rules:
 
-- One-click button: leave the root directory blank (or use `.`).
-- Normal Cloudflare Git import of this monorepo: use `apps/website`.
+- Set the **Path** field to `/apps/website`.
+- The Worker project name can be any valid name; the build synchronizes the
+  OpenNext self-service binding automatically.
 
 ## Repository Structure
 

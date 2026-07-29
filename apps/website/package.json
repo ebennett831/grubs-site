@@ -6,6 +6,8 @@
     "node": ">=22"
   },
   "scripts": {
+    "cloudflare:sync-worker-name": "node scripts/sync-cloudflare-worker-name.mjs",
+    "prebuild": "npm run cloudflare:sync-worker-name",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

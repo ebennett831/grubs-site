@@ -8,28 +8,31 @@ bucket for the Next.js incremental cache.
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ebennett831/grubs-site/tree/master/apps/website)
 
-The button deliberately points to `apps/website`. Cloudflare copies this folder
-into a new repository and treats it as the project root, so no monorepo root
-directory needs to be entered. Leave the root-directory field blank, or use `.`
-if Cloudflare requires a value. Do not enter `apps/website` in the one-click
-flow.
-
-If this original monorepo is imported through Cloudflare's normal Git setup
-instead, set its root directory to `apps/website`.
+The button deliberately points to `apps/website`. In Cloudflare's current setup
+screen, set **Path** to `/apps/website`. Use the same path when importing this
+monorepo through Cloudflare's normal Git setup.
 
 During setup:
 
 1. Sign in to Cloudflare and connect a GitHub account.
 2. Choose the Cloudflare account that will own the site.
-3. Keep or customize the Worker and R2 bucket names.
-4. Confirm the supplied Sanity project, dataset, and API version.
-5. Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS site URL.
-6. Deploy.
+3. Choose any valid Worker project name.
+4. Set the build command to `npx opennextjs-cloudflare build`.
+5. Set the deploy command to
+   `npx opennextjs-cloudflare deploy -- --keep-vars`.
+6. Confirm the supplied Sanity project, dataset, and API version.
+7. Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS site URL.
+8. Deploy.
 
 Cloudflare reads `wrangler.jsonc` and creates the R2 incremental-cache bucket
 and Durable Object binding during setup. The configuration intentionally has no
 custom-domain route, so it works in accounts that do not own
 `bennettethan.com`.
+
+Before every build, `scripts/sync-cloudflare-worker-name.mjs` reads the Worker
+name selected by Cloudflare CI and updates both the Wrangler Worker name and its
+self-service binding. First-time deployments therefore work with any valid
+project name instead of requiring `grubs-site`.
 
 If the final URL is not known yet, deploy to the generated `workers.dev` URL,
 then update `NEXT_PUBLIC_SITE_URL` in the Worker's variables and trigger one
