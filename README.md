@@ -7,6 +7,23 @@ This repository is split into two independently deployable apps:
 
 Both apps point to the same Sanity project and dataset.
 
+## One-click Website Deployment
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ebennett831/grubs-site/tree/master/apps/website)
+
+This is the easiest handoff for a new Cloudflare account. The link starts from
+`apps/website` automatically, creates a new repository for the recipient, and
+provisions the R2 cache bucket and Durable Object declared by the website.
+Account-specific custom domains are intentionally not committed.
+
+See [`apps/website/README.md`](apps/website/README.md) for the short deployment
+walkthrough and custom-domain follow-up.
+
+Root-directory rule:
+
+- One-click button: leave the root directory blank (or use `.`).
+- Normal Cloudflare Git import of this monorepo: use `apps/website`.
+
 ## Repository Structure
 
 ```txt
@@ -77,8 +94,8 @@ Website app path: `apps/website`
 This app uses Next.js with `@opennextjs/cloudflare` on Cloudflare Workers. It is
 not a Pages static-output deployment. Use Node.js 22 for builds.
 
-Before the first deployment, authenticate Wrangler and create the configured R2
-incremental-cache bucket:
+For a manual first deployment, authenticate Wrangler and create the configured
+R2 incremental-cache bucket:
 
 ```bash
 npx wrangler login

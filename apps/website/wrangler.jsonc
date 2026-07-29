@@ -1,5 +1,4 @@
 {
-  "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "grubs-site",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-07-13",
@@ -12,12 +11,6 @@
     {
       "binding": "WORKER_SELF_REFERENCE",
       "service": "grubs-site",
-    },
-  ],
-  "routes": [
-    {
-      "pattern": "grubs-test-site.bennettethan.com",
-      "custom_domain": true,
     },
   ],
   "r2_buckets": [

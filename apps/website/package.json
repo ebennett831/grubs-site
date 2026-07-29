@@ -2,6 +2,9 @@
   "name": "@grubs/website",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -39,5 +42,21 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "wrangler": "^4.110.0"
+  },
+  "cloudflare": {
+    "bindings": {
+      "NEXT_PUBLIC_SITE_URL": {
+        "description": "The final public URL, including https:// and no trailing slash. You can start with your workers.dev URL and update it after adding a custom domain."
+      },
+      "NEXT_PUBLIC_SANITY_PROJECT_ID": {
+        "description": "The public Sanity project ID used by both the portfolio and Studio."
+      },
+      "NEXT_PUBLIC_SANITY_DATASET": {
+        "description": "The published Sanity dataset to read. This portfolio normally uses production."
+      },
+      "NEXT_PUBLIC_SANITY_API_VERSION": {
+        "description": "The Sanity API version in YYYY-MM-DD format. Keep the provided value unless the Studio configuration changes."
+      }
+    }
   }
 }
