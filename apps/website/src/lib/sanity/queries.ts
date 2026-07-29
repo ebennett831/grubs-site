@@ -96,6 +96,7 @@ export const homePageSettingsQuery = groq`*[
   featuredEyebrow,
   featuredTitle,
   featuredDescription,
+  featuredPhotoSize,
   "featuredPhotos": coalesce(
     array::compact(featuredPhotos[]->${photoProjection}),
     []

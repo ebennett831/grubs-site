@@ -104,6 +104,7 @@ export interface HomePageSettings {
   featuredEyebrow?: string | null;
   featuredTitle?: string | null;
   featuredDescription?: string | null;
+  featuredPhotoSize?: number | null;
   featuredPhotos?: Array<Photo | null>;
 }
 

@@ -1,6 +1,9 @@
 import { defineField, defineType } from "sanity";
 
-import { HeroTitleSizeSlider } from "../inputs/scale-slider";
+import {
+  FeaturedPhotoSizeSlider,
+  HeroTitleSizeSlider,
+} from "../inputs/scale-slider";
 
 export const homePageSettingsSchema = defineType({
   name: "homePageSettings",
@@ -135,6 +138,19 @@ export const homePageSettingsSchema = defineType({
       validation: (rule) => rule.max(220).warning(),
     }),
     defineField({
+      name: "featuredPhotoSize",
+      title: "Featured Photo Size",
+      description:
+        "Controls the overall width of the featured photo sequence on tablet and desktop. Photos remain full width on phones. Level 5 preserves the current full-width layout.",
+      type: "number",
+      group: "featured",
+      initialValue: 5,
+      validation: (rule) => rule.min(1).max(5).warning(),
+      components: {
+        input: FeaturedPhotoSizeSlider,
+      },
+    }),
+    defineField({
       name: "featuredPhotos",
       title: "Featured Photos",
       description:
@@ -163,6 +179,7 @@ export const homePageSettingsSchema = defineType({
     select: {
       heroTitle: "heroTitle",
       heroImage: "heroImage",
+      featuredPhotoSize: "featuredPhotoSize",
       featuredPhotos: "featuredPhotos",
     },
     prepare(selection) {
@@ -173,10 +190,14 @@ export const homePageSettingsSchema = defineType({
         typeof selection.heroTitle === "string" && selection.heroTitle.trim()
           ? selection.heroTitle.trim()
           : "Home Page Settings";
+      const featuredPhotoSize =
+        typeof selection.featuredPhotoSize === "number"
+          ? Math.min(5, Math.max(1, Math.round(selection.featuredPhotoSize)))
+          : 5;
 
       return {
         title,
-        subtitle: `${featuredCount} featured photo${featuredCount === 1 ? "" : "s"}`,
+        subtitle: `${featuredCount} featured photo${featuredCount === 1 ? "" : "s"} · Size ${featuredPhotoSize} of 5`,
         media: selection.heroImage,
       };
     },

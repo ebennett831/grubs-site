@@ -16,6 +16,7 @@ import {
 type ScaleSliderProps = NumberInputProps<NumberSchemaType>;
 
 interface ScaleSliderConfig {
+  defaultValue?: number;
   label: string;
   minimumLabel: string;
   maximumLabel: string;
@@ -29,7 +30,9 @@ function ScaleSlider(
   const { value, readOnly, onChange, elementProps } = props;
   const inputId = elementProps.id;
   const currentValue =
-    typeof value === "number" ? Math.min(5, Math.max(1, Math.round(value))) : 3;
+    typeof value === "number"
+      ? Math.min(5, Math.max(1, Math.round(value)))
+      : (config.defaultValue ?? 3);
   const setInputRef = useCallback(
     (element: HTMLInputElement | null) => {
       elementProps.ref.current = element;
@@ -136,5 +139,17 @@ export const HeroTitleSizeSlider = forwardRef<
     label: "Hero title size",
     minimumLabel: "Smaller",
     maximumLabel: "Larger",
+  });
+});
+
+export const FeaturedPhotoSizeSlider = forwardRef<
+  HTMLInputElement,
+  ScaleSliderProps
+>(function FeaturedPhotoSizeSlider(props, ref) {
+  return ScaleSlider(props, ref, {
+    defaultValue: 5,
+    label: "Featured photo size",
+    minimumLabel: "Smaller",
+    maximumLabel: "Full width",
   });
 });

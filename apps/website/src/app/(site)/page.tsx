@@ -41,6 +41,14 @@ const heroTitleSizeOptions = {
   5: "text-5xl leading-[0.9] sm:text-7xl lg:text-[7rem] xl:text-[8rem]",
 } as const;
 
+const featuredPhotoSizeOptions = {
+  1: "mx-auto w-full sm:w-[84%] lg:w-[64%]",
+  2: "mx-auto w-full sm:w-[88%] lg:w-[73%]",
+  3: "mx-auto w-full sm:w-[92%] lg:w-[82%]",
+  4: "mx-auto w-full sm:w-[96%] lg:w-[91%]",
+  5: "w-full",
+} as const;
+
 const PRIMARY_FEATURED_LAYOUTS: FeaturedLayout[] = [
   {
     requestWidth: 2000,
@@ -345,6 +353,14 @@ export default async function HomePage() {
   const featuredDescription = getTrimmedString(
     homePageSettings?.featuredDescription,
   );
+  const featuredPhotoSize =
+    typeof homePageSettings?.featuredPhotoSize === "number"
+      ? Math.min(5, Math.max(1, Math.round(homePageSettings.featuredPhotoSize)))
+      : 5;
+  const featuredPhotoSizeClass =
+    featuredPhotoSizeOptions[
+      featuredPhotoSize as keyof typeof featuredPhotoSizeOptions
+    ];
   const hasFeaturedIntro = Boolean(
     featuredEyebrow || featuredTitle || featuredDescription,
   );
@@ -502,7 +518,9 @@ export default async function HomePage() {
               </div>
             ) : null}
 
-            <FeaturedSequence photos={featuredPhotos} />
+            <div className={featuredPhotoSizeClass}>
+              <FeaturedSequence photos={featuredPhotos} />
+            </div>
           </Container>
         </section>
       ) : null}

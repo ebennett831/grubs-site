@@ -40,11 +40,14 @@ opening still feels intentional.
 
 1. Open Home Page.
 2. Open Featured work.
-3. In Featured Photos, add up to 8 photos.
-4. Drag to reorder.
-5. Click Publish.
+3. Use Featured Photo Size to adjust the overall photo scale.
+4. In Featured Photos, add up to 8 photos.
+5. Drag to reorder.
+6. Click Publish.
 
 If Featured Photos is empty, the website automatically shows recent photos.
+The size control affects tablet and desktop layouts while keeping photos
+comfortably full width on phones.
 
 ### Add a new photo
 
