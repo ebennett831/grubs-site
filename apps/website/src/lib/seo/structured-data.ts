@@ -1,6 +1,6 @@
 import { getSiteUrl } from "@/lib/utils/site";
 import { normalizeSocialLinks } from "@/lib/utils/social-links";
-import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
+import { getTrimmedString } from "@/lib/utils/content";
 import { type SiteSettings } from "@/types/sanity";
 
 export function buildOrganizationSchema(siteSettings: SiteSettings | null) {
@@ -12,8 +12,9 @@ export function buildOrganizationSchema(siteSettings: SiteSettings | null) {
         .map((item) => item.href),
     ),
   ];
-  const emailHref = getSafeEmailHref(siteSettings?.contactEmail);
-  const email = emailHref?.slice("mailto:".length);
+  const email = normalizedSocialLinks
+    .find((item) => item.platform === "email")
+    ?.href.slice("mailto:".length);
 
   return {
     "@context": "https://schema.org",

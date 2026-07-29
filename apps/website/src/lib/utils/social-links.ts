@@ -78,11 +78,16 @@ export function normalizeSocialLink(
 
   const platform = normalizePlatform(link.platform);
   const href = normalizeHref(platform, link.url ?? "");
-  const label = getTrimmedString(link.label) ?? getDefaultLabel(platform);
 
   if (!href) {
     return null;
   }
+
+  const label =
+    getTrimmedString(link.label) ??
+    (platform === "email"
+      ? href.replace(/^mailto:/i, "")
+      : getDefaultLabel(platform));
 
   return {
     key: getTrimmedString(link._key) ?? `${platform}-${index}-${href}`,

@@ -65,24 +65,6 @@ export const siteSettingsSchema = defineType({
       },
     }),
     defineField({
-      name: "contactEmail",
-      title: "Contact Email",
-      description:
-        "Primary public email used by contact prompts. Add an Email item under Social Links to show it in the footer or About page.",
-      type: "string",
-      group: "identity",
-      validation: (rule) =>
-        rule.custom((value) => {
-          if (!value?.trim()) {
-            return true;
-          }
-
-          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
-            ? true
-            : "Enter a valid email address.";
-        }),
-    }),
-    defineField({
       name: "footerEyebrow",
       title: "Footer Eyebrow",
       description: "Short pre-heading above the footer heading.",
@@ -144,7 +126,7 @@ export const siteSettingsSchema = defineType({
       name: "socialLinks",
       title: "Social Links",
       description:
-        "Add each profile or email once, then choose whether it appears in the footer and/or About page. Drag items to set their display order.",
+        "Add each profile or email once. Enabled items appear in the footer; drag them to set their display order.",
       type: "array",
       group: "social",
       of: [{ type: "socialLink" }],

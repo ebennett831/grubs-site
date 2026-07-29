@@ -59,7 +59,6 @@ export const siteSettingsQuery = groq`*[
   siteDescription,
   accentColor{hex},
   headerSize,
-  contactEmail,
   footerEyebrow,
   footerHeading,
   footerDescription,

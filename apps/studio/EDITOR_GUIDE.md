@@ -101,8 +101,8 @@ If it has not been published yet, the website uses density 3.
 5. Add Portrait Alt Text whenever a portrait is uploaded.
 6. Click Publish.
 
-The public email comes from Site Settings and is shown in the global footer
-rather than repeated on the About page.
+The public email is an Email item under Site Settings → Socials and is shown in
+the global footer rather than repeated on the About page.
 
 ### Update footer and social links
 
@@ -120,7 +120,7 @@ Only configured social items are displayed.
 ### Update global identity and SEO
 
 1. Open Site Settings.
-2. Use Identity for Site Title, Site Description, and Contact Email.
+2. Use Identity for Site Title and Site Description.
 3. In Appearance, use Header Size to choose one of five global header scales.
 4. In Appearance, optionally choose a Site Accent Color. Clear it to use the
    default terracotta.

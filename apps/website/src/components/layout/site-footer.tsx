@@ -1,8 +1,8 @@
 import { Container } from "@/components/ui/container";
 import { SocialLinks } from "@/components/social/social-links";
 import { normalizeSocialLinks } from "@/lib/utils/social-links";
-import { getSafeEmailHref, getTrimmedString } from "@/lib/utils/content";
-import { type SiteSettings, type SocialLink } from "@/types/sanity";
+import { getTrimmedString } from "@/lib/utils/content";
+import { type SiteSettings } from "@/types/sanity";
 
 interface SiteFooterProps {
   siteSettings: SiteSettings | null;
@@ -10,32 +10,8 @@ interface SiteFooterProps {
 
 export function SiteFooter({ siteSettings }: SiteFooterProps) {
   const currentYear = new Date().getFullYear();
-  const configuredSocialLinks = siteSettings?.socialLinks ?? [];
-  const normalizedSocialLinks = normalizeSocialLinks(configuredSocialLinks);
-  const socialEmail = normalizedSocialLinks.find(
-    (link) => link.platform === "email",
-  );
-  const configuredContactEmail = getTrimmedString(siteSettings?.contactEmail);
-  const contactEmailHref =
-    getSafeEmailHref(configuredContactEmail) ?? socialEmail?.href ?? null;
-  const contactEmail = contactEmailHref?.replace(/^mailto:/i, "") ?? null;
-  const footerSocialLinks: ReadonlyArray<SocialLink | null> = contactEmail
-    ? [
-        ...configuredSocialLinks.filter(
-          (link) => getTrimmedString(link?.platform)?.toLowerCase() !== "email",
-        ),
-        {
-          _key: "site-contact-email",
-          _type: "socialLink",
-          platform: "email",
-          label: contactEmail,
-          url: contactEmail,
-          showInFooter: true,
-        },
-      ]
-    : configuredSocialLinks;
   const hasFooterSocialLinks =
-    normalizeSocialLinks(footerSocialLinks).length > 0;
+    normalizeSocialLinks(siteSettings?.socialLinks).length > 0;
   const eyebrow = getTrimmedString(siteSettings?.footerEyebrow);
   const heading = getTrimmedString(siteSettings?.footerHeading);
   const description = getTrimmedString(siteSettings?.footerDescription);
@@ -103,7 +79,7 @@ export function SiteFooter({ siteSettings }: SiteFooterProps) {
                     : "max-w-2xl lg:ml-auto lg:w-full"
                 }
               >
-                <SocialLinks links={footerSocialLinks} />
+                <SocialLinks links={siteSettings?.socialLinks} />
               </nav>
             ) : null}
           </div>

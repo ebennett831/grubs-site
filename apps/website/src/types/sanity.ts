@@ -173,7 +173,6 @@ export interface SiteSettings {
   siteDescription?: string | null;
   accentColor?: SanityColor | null;
   headerSize?: number | null;
-  contactEmail?: string | null;
   footerEyebrow?: string | null;
   footerHeading?: string | null;
   footerDescription?: string | null;
