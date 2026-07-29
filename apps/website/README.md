@@ -8,6 +8,31 @@ bucket for the Next.js incremental cache.
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ebennett831/grubs-site/tree/master/apps/website)
 
+### Ownership handoff without terminal commands
+
+After transferring the Sanity project, the new owner can complete the website
+handoff entirely in the Cloudflare and Sanity dashboards:
+
+1. Open the **Deploy to Cloudflare** button above and connect their own GitHub
+   and Cloudflare accounts.
+2. Use `/apps/website` as the application path, choose any Worker name, and
+   keep the build and deploy commands listed below.
+3. For `SANITY_REVALIDATE_SECRET`, create a unique random password of at least
+   48 characters with a password manager. Keep a temporary copy until step 6.
+   This is a private webhook password, not a Sanity API token.
+4. Complete the Worker deployment and copy its `workers.dev` URL.
+5. Open the transferred project at
+   **Sanity Manage → API → Webhooks → Create webhook**.
+6. Use the Worker URL followed by `/api/revalidate`, the production dataset,
+   and the exact saved secret. Copy the filter, projection, triggers, method,
+   and authorization header from **Instant published-content updates** below.
+7. After the webhook is saved, the temporary copy of the secret can be removed.
+   Cloudflare and Sanity retain it securely.
+
+The public website does not need a Sanity read or write token. It reads only
+published content from the public `production` dataset. Studio editing access
+comes from ownership or membership in the transferred Sanity project.
+
 The button deliberately points to `apps/website`. In Cloudflare's current setup
 screen, set **Path** to `/apps/website`. Use the same path when importing this
 monorepo through Cloudflare's normal Git setup.

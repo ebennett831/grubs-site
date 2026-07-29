@@ -60,7 +60,7 @@
         "description": "The Sanity API version in YYYY-MM-DD format. Keep the provided value unless the Studio configuration changes."
       },
       "SANITY_REVALIDATE_SECRET": {
-        "description": "A private random value shared with the Sanity webhook. This securely triggers near-instant cache refreshes after publishing."
+        "description": "Create a unique random password of at least 48 characters and save it until the Sanity webhook is configured. This is not a Sanity API token; Cloudflare stores it as an encrypted Worker secret."
       }
     }
   }
